@@ -28,6 +28,10 @@ FM has all the features that you would expect from a CLI but also from a Desktop
 - Inline contextual help/documentation for each menu and section
 - Zsh-widget: you can also get FM while typing commands in the zsh prompt: navigate, preview and automatically place the seleced paths to complete your command.
 
+## Try it without installing it
+
+You can try FM on your system with the [`try-fm`](https://github.com/ddnexus/try-fm) docker image. It's a very quick and clean way to try it on your own filesystem without the need of installing it.
+
 ## Installation
 
 ### Install Prerequisites
