@@ -1,0 +1,36 @@
+#!/usr/bin/env zsh
+
+setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_POSIX_IDENTIFIERS
+
+zmodload zsh/param/private
+autoload -Uz $_fm_root/autoload/**/*(.)
+
+local lines=($1) view=$2 hidden=$3
+shift 3
+local rg_query=$*
+
+local items=()
+_fm-set-items
+
+print -nP -- %F{$FM_INFO_COLOR}
+    if [[ $items[1] ]]; then
+        print -- ${items[1]:t}: $(file -b -- $items[1]) | fmt -w $FZF_PREVIEW_COLUMNS
+    else
+        print 'No item to display'
+    fi
+print -P -- %f
+
+if [[ -d $items[1] ]]; then
+    _fm-view-dir $items[1]
+else
+    case $view in
+        GREP)
+            local -P cmd=$FM_CMD_RIPGREP
+            $hidden && cmd+=' --hidden'
+            $=cmd -C1 -p --trim $=rg_query $items[1]
+            ;;
+        *)
+            _fm-cat $items[1]
+            ;;
+    esac
+fi

@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+_fm-print() {
+    local -P noend
+    if [[ $1 == -n ]] { noend=$1 ; shift }
+    print $noend -- ${(%):-%F{${1:1}}}$2${(%):-%f}
+}

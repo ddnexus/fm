@@ -1,0 +1,24 @@
+#!/usr/bin/env zsh
+
+fm-widget() {
+    setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_POSIX_IDENTIFIERS
+
+    local fs_view=DIR view=DIR fm_mode=widget
+    local hidden=false sort=false
+    local rg_query rg_message
+    local -a recent_dirs header=()
+    local -A preview
+    _fm-read -data preview
+    _fm-read -data recent_dirs
+    recent_dirs=( $PWD ${recent_dirs:#$PWD} )
+    _fm-write -data recent_dirs
+
+    tput cud1
+    LBUFFER+=$( _fm-panel-start )
+    local -P res=$?
+    tput cuu1
+    [[ $widgets[autosuggest-clear] ]] && zle autosuggest-clear
+    zle redisplay
+    typeset -f zle-line-init > /dev/null && zle zle-line-init
+    return $res
+}

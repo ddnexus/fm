@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+_fm-view-rec() {
+    local -P dir
+    _fm-read -data recent_dirs
+    for dir in $recent_dirs
+        if [[ ! -d $dir ]] recent_dirs=( ${recent_dirs:#$dir} ) # removes deleted recent_dirs dirs
+    recent_dirs=( ${recent_dirs:0:$FM_MAX_RECENT_DIRS} ) # prune
+    _fm-write -data recent_dirs
+    for dir in ${recent_dirs:1}; do
+        _fm-print -blue $dir
+    done |
+        if [[ $sort == true && $FM_CMD_SORT ]]; then
+            LC_ALL=C $=FM_CMD_SORT
+        else
+            >&1
+        fi
+}

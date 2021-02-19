@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+
+_fm-copy-paths() {
+    local -P res
+    if [[ -z $FM_CMD_XCLIP ]] { _fm-notify 'No FM_CMD_XPLIP command found'; return 0 }
+    print -n -- ${(@qqq)items} | $=FM_CMD_XCLIP
+    res=$?
+    if [[ $res -gt 0 ]]; then
+        fm-notify "0 Paths copied to x-clipboard [ERROR $res]"
+    else
+        _fm-notify "$#items Paths copied to x-clipboard"
+    fi
+}

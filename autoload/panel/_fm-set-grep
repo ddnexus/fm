@@ -1,0 +1,26 @@
+#!/usr/bin/env zsh
+
+_fm-set-grep() {
+    if [[ -z $FM_CMD_RIPGREP ]] { _fm-notify 'No FM_CMD_RIPGREP command found'; return 0 }
+    local -P num=0 message='Matching files' cmd=$FM_CMD_RIPGREP res note
+    rg_query=$query; query='';
+    if [[ $rg_query ]]; then
+        message+=" for: $rg_query"
+    else
+        _fm-notify 'You must enter a query to GREP [ERROR 1]'
+        return 1
+    fi
+    view=GREP; rg_message=''; : > $FM_TMP/matches
+    $hidden && cmd+=' --hidden'
+
+    $=cmd --color never --one-file-system --no-messages -p -c $=rg_query 2>/dev/null |
+        head -n $FM_MAX_GREP_FILES > $FM_TMP/matches || res=$?
+
+    num=$(wc -l < $FM_TMP/matches)
+    if [[ $num -ge $FM_MAX_GREP_FILES ]]; then
+        num+='+'
+        message+='\n(FM_MAX_GREP_FILES limit exceeded)'
+    fi
+    if [[ $res > 0 ]] note=" [ERROR $res]"
+    rg_message="$num $message$note"
+}

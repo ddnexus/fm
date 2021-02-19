@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+_fm-sort-items() {
+    if [[ -z $FM_CMD_SORT ]] { _fm-notify "No FM_CMD_SORT command found"; return 0 }
+    sort=true
+    _fm-notify "Items temporarily sorted by path"
+}

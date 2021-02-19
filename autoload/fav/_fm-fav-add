@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+
+_fm-fav-add() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local list=(${1:-$items}) num=0 message='Favorites added' name=''
+    local -P item
+    _fm-open-dialog -green 'Add Selected Favorites' list
+    {
+        for item in $list; do
+            name=$item:t && _fm-fav-accept-name -green
+            if [[ -z $name ]] { _fm-print -yellow 'Skipped!' ; continue }
+            print "hash -d $name=${(q)item}" >> $FM_DATA/favorites
+            ((num+=1))
+            _fm-print -green 'Added!'
+        done
+
+        if [[ $num -gt 0 ]] { source $FM_DATA/favorites ; view=FAV }
+    } always {
+        _fm-close-dialog
+    }
+}

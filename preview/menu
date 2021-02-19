@@ -1,0 +1,737 @@
+#!/usr/bin/env zsh
+
+setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_POSIX_IDENTIFIERS
+
+local B=${(%):-%F{blue}%B}
+local Y=${(%):-%F{yellow}%B}
+local R=${(%):-%F{red}%B}
+local C=${(%):-%F{cyan}%B}
+local E=${(%):-%b%f}
+local g=${(%):-%F{green}}
+local e=${(%):-%f}
+
+local var id title key
+sed -E "s/[[:space:]][[:space:]]+/\n/g" <<< $1 | for var in id title key; read $var
+
+print ${C}${title//_/}${E}
+print
+
+local details=${:-${g}Shortcut key variable${e}: FM_KEY_$id ${Y}"'$key'"${E}.
+See ${B}fm env${E} to see all the current environment.}
+
+case $id in
+
+# FM-UI
+	-fm-ui)
+		cat <<-notes
+			This section groups the menus that interact with specific parts of the FM UI.
+
+			${C}UI Components${E}
+
+			FM Panel
+			The main FM panel. You can switch/choose among 4 views:
+			* DIR  list the detailed content of the current dir
+			* FIND list all the paths in current and nested dirs
+			* GREP list all the files with grep-matches in current and nested dirs
+			* REC  list of recently visited dirs
+			* FAV  list of your favorite items
+
+			Menu Panel
+			The Menu is designed to be easy to toggle and filtered from any FM Panel View. Use it whenever you forget a shortcut key.
+
+			Here are its sections:
+
+			* ${Y}FM UI${E}         UI related menus
+			* ${Y}FM Views${E}      Switches for the 5 views listed above
+			* ${Y}FS Navigation${E} Jump to specific dirs
+			* ${Y}FS Commands${E}   Menu to link, create, copy, cut, paste, rename, remove FS Items
+			* ${Y}Tools${E}         External tools like EDITOR, new Shell, open in desktop app, etc.
+			* ${Y}Added Tools${E}   Your own function/commands added to FM
+			* ${Y}Widget${E}        Zsh Widget only menus.
+
+			Preview Windows
+			* The FM Preview Window shows the currently selected dir or file
+			* The Menu Preview Window shows the usage notes of the currently selected menu (e.g. this very note)
+
+			${B}Prompt${E}
+			Shows the current View and the the abbreviated current path
+
+			${B}Widget${E}
+			Press the FM_WIDGET_KEY from the zsh prompt in order to get into the FM Widget (by default press ${Y}'alt-f'${E} twice very fast). From there you can use the menu to get more informations about the Widget section.
+
+			${C}Usage Tips${E}
+
+			${B}Scroll${E}
+			* Scroll the FM Panel with ${Y}up${E} and ${Y}down${E} keys.
+			* Scroll the Preview Window with ${Y}shift-up${E} and ${Y}shift-down${E} keys.
+			* If your terminal supports mouse interaction you can also use the mouse wheel or touch-pad on both.
+
+			${B}Select/deselect${E}
+			* Select/deselect single or multiple Items with ${Y}tab${E}
+			* If your terminal supports mouse interaction you can also ${Y}right-click${E} the Items.
+			* Press the ${Y}Select All Items${E} shortcut to select all the visible Items.
+			* Deselect all the Items with the ${Y}Refresh/Deselect All${E} menu shortcut.
+
+			${B}Quit/exit FM${E}
+			* Exit FM by pressing ${Y}ctrl-q${E} (FM default) or with ${Y}ctrl-c${E} or ${Y}esc${E} (fzf default).
+
+			${B}Shortcut Keys${E}
+			The default shortcut keys are chosen with care so you will likely be fine with them, however you can customize them with any alternative combination supported by ${B}fzf${E} (see ${B}man fzf${E} for details). Just edit the ${g}"Shortcut key variable"${e} indicated at the bottom of each menu usage note.
+
+			The FM_KEY_MENU, FM_KEY_VIEW_ITEM, FM_KEY_PREVIEW, FM_KEY_SELECT_ALL are essential and can be customized but not removed.
+			All the other keys are also removable by setting them to "". In that case you can still pick their menu from the Menu Panel (and maybe use their key for more important or added menus)
+
+			${B}Hint Message${E}
+			Save one line by removing the hints below the FM Panel prompt by setting ${B}FM_HINTS${E} to ${g}false${e}.
+		notes
+		;;
+	MENU)
+		cat <<-notes
+			This Menu Panel can be helpful in different ways:
+
+			* Press ${Y}$key${E} to toggle it on and off istantaneously from any view
+			* Filter it by typing some partial string to narrow down what you need (e.g. try to type ${g}"file"${e})
+			* Pick a menu line (i.e. select and enter or double-click it)
+			* Press any shortcut right fom the Menu Panel OR from the main FM Panel
+
+			Notice
+			Exit from this Menu Panel by picking a menu or pressing the same ${Y}$key${E} again.
+
+			$details
+
+		notes
+		;;
+	PREVIEW)
+		cat <<-notes
+			Cycle the Preview Window mode in the FM Panel or Menu Panel.
+
+			There are 3 default modes in the FM_PREVIEW_MODES array that basically set the preview on the right, bottom or hidden.
+			Cycling between them may be useful to reveal long paths hidden below it, adapt it to the layout of your window and/or your own preference.
+
+			Notice
+			This menu affects only the Preview Window of the visualized Panel. Use its shortcut from the FM Panel to cycle the FM Panel Preview and from the Menu Panel to cycle the Menu Panel Preview.
+			The choice is persistent across sections. The last one you choose will be stored and retrieved by the next new session.
+
+			${C}Advanced Configuration${E}
+
+			You can edit the FM_PREVIEW_MODES adding different properties or add more modes. See the ${B}man fzf${E} and search for ${Y}--preview-window${E}.
+			If you know what you are doing, you may want to edit also other FM_FZF_OPTS to change the layout of the panels more drastically.
+
+			$details
+		notes
+		;;
+	SELECT_ALL)
+		cat <<-notes
+			Select all the items visible in the current FM Panel list.
+
+			You can deselect single items manually with ${Y}tab${E} or ${Y}right-click${E} or use the ${Y}Refresh/Deselect All${E} menu shortcut to deselect them all.
+
+			Notice
+			The shortcut of this menu must be used from the FM Panel; it has no effect from the Menu Panel.
+
+			$details
+		notes
+		;;
+	REFRESH)
+		cat <<-notes
+			Refresh the FM Panel current list.
+
+			It is useful for a couple of things:
+			* Refreshing the FM Panel list with the latest FS changes
+			* Deselecting all the selected items in the FM Panel
+
+			$details
+		notes
+		;;
+	NOTIFY_WD)
+		cat <<-notes
+			Temporarily notify the current Working Dir. Useful when you don't remember the abbreviated path shown in the prompt.
+
+			$details
+		notes
+		;;
+	HIDDEN)
+		cat <<-notes
+			Toggle the visibility of hidden Items. It will be persisted till you toggle it OFF again.
+
+			$details
+		notes
+		;;
+	SORT)
+		cat <<-notes
+			Temporarily sort the displayed items by their paths.
+
+			Notice
+			* Some delay may happen before the results appear. That may be unnoticeable or be quite long, depending on the quantity of results to display and the speed of your CPU.
+			* This menu has no effect on the DIR View which is already sorted.
+
+			$details
+		notes
+		;;
+	QUIT)
+		cat <<-notes
+			Besides this key, you can also exit with ${Y}ctrl-c${E} and ${Y}esc${E}.
+
+			$details
+		notes
+		;;
+	-views)
+		cat <<-notes
+			This section groups the menus that interact with the view of the File System.
+
+			You can switch among 5 available views. The current view mode is visible in the prompt, for feedback:
+
+			1. DIR
+			show the content of the ${Y}current dir${E} (useful for exploring)
+
+			2. FIND
+			show the paths of all the dirs/files in the ${Y}current and nested dirs${E} (useful for searching)
+
+			3. GREP
+			show the paths of all the files that grep-mathes in the ${Y}current and nested dirs${E} (useful to find files by searching their content)
+
+			4. REC
+			show the list of the recently visited dirs (useful to jump back to a recent dir)
+
+			5. FAV
+			show your Favorites dirs/files (useful to precisely jump to favorite FS locations)
+
+			It offers also the ${Y}View Selected File/Dir${E}, used for step by step navigation.
+		notes
+		;;
+	VIEW_ITEM)
+		cat <<-notes
+			You can view the content of each item in the FM Panel list by selecting it and pressing ${Y}$key${E} (or ${Y}double-click)${E} the item if your terminal supports mouse interaction).
+
+			IMPORTANT
+			In case of multiple Selected Items, this menu applies only to the first one.
+
+			${C}If the Selected Item is a DIR${E}
+
+			FM will ${B}cd${E} into the DIR using the command in the FM_CMD_LS variable.
+			The FM_CMD_LS supports ${B}exa${E} or ${B}ls${E}. ${B}exa${E} is picked by default if it's available because it offers better feedback.
+
+			${C}If the Selected Item is a FILE${E}
+
+			FM will show the FILE content using the command in the FM_CMD_CAT variable, paginated and searchable by ${B}less${E}.
+			The FM_CMD_CAT supports ${B}bat${E} or ${B}cat${E}. ${B}bat${E} is picked by default if it's available because it offers better feedback.
+
+			${C}If the Selected Item is a GREPped FILE${E}
+
+			FM will show the same as for the above FILE, plus:
+			* if you use ${B}bat${E} the matching lines will be highlighted, preserving the usual syntax-highlight
+			* if you use ${B}cat${E} that does not offere syntax highlight, the actual matches will be colored
+
+			Notice
+			The preview window of the main FM Panel does not wrap the FILE content in order to preserve the indentation.
+			If you want a complete and searchable inspection of the content, just press the ${Y}$key${E} (or ${Y}double-click${E} the item if your terminal supports mouse interaction).
+
+			$details
+		notes
+		;;
+	VIEW_DIR)
+		cat <<-notes
+			Show all the details for each file/dir in the ${Y}currernt dir${E}.
+			This view works better for exploring the FS.
+
+			The DIR view will be persisted until you will explicitly switch to another view or until some menu you picked switches to another view.
+
+			Notice
+			This menu uses the command in the FM_CMD_LS variable. It supports ${B}exa${E} or ${B}ls${E}.
+			${B}exa${E} is picked by default if it's available because it offers better feedback.
+
+			$details
+		notes
+		;;
+	VIEW_FIND)
+		cat <<-notes
+			Show all the paths for each file/dir in the ${Y}current and nested dirs${E}.
+			This mode works better for finding or listing together deeply nested dirs/files.
+
+			The FIND View will be persisted until you will explicitly switch to another view or until some menu you picked switches to another view.
+
+			Notice
+			This menu uses the command in the FM_CMD_FIND variable. It supports ${B}fg${E} or ${B}find${E} commands.
+			${B}fg${E} is picked by default if it's available because it offers faster performance.
+
+			The result paths can be sorted with the ${Y}Toggle Path Sorting${E} menu. See its inline help for details.
+
+			${B}fg${E} has a fancy ${Y}--color${E} param that is not enabled by default because it slows down the output quite a lot in dirs with many entries.
+			If despite the performance hit you prefer the color coolness, you can add ${Y}--color${E} to the FM_CMD_FIND variable.
+
+			$details
+		notes
+		;;
+	VIEW_GREP)
+		cat <<-notes
+			This menu expects to find a grep pattern entered the query field, and uses ripgrep to find all the files with matches.
+
+			${R}IMPORTANT: This menu requires the ripgrep (rg) command.${E}
+
+			Each file found shows the number of matching lines. You can get a preview of the content lines around the matching by selecting any file in the list.
+			Double-clik/enter any item listed in the GREP view to get its full view with the higlighted matches and paginated and searchable with less.
+
+			In this view you can use any menu that applies to the items that you select.
+			The GREP view will be persisted until you will explicitly switch to another view or until some menu you picked will switch to another view.
+
+			Notice
+			This menu uses the command in the FM_CMD_RIPGREP variable, and stops grep after FM_MAX_GREP_FILES found with matches.
+
+			The result paths can be sorted with the ${Y}Toggle Path Sorting${E} menu. See its inline help for details.
+
+			${C}Advanced Usage${E}
+			The PATTERN that you are asked to enter for grepping is concatenated at the end of the FM_CMD_RIPGREP command and other parameters. If you know what you are doing you can also enter extra parameters in the query before the contet PATTERN, and they will be part of the command that will be executed.
+
+			For example: ${g}-i MyPatTtern${e} will look for insensitive matches, etc. (see ${B}man rg${E} for details)
+
+			If your added params are wrong or incompatible with the rest of the builtin command you will get a clear ${R}[ERROR <n>]${E} label in the notification area. In that case you should fix your query or fallback to the shell. Notice however that an ${R}[ERROR 1]${E} is returned by rg when no matches are found, and ${R}[ERROR 2]${E} can be a catastrofic syntax error or also a file reading error, so we cannot get a very precise feedbak from ripgrep (see ${B}man rg /EXIT STATUS${E}).
+
+			$details
+		notes
+		;;
+	VIEW_REC)
+		cat <<-notes
+			Show the last FM_MAX_RECENT_DIRS that you visited in the current FM session.
+
+			This is a ${Y}recently visited${E} list, designed to be easy to navigate. The most recent dirs are added or (if already visited) moved on the top of the list. That way there are no duplicates and they are kept sorted by recency.
+
+			When you enter/cd to any dir listed in the REC view, FM will switch back to the last persistent FM View used (i.e. DIR or FIND).
+
+			Notice
+			* The content of the list will be persisted and will work also across sessions of the same user.
+			* This recent dirs list is pruned at FM_MAX_RECENT_DIRS.
+			* Recent dirs that have been deleted or moved are automatucally purged from the list.
+
+			$details
+		notes
+		;;
+	VIEW_FAV)
+		cat <<-notes
+			Show all your Favorite dirs/files.
+
+			Double-clik/enter any FILE listed in the FAV view to get its full view paginated and searchable with less.
+			When you enter/cd to any DIR listed in the FAV view, FM will switch back to the last persistent FM View used (i.e. DIR or FIND).
+
+			Notice
+			Favorites that refers to non-existent targets get automatically purged from the list. That happens when the original target gets deleted or moved.
+			You can add favorites by using the ${Y}Add Selected Favorites${E} menu shortcut.
+
+			IMPORTANT
+			While in the FAV View the ${Y}reName Selected Elements${E} and ${Y}Remove Selected Elements${E} refer to the Favorites themselves not the dirs/files they are pointing to. The particular ${g}"Elements"${e} word indicates that they applies to either Items (dirs/files) or Favorites.
+
+			$details
+		notes
+		;;
+
+# Navigation
+	-nav)
+		cat <<-notes
+		This section groups the menus that jump to common used dirs.
+
+		You can quickly navigate to any location having the direct access to:
+		* ${Y}/${E}
+		* ${Y}\$HOME${E}
+		* ${Y}\$OLDPWD${E}
+		* ${Y}..${E}
+		* ${Y}FM Start${E} dir
+		* ${Y}FM Contining${E} dir of the Selected Item
+
+		Notice
+		Since it's common navigation all the shortcuts in this section use the simplest/easiest ${Y}alt${E} key combined with a meaningful letter. That should also be very easy to memorize.
+		notes
+		;;
+	CD_HOME)
+		cat <<-notes
+			cd to the ${Y}\$HOME${E} dir.
+
+			$details
+		notes
+		;;
+	CD_ROOT)
+		cat <<-notes
+			cd to the ${Y}/${E} dir.
+
+			$details
+		notes
+		;;
+	CD_PARENT)
+		cat <<-notes
+			cd to the ${Y}..${E} dir.
+
+			$details
+		notes
+		;;
+	CD_LAST)
+		cat <<-notes
+			cd back to the just visited dir ${Y}\$OLDPWD${E}.
+
+			$details
+		notes
+		;;
+	CD_CONTAIN)
+		cat <<-notes
+			cd to the containing dir of the Selected Item.
+
+			Notice
+			* In case of multiple Selected Items, this menu applies only to the first one.
+			* Use it in any view but DIR. In DIR view the containing dir is the current dir, so it triggers just a refresh.
+
+			$details
+		notes
+		;;
+	CD_START)
+		cat <<-notes
+			cd to the dir FM was started from.
+
+			Notice
+			This is similar to the ${B}fm -${E} command that does the same when you are already exited from FM (see ${B}fm help${E} for details)
+
+			$details
+		notes
+		;;
+# FS-Commands
+	-fs-cmd)
+		cat <<-usage
+			This section groups the menus that modify the File System structure.
+
+			You can:
+			* create links, files and dirs
+			* copy and move around groups of items recursively
+			* rename and remove files and dirs
+			* toggle the execute bit of the Selected Items
+
+			If your user doesn't have the permission, ${B}sudo${E} will prompt for your password.
+
+			All that should be as simple as using a desktop file manager, just more powerful and faster.
+
+			Notice
+			Since all the commands in this section can actually change things in the FS, all the shortcuts use the (slightly more involved) ${Y}ctrl-alt${E} keys combined with a meaningful letter. That should be also very easy to memorize.
+		usage
+		;;
+	NEW_FILE)
+		cat <<-notes
+			Create a new empty file using ${B}touch${E} in the current dir.
+
+			Notice
+			If your current dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+
+			$details
+		notes
+		;;
+	NEW_DIR)
+		cat <<-notes
+			Create a new dir using ${B}mkdir${E} in the current dir.
+
+			Notice
+			If your current dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+
+			$details
+
+			${R}WARNING Gnome Desktop${E}
+			The default shortcut for this menu (${Y}ctrl-alt-d${E}) is also a shortcut redundantly used by the Gnome/Ubuntu desktop: it hides all windows and show the desktop.
+
+			You may want to disable the conflicting desktop shortcut still allowing the other 2 shortcuts that do the same (${Y}ctrl-super-d${E} and ${Y}super-d${E}). That way all the FM menu keys will be consistent.
+
+			Here is the command to run in the terminal:
+
+			${g}gsettings set \\
+			    org.gnome.desktop.wm.keybindings \\
+			    show-desktop \\
+			    "['<Primary><Super>d', '<Super>d']"${e}
+		notes
+		;;
+	COPY)
+		cat <<-notes
+			Copy all the Selected Items.
+
+			Notice
+			* You can copy single or multiple files and dirs together, from any view.
+			* Dirs will be copied recursively: i.e. you don't need to select child items of an already selected parent dir. Doing it (possible in ${Y}FIND${E} view) is redundant and has no different effect than just selecting/copying the parent dir.
+			* The copied items are persistent in the clipboard also across sessions of the same user. They will be available to paste until you will Copy or Cut other items again.
+
+			$details
+		notes
+		;;
+	CUT)
+		cat <<-notes
+			Cut all the Selected Items.
+
+			Notice
+			* You can cut single or multiple files and dirs together, from any view.
+			* Dirs will be moved recursively: i.e. you don't need to select child items of an already selected parent dir. Doing it (which is possible in ${Y}FIND${E} view) is redundant and has no different effect than just selecting/cutting the parent dir.
+			* The Selected items will actually be moved/deleted only when you use the ${Y}Paste Items${E} menu.
+
+			$details
+		notes
+		;;
+	PASTE)
+		cat <<-notes
+			Paste all the items previously copied/cut into the current dir.
+
+			Notice
+			* If any source or destination is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			* If any item is already present in the destination dir, the ${g}"(pasted[-n])"${e} suffix will be appended to the name root, preserving the eventual extension of the file. E.g. ${g}"file.txt"${e}, ${g}"file(pasted).txt"${e}, ${g}"file(pasted-2).txt"${e}, ...
+
+			$details
+		notes
+		;;
+	FAV_ADD_WD)
+		cat <<-usage
+			Add the Favorite of the Current Dir.
+
+			You will be asked to confirm a generated name for the favorite or type a name of your choice. The name must be alpha-numeric and start with ${g}[A-Za-z]${e}. If it does not, FM will edit your entry accordingly and re-ask for your confirmation.
+
+			See the ${Y}Toggle faVorite View${E} menu for info about how to use a Favorite inside FM.
+
+			$details
+		usage
+		;;
+	FAV_ADD)
+		cat <<-notes
+			Add the Favorites of single or multiple selected DIRS or FILES.
+
+			You will be asked to confirm a generated name for the favorite or type a name of your choice. The name must be alpha-numeric and start with ${g}[A-Za-z]${e}. If it does not, FM will edit your entry accordingly and re-ask for your confirmation.
+
+			See the ${Y}Toggle faVorite View${E} menu for info about how to use a Favorite inside FM.
+
+			IMPORTANT
+			If you use ${B}zsh${E} the Favorites created with this menu are also usable outside FM through ${B}Shell expansion${E}.
+
+			\The ${g}~favorite-name${e} typed in the prompt line is expanded by ${B}zsh${E} to the full path of the Favorite. You can use the Favorites as a sort of easy to type/remember aliases. For example:
+			${g}
+			~ \$ cd ~pagy           # normal cd
+			~ \$ ~pagy              # cd with AUTO_CD zsh option
+			~ \$ ~pa<tab><enter>    # completes ~pagy and cd to it
+			~ \$ nano ~pagy-readme  # use the file using its fav name
+			~ \$ ~my-script         # run your script from its location
+			${e}
+
+			Notice
+
+			You can also use the widget to cd into a favorite dir or pick a path to complete your commands.
+
+			$details
+		notes
+		;;
+	MARK)
+		cat <<-notes
+			This menu marks the Selected Items as the targets to link to.
+
+			You use this menu to mark the targets first, and then use the ${Y}Create Links to Targets${E} menu in the destination dir.
+
+			Notice
+			* You can mark single or multiple files and dirs together from any view.
+			* The marked Targets are persistent also across sessions of the same user. They will be available to link until they exist or until you will mark other items.
+
+			$details
+		notes
+		;;
+	LINK)
+		cat <<-notes
+			This menu creates the links to the target marked previously.
+
+			You use this menu only after marking the target paths with the ${Y}Mark Selected Target${E} menu.
+
+			Notice
+			* If your destination dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			* If any target-name is already present in the destination dir, the ${g}"(linked[-n])"${e} suffix will be appended to the name root, preserving the eventual extension of the file. E.g. ${g}"file.txt"${e}, ${g}"file(linked).txt"${e}, ${g}"file(linked-2).txt"${e}, ...
+
+			$details
+		notes
+		;;
+	RENAME)
+		cat <<-notes
+			Rename all the Selected Items interactively.
+
+			Notice
+			If the item is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+
+			IMPORTANT
+			While in the FAV View this menu refers to the Favorites themselves not the dirs/files they are pointing to. The particular ${g}"Elements"${e} word indicates that they applies to either Items (dirs/files) or Favorites.
+
+			$details
+		notes
+		;;
+	REMOVE)
+		cat <<-notes
+			Removes all the Selected Items interactively.
+
+			Notice
+			If the item is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+
+			IMPORTANT
+			While in the FAV View this menu refers to the Favorites themselves not the dirs/files they are pointing to. The particular ${g}"Elements"${e} word indicates that they applies to either Items (dirs/files) or Favorites.
+
+			$details
+		notes
+		;;
+	EXEC_ON)
+		cat <<-notes
+			Switch the execute bit of the Selected Files ON. Dir Items are silently skipped.
+
+			Notice
+			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable)
+
+			$details
+		notes
+	;;
+	EXEC_OFF)
+		cat <<-notes
+			Switch the exeuted bit of the Selected Files OFF. Dir Items are silently skipped.
+
+			Notice
+			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable)
+
+			$details
+		notes
+	;;
+
+# Tools
+	-tools)
+		cat <<-usage
+			This section groups the tools that you can use on single or multiple Selected Items.
+
+			Notice
+			These tools may open a file in another program or edit it in another screen, but they will not close the FM sesssion: FM will keep waiting for your explicit command to exit.
+		usage
+		;;
+	EDIT)
+		cat <<-notes
+			Edit the Selected Files with the ${B}EDITOR${E} of your system. Dir Items are silently skipped.
+
+			Notice
+			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable)
+			* This menu use the command in the FM_CMD_EDIT variable. It is set to the ${B}EDITOR${E} variable of your system or to the first available editor.
+
+			$details
+		notes
+	;;
+	OPEN)
+		cat <<-notes
+			Open all the Selected Items (single or multiple files or dirs) in the user's preferred application.
+
+			Notice
+			This menu use the command in the FM_CMD_OPEN variable: ${B}xdg-open${E} by default.
+
+			$details
+		notes
+		;;
+	NEW_SHELL)
+		cat <<-notes
+			Opens a new shell in the current dir.
+
+			Depending on the context available:
+			1. it tries to open a TMUX session
+			2. if TMUX is not currently active/available it tries to open a new terminal window/tab
+			3. if also that fails then it opens a new regular shell in the current terminal session
+
+			Notice
+			This menu uses the comands in the FM_CMD_TERMINAL and FM_CMD_SHELL variables as described above. You might need to customize them to your terminal/shell.
+
+			$details
+		notes
+		;;
+	COPY_PATH)
+		cat <<-notes
+			${R}REQUIREMENT: One of xclip or xsel command must be installed!${E}
+
+			This menu copies the quoted paths of the Selected Items that you can paste in any other application or shell.
+
+			Notice
+			* This menu uses the command in the FM_CMD_XCLIP variable. It supports ${B}xclip${E} or ${B}xsel${E}, or any other command capable of reading from STDIN and copying to the x-server selection.
+			* It uses the clipboard selection, which is more exportable but it does not work with the middle click. Edit the FM_CMD_XCLIP if you prefer to switch to the primary selection.
+
+			$details
+		notes
+		;;
+	-widget)
+		cat <<-notes
+			This is a special (and quite useful) feature for zsh shell users only. It is not supported by other shells.
+
+			The FM widget is particularly useful when you just need to cd to some dir or when you are in the middle of a command and need to pick and place some path in the prompt. For that you don't need the full featured ${B}fm${E} command, and you can actually save some typing/clicking getting what you want faster with the widget.
+
+			Press the FM_WIDGET_KEY from the zsh prompt in order to get into the FM Widget (by default press ${Y}'alt-f'${E} twice very fast).
+
+			The FM Widget offers a quick subset of the full ${B}fm${E} command: missing the ${Y}FS Commands${E}, ${Y}Tools${E} and ${Y}Added Tools${E} sections.
+
+			With the widget you can start to type a command in the prompt then decide that you need a couple of paths. You can just invoke the Widget in the middle of your command, pick them from the Recent or Favorite view, or manually navigate to find and pick them, and you can compete your command.
+
+			To get the same with the ${B}fm${E} command you should first run the command, use the ${Y}Copy selected paths${E}, and only then start to type the command and paste the paths. A lot more planning and typing to get the same.
+		notes
+		;;
+	PICK)
+		cat <<-notes
+			This menu picks the Selected items, closes the widget and automatically place them in the zsh prompt.
+
+			You may want to enable the AUTO_CD zsh option in order to get zsh to cd automatically.
+		notes
+		;;
+	PICK_WD)
+		cat <<-notes
+			This menu picks the current Working Dir, closes the widget and automatically place it in the zsh prompt. The path(s) are abbreviated and quoted for the shell.
+
+			You may want to enable the AUTO_CD zsh option in order to get cd into it automatically.
+		notes
+		;;
+	-added)
+		cat <<-notes
+			You can add your own tools to this section very easily with the following comand:
+
+			${g}fm add OPTS${e}
+
+			The OPTS are:
+
+			${Y}--tool${E}
+			The function or command to execute when you chose the menu
+
+			${Y}--title${E}
+			The menu title that appears in the Added Tool Menu section (it will get truncated if too long)
+
+			${Y}--key${E}
+			The optional shortcut key for the tool. If missing you can still pick the menu from the Menu Panel
+
+			${Y}--usage${E}
+			The optional usage note that will appear in the Preview window when you select the menu
+
+			${C}Examples${E}
+
+			For example you can create a function in your ${Y}.zshrc${E} and call the ${B}fm add${E}:
+
+			${g}added-example() {
+			    ...
+			}
+
+			fm add --tool  'added-tool-example' \\
+			       --title 'Show Added Tool Example' \\
+			       --key   'ctrl-k' \\
+			       --usage 'These are the added-tool-example usage notes'
+			${e}
+			That will add the ${g}'Show Added Tools Example  ctrl-k'${e} menu and key to this section, which will will execute your function on press.
+
+			You can analize a few complete examples in the ${g}$_fm_root/added-tools-examples${e} file. Source it in your ${g}~/.zshrc${e} in order to actually try it in FM:
+
+			${g}source \$_fm_root/added-tools-examples${e}
+
+			${C}Available Variables${E}
+
+			* Your functions will run in the context of the ${B}_fm-panel${E} function, so your own tool will have all the variables available in that context. For example:
+			    * ${Y}\$view${E}       The current FM View (DIR, FIND, GREP, REC, FAV)
+			    * ${Y}\$query${E}      The current fzf query
+			    * ${Y}\$items${E}      The array of the paths of the Selected Items
+			    * ${Y}\$lines${E}      The array of the raw Selected Lines
+			    * ${Y}_fm-notify${E}   The function to write in the header of the FM Panel
+			* Your usage text is rendered in the context of the ${B}\$_fm_root/menu${E}, so you can inspect that function to see what may be usefult to you.
+			* Also, all the ${Y}_fm-*${E} function are available, although not all may be useful in your context.
+		notes
+		;;
+	*)
+		local added_menu=()
+		source $FM_TMP/added_menu
+		print -- ${${added_menu[$id]%%$'\t'*}:-No usage available for this added tool}
+		;;
+esac |
+	sed -E "s/^(IMPORTANT)$/${R}&${E}/;
+			s/^(Notice|\*|[[:digit:]]+\.)/${B}&${E}/;
+			s/(FM_[^[:space:].]+|FM Panel|Menu Panel|FM Preview Window|Menu Preview Window|Preview Window)/${B}&${E}/g;
+			s/\b(DIR|FIND|GREP|REC|FAV)\b/${g}&${e}/g;
+		   "

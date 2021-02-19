@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+fm() {
+    setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_ALIASES NO_POSIX_IDENTIFIERS CLOBBER
+    local -P cmd=${1:-run}
+    if ! type _fm-cmd-$cmd &>/dev/null; then
+        _fm-print -red "[FM ERROR] Unknown fm command '$cmd'!\n" >&2
+        _fm-cmd-help
+        return 1
+    fi
+    if [[ $1 ]] shift
+    _fm-cmd-$cmd $@
+}
+

@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+
+_fm-fav-remove() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local -P line var ln name line_numbers=() yn
+    local num=0 message='Favorites removed'
+    local fav_names=(); for line in $lines; fav_names+=${${=line}[2]}
+    _fm-open-dialog -red 'Remove Selected Favorites' fav_names
+    {
+        for line in $lines; do
+            ln=${${=line}[1]}; name=${${=line}[2]}
+            _fm-print -n -red "Remove Favorite $name? (y/n)> "
+            if read -q yn; then
+                line_numbers+=$ln
+                _fm-print -red '\nRemove...'
+            else
+                _fm-print -yellow '\nSkippeed!'
+            fi
+        done
+        num=$#line_numbers
+        if [[ $num -gt 0 ]] _fm-fav-rm $line_numbers
+    } always {
+        _fm-close-dialog
+    }
+}

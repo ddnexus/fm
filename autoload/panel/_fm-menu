@@ -1,0 +1,100 @@
+#!/usr/bin/env zsh
+
+_fm-menu() {
+	local -P query=$1 col id title line var
+
+	cat <<-MENU |
+		cw  yellow   -fm-ui      FM UI
+		cw  yellow   MENU        Toggle This Menu
+		cw  yellow   PREVIEW     Cycle Preview Mode
+		cw  yellow   SELECT_ALL  Select All Items
+		cw  yellow   REFRESH     Refresh/Deselect All
+		cw  yellow   NOTIFY_WD   Notify Working Dir
+		cw  yellow   HIDDEN      Toggle Hidden Visibility
+		cw  yellow   SORT        Sort Items by Path
+		cw  yellow   QUIT        Quit FM
+		cw  green    -views      FM Views
+		cw  green    VIEW_ITEM   View Selected File/Dir
+		cw  green    VIEW_DIR    Switch to DIR View
+		cw  green    VIEW_FIND   Switch to FIND View
+		cw  green    VIEW_GREP   GREP Content in Working Dir
+		cw  green    VIEW_REC    Toggle RECent View
+		cw  green    VIEW_FAV    Toggle FAVorite View
+		cw  blue     -nav        FS Navigation
+		cw  blue     CD_HOME     Jump/cd to Home Dir
+		cw  blue     CD_ROOT     Jump/cd to Root Dir
+		cw  blue     CD_PARENT   Jump/cd to Parent Dir
+		cw  blue     CD_LAST     Jump/cd to Last Dir
+		cw  blue     CD_CONTAIN  Jump/cd to Containing Dir
+		cw  blue     CD_START    Jump/cd to FM-Start Dir
+		c-  magenta  -fs-cmd     FS Commands
+		c-  magenta  NEW_FILE    Create New File
+		c-  magenta  NEW_DIR     Create New Dir
+		c-  magenta  COPY        Copy Selected Items
+		c-  magenta  CUT         Cut Selected Items
+		c-  magenta  PASTE       Paste Items
+		c-  magenta  FAV_ADD_WD  Add Working Dir Favorite
+		c-  magenta  FAV_ADD     Add Selected Favorites
+		c-  magenta  MARK        Mark Selected Targets
+		c-  magenta  LINK        Create Links to Targets
+		c-  magenta  RENAME      reName Selected Elements
+		c-  magenta  REMOVE      Remove Selected Elements
+		c-  magenta  EXEC_ON     Switch Execute bit ON
+		c-  magenta  EXEC_OFF    Switch Execute bit OFF
+		c-  cyan     -tools      Tools
+		c-  cyan     EDIT        Edit Selected Files
+		c-  cyan     OPEN        Open Selected Items
+		c-  cyan     NEW_SHELL   Open New Shell Here
+		c-  cyan     COPY_PATH   Copy Selected Paths
+		-w  cyan     -widget     Widget
+		-w  cyan     PICK        Pick Selected Items
+		-w  cyan     PICK_WD     Pick Working Dir
+		c-  default  -added      Added Tools
+		$( printf "c-\tdefault\t%s\n" ${added_menu#*$'\t'*$'\t'} )
+	MENU
+		while read mode col id title; do
+			if [[ $mode != *${fm_mode[1]}* ]] continue
+			local w=$FM_MENU_WIDTH k=${(P)${:-FM_KEY_$id}}
+			if [[ $id == -* ]]; then
+				print -P -- "$id  %F{$col}%B%S $title %s%b${(r:((w-$#title-2))::_:)${:-}}%f" # no % in category titles
+			else
+				if [[ $title == *$'\t'* ]]; then # added menu with shortcut
+					k=${title#*$'\t'}
+					title=${title%$'\t'*}
+				fi
+				if [[ $k ]] ((w=w-2-$#k))
+				if [[ $#title -gt $w ]] title="${title:0:((w-2))}.."
+				print -- ${(%):-$id  %F{$col}}${(r:((w+2)):)title}$k${(%):-%f}
+			fi
+		done |
+			fzf ${(P)=${:-FM_${(U)fm_mode}_FZF_OPTS}} \
+					--prompt="$(_fm-prompt)" \
+					--header="$(_fm-menu-header)" \
+					--expect=${(Pj|,|)${:-_fm_${fm_mode}_keys}} \
+					--preview="$_fm_root/preview/menu {}" \
+					--preview-window=wrap:$FM_PREVIEW_MODES[$preview[${fm_mode}-menu]] \
+					--query=$query \
+					--with-nth=2.. \
+					--print-query \
+					--ansi \
+					--no-multi \
+					--no-clear |
+				for var in query key line; read $var
+
+	case $key in
+		double-click|$FM_KEY_VIEW_ITEM)
+			if [[ $pipestatus[3] -eq 1 || $line == -* ]]; then
+				_fm-menu $query # no match reload the menu
+			elif [[ ${line%% *} == PREVIEW ]]; then
+				_fm-cycle-preview ${fm_mode}-menu
+				_fm-menu $query
+			else
+				key=${line%% *} # id
+			fi
+			;;
+		$FM_KEY_PREVIEW|PREVIEW)
+			_fm-cycle-preview ${fm_mode}-menu
+			_fm-menu $query
+			;;
+	esac
+}

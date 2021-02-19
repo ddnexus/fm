@@ -1,0 +1,17 @@
+#!/usr/bin/env zsh
+
+_fm-view-dir() {
+    local -P dir=$1 cmd=$FM_CMD_LS
+    if $hidden; then
+        case $FM_CMD_LS in
+            exa*) cmd+=' -a' ;;
+            ls*)  cmd+=' -A' ;;
+        esac
+    fi
+    if [[ ${FM_CMD_LS%% *} == ls ]]; then
+        print -l -- ${"${(@f)$($=cmd $dir)}":1}
+    else
+        $=cmd $dir
+    fi
+}
+
