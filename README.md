@@ -46,7 +46,7 @@ In order to get the best experience with FM you should also install the followin
 
 ### Install FM
 
-- with [zinit](https://github.com/zdharma/zinit)(zplugin): `zinit load ddnexus/fm`
+- with [zinit](https://github.com/zdharma/zinit)(zplugin): `zinit ice --depth'1' atinit'source fm.zsh'; zinit light ddnexus/fm`
 - with [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm"`
 - with [antigen](https//github.com/zsh-users/antigen): `antigen bundle ddnexus/fm`
 - with [zgen](https://github.com/tarjoilija/zgen): `zgen load ddnexus/fm`
@@ -68,14 +68,14 @@ In order to get the best experience with FM you should also install the followin
   - Replace the following \<RC-FILE-PATH\> placeholder with the actual path for your shell (e.g. for `bash` it would be `$HOME/.bashrc`), and run:
 
   ```sh
-  zsh -c 'print "\n. $_fm_root/launcher/fm.sh" >> <RC-FILE-PATH>'
+  zsh -c 'print "\n. $fm_root/launcher/fm.sh" >> <RC-FILE-PATH>'
   ```
   - Restart your shell
 
 - **Fish shell**
 
   ```sh
-  zsh -c 'mkdir -p $HOME/.config/fish; echo "\nsource $_fm_root/launcher/fm.fish" >> $HOME/.config/fish/config.fish'
+  zsh -c 'mkdir -p $HOME/.config/fish; echo "\nsource $fm_root/launcher/fm.fish" >> $HOME/.config/fish/config.fish'
   ```
   - Restart your shell
 

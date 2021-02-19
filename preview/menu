@@ -708,20 +708,20 @@ case $id in
 			${e}
 			That will add the ${g}'Show Added Tools Example  ctrl-k'${e} menu and key to this section, which will will execute your function on press.
 
-			You can analize a few complete examples in the ${g}$_fm_root/added-tools-examples${e} file. Source it in your ${g}~/.zshrc${e} in order to actually try it in FM:
+			You can analize a few complete examples in the ${g}$fm_root/added-tools-examples${e} file. Source it in your ${g}~/.zshrc${e} in order to actually try it in FM:
 
-			${g}source \$_fm_root/added-tools-examples${e}
+			${g}source \$fm_root/added-tools-examples${e}
 
 			${C}Available Variables${E}
 
-			* Your functions will run in the context of the ${B}_fm-panel${E} function, so your own tool will have all the variables available in that context. For example:
+			* Your functions will run in the context of the ${B}__fm-panel${E} function, so your own tool will have all the variables available in that context. For example:
 			    * ${Y}\$view${E}       The current FM View (DIR, FIND, GREP, REC, FAV)
 			    * ${Y}\$query${E}      The current fzf query
 			    * ${Y}\$items${E}      The array of the paths of the Selected Items
 			    * ${Y}\$lines${E}      The array of the raw Selected Lines
-			    * ${Y}_fm-notify${E}   The function to write in the header of the FM Panel
-			* Your usage text is rendered in the context of the ${B}\$_fm_root/menu${E}, so you can inspect that function to see what may be usefult to you.
-			* Also, all the ${Y}_fm-*${E} function are available, although not all may be useful in your context.
+			    * ${Y}__fm-notify${E}  The function to write in the header of the FM Panel
+			* Your usage text is rendered in the context of the ${B}\$fm_root/menu${E}, so you can inspect that function to see what may be usefult to you.
+			* Also, all the ${Y}__fm-*${E} function are available, although not all may be useful in your context.
 		notes
 		;;
 	*)

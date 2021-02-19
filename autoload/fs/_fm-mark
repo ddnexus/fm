@@ -1,8 +1,0 @@
-#!/usr/bin/env zsh
-
-_fm-mark() {
-    _fm-reduce-items
-    targets=( $items )
-    _fm-write -tmp targets
-    _fm-notify "$#targets Targets marked"
-}

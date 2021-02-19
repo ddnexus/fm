@@ -1,0 +1,19 @@
+#!/usr/bin/env zsh
+
+__fm-cmd-add() {
+    local -PA p
+    local added_menu=()
+    for ((n = 1; n <= $#; n++)) argv[n]=${argv[n]//$'\t'/  } # tabs used as field delimiters, converted to double-space
+    zparseopts -F -A p -tool: -title: -key:: -usage::
+    type ${p[--tool]%% *} &>/dev/null || { __fm-print -red "[FM ERROR] '$p[--tool]' is not a defined command or function!" >&2 ; return 1 }
+    if [[ $p[--key] ]]; then
+        if (( $__fm_command_keys[(Ie)$p[--key]] )); then
+            __fm-print -red "[FM ERROR] The key '$p[--key]' is already assigned!" >&2
+        else
+            __fm_command_keys+=$p[--key]
+        fi
+    fi
+    __fm-read -tmp added_menu
+    added_menu+=$p[--usage]$'\t'$p[--tool]$'\t'$(($#added_menu+1))$'\t'$p[--title]$'\t'$p[--key]
+    __fm-write -tmp added_menu
+}

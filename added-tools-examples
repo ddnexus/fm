@@ -10,7 +10,7 @@ ${(@F)items}
 lines:
 ${(@F)lines}
 VARS
-    less && _fm-notify "The 'show-variable' function works!"
+    less && __fm-notify "The 'show-variable' function works!"
 }
 fm add --tool  'show-variables' \
        --title 'Show Variables Example' \

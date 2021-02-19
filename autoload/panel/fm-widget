@@ -8,13 +8,13 @@ fm-widget() {
     local rg_query rg_message
     local -a recent_dirs header=()
     local -A preview
-    _fm-read -data preview
-    _fm-read -data recent_dirs
+    __fm-read -data preview
+    __fm-read -data recent_dirs
     recent_dirs=( $PWD ${recent_dirs:#$PWD} )
-    _fm-write -data recent_dirs
+    __fm-write -data recent_dirs
 
     tput cud1
-    LBUFFER+=$( _fm-panel-start )
+    LBUFFER+=$( __fm-panel-start )
     local -P res=$?
     tput cuu1
     [[ $widgets[autosuggest-clear] ]] && zle autosuggest-clear

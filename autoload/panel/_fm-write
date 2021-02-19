@@ -1,5 +1,0 @@
-#!/usr/bin/env zsh
-
-_fm-write() {
-    typeset -p $2 > ${(P)${:-FM_${(U)1:1}}}/$2
-}

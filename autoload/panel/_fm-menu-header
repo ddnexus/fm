@@ -1,9 +1,0 @@
-#!/usr/bin/env zsh
-
-_fm-menu-header() {
-    local -P w=$(($FM_MENU_WIDTH / 2))
-    if [[ $FM_MAX_MENU_RECAP -gt 0 ]] _fm-print -yellow 'Selected Items:'
-    _fm-print-recap -yellow items $FM_MAX_MENU_RECAP
-    $FM_HINTS && _fm-print -red ${(l:$w::<:: :r:$w::>:: :)${:-Pick a menu or press a sortcut}}
-}
-

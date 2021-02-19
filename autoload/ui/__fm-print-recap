@@ -1,0 +1,17 @@
+#!/usr/bin/env zsh
+
+__fm-print-recap() {
+    local -P color=$1 elements=( ${(P)${2}} ) limit=$3 element n=1 fmt
+    if [[ $limit -le 0 ]]; then
+        return 0
+    elif [[ $limit -eq 1 && $#elements -gt 1 ]]; then
+        __fm-print $color "$#elements Selected Elements in Total"
+        return 0
+    elif [[ $limit -lt $#elements ]]; then
+        ((limit-=1))
+    fi
+    for element in $elements[1,$limit]
+        __fm-print $color "${(l:$#limit:)$((n++))}. $element"
+    if [[ $limit -lt $#elements ]] \
+        __fm-print $color "...and $(($#elements-$limit)) more, for a Total of $#elements"
+}
