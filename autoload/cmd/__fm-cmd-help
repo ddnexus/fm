@@ -13,6 +13,8 @@ __fm-cmd-help() {
 		    env                  Show the value of the relevant variables
 		    add OPTS             Add your tool (command/function) in FM.
 		                         See the "Added Tools" section in the FM Menu
+		    compile              Compile all the FM functions for faster execution
+		                         (wrapper around the executable fm-compile)
 		    help                 Show this screen
 
 		FAV WIDGET               FM provide a zsh widget to preview, navigate and pick

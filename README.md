@@ -6,7 +6,7 @@ FM is a complete File Manager for any shell. As fast as a CLI and as easy as a d
 
 Whether you are comfortable with the terminal or not, you spend a lot of time and effort just repeating basic commands like `cd`, `ls`, `cat`, `cp`, `mv`, `ln`, `find`, `grep`, `mkdir`, `touch`... or maybe you are switching back and forth from the Desktop File Manager to the terminal just to avoid it...
 
-FM saves you all that repeated typing and switching, providing automatic feedback and all that basic tools at the press of a shortcut... and it can also integrate your own tool.
+FM saves you all that repeated typing and switching, providing automatic feedback and all that basic tools at the press of a shortcut... and it can also integrate your own tools.
 
 ### Star and share!
 
@@ -50,8 +50,12 @@ In order to get the best experience with FM you should also install the followin
 
 ### Install FM
 
-- with [zinit](https://github.com/zdharma/zinit)(zplugin): `zinit ice --depth'1' atinit'source fm.zsh'; zinit light ddnexus/fm`
-- with [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm"`
+- with [zinit](https://github.com/zdharma/zinit)(zplugin):
+  ```zsh
+  zinit ice --depth'1' atinit'source fm.zsh' atclone'./fm-compile' atpull'%atclone'
+  zinit light ddnexus/fm
+  ```
+- with [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm", hook-build:"./fm-compile"`
 - with [antigen](https//github.com/zsh-users/antigen): `antigen bundle ddnexus/fm`
 - with [zgen](https://github.com/tarjoilija/zgen): `zgen load ddnexus/fm`
 - manually:
@@ -62,6 +66,13 @@ In order to get the best experience with FM you should also install the followin
   echo "source <FM-DIR-PATH>/fm.zsh" >> $HOME/.zshrc
   ```
   In this case, remember to pull the repo periodically.
+
+#### Compile after install
+
+To make it run faster, FM can be compiled with a simple command.
+Run `fm compile` only once, every time you update the repo.
+
+**Notice**: the `zinit` and `zplug` installation commands shown above, compile FM automatically, so you don't need to do it manually.
 
 ## Configuration
 
