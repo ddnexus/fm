@@ -10,6 +10,8 @@ local E=${(%):-%b%f}
 local g=${(%):-%F{green}}
 local e=${(%):-%f}
 
+if [[ $TRY_FM ]] local caveats=${(%):-$'\n'%F{red}COMMAND NOT AVAILABLE OR LIMITED IN TRY-FM SESSIONS%f}
+
 local var id title key
 sed -E "s/[[:space:]][[:space:]]+/\n/g" <<< $1 | for var in id title key; read $var
 
@@ -611,7 +613,7 @@ case $id in
 			Open all the Selected Items (single or multiple files or dirs) in the user's preferred application.
 
 			Notice
-			This menu use the command in the FM_CMD_OPEN variable: ${B}xdg-open${E} by default.
+			This menu use the command in the FM_CMD_OPEN variable: ${B}xdg-open${E} by default.$caveats
 
 			$details
 		notes
@@ -626,7 +628,7 @@ case $id in
 			3. if also that fails then it opens a new regular shell in the current terminal session
 
 			Notice
-			This menu uses the comands in the FM_CMD_TERMINAL and FM_CMD_SHELL variables as described above. You might need to customize them to your terminal/shell.
+			This menu uses the comands in the FM_CMD_TERMINAL and FM_CMD_SHELL variables as described above. You might need to customize them to your terminal/shell.$caveats
 
 			$details
 		notes
