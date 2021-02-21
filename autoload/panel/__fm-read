@@ -1,5 +1,0 @@
-#!/usr/bin/env zsh
-
-__fm-read() {
-    source ${(P)${:-FM_${(U)1:1}}}/$2
-}

@@ -57,19 +57,19 @@ __fm_command_keys=(
     double-click       # default fzf alternative of accept
     esc ctrl-c ctrl-z  # exit/interrupt/suspend
 )
-: ${FM_CMD_CAT:=$( __fm-get-cmd 'bat -f --style=numbers --wrap=never' 'cat -n' )}
-: ${FM_CMD_LS:=$( __fm-get-cmd 'exa -lbg --color=always --color-scale --group-directories-first' 'ls -lh --color --group-directories-first' )}
-: ${FM_CMD_FIND:=$( __fm-get-cmd fd find )}
-: ${FM_CMD_EDIT:=${EDITOR:-$( __fm-get-cmd nano vim emacs vi )}}
-: ${FM_CMD_OPEN:=$( __fm-get-cmd xdg-open open )}
-: ${FM_CMD_PAGER:=$( __fm-get-cmd 'less -R' )}
-: ${FM_CMD_RIPGREP:=$( __fm-get-cmd rg )}
-: ${FM_CMD_TERMINAL=$( __fm-get-cmd 'gnome-terminal --tab --working-directory' 'konsole --workdir' 'terminology -d' )} #  can be disabled by setting it to ''
+: ${FM_CMD_CAT:=$( fm::get-cmd 'bat -f --style=numbers --wrap=never' 'cat -n' )}
+: ${FM_CMD_LS:=$( fm::get-cmd 'exa -lbg --color=always --color-scale --group-directories-first' 'ls -lh --color --group-directories-first' )}
+: ${FM_CMD_FIND:=$( fm::get-cmd fd find )}
+: ${FM_CMD_EDIT:=${EDITOR:-$( fm::get-cmd nano vim emacs vi )}}
+: ${FM_CMD_OPEN:=$( fm::get-cmd xdg-open open )}
+: ${FM_CMD_PAGER:=$( fm::get-cmd 'less -R' )}
+: ${FM_CMD_RIPGREP:=$( fm::get-cmd rg )}
+: ${FM_CMD_TERMINAL=$( fm::get-cmd 'gnome-terminal --tab --working-directory' 'konsole --workdir' 'terminology -d' )} #  can be disabled by setting it to ''
 : ${FM_CMD_SHELL:=$SHELL}
-: ${FM_CMD_XCLIP:=$( __fm-get-cmd 'xclip -selection clipboard' 'xsel --clipboard -i' )}
-: ${FM_CMD_SUDO=$( __fm-get-cmd sudo )} #  can be disabled by setting it to ''
-: ${FM_CMD_STAT:=$( __fm-get-cmd stat )}
-: ${FM_CMD_SORT:=$( __fm-get-cmd 'sort -fbi' )}
+: ${FM_CMD_XCLIP:=$( fm::get-cmd 'xclip -selection clipboard' 'xsel --clipboard -i' )}
+: ${FM_CMD_SUDO=$( fm::get-cmd sudo )} #  can be disabled by setting it to ''
+: ${FM_CMD_STAT:=$( fm::get-cmd stat )}
+: ${FM_CMD_SORT:=$( fm::get-cmd 'sort -fbi' )}
 
 : ${FM_MAX_GREP_FILES:=100}
 : ${FM_MAX_RECENT_DIRS:=100}
@@ -110,7 +110,7 @@ for file in favorites \
 
 if [[ ! -s $FM_DATA/preview ]]; then
     local -A preview=( [command-panel]=1 [command-menu]=1 [widget-panel]=1 [widget-menu]=1 )
-    __fm-write -data preview
+    fm::write -data preview
 fi
 
 for file in added_menu \

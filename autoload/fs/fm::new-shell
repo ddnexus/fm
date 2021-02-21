@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+fm::new-shell() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local -P res
+    {
+        if [[ $TMUX ]]; then
+            tmux new-window -c $PWD -n "dir $PWD:t"
+        elif [[ $FM_CMD_TERMINAL ]]; then
+            $=FM_CMD_TERMINAL $PWD &>/dev/null &!
+        elif [[ $FM_CMD_SHELL ]]; then
+            print "Opening a new '$FM_CMD_SHELL' session here. Type 'exit' to return to the FM Panel..."
+            $=FM_CMD_SHELL
+        else
+            fm::notify 'No suitable command for opening a new shell found'
+            return 0
+        fi
+    } always {
+        res=$?
+        if [[ $res -gt 0 ]] fm-notify "New Shell Tool failed [ERROR $res]"
+    }
+}

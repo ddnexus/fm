@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+fm::toggle-hidden() {
+    if $hidden; then
+        hidden=false
+        fm::notify 'Hidden Visibility OFF'
+    else
+        hidden=true
+        fm::notify "Hidden Visibility ON"
+    fi
+    if [[ $view == GREP ]]; then
+        query=$rg_query
+        fm::set-grep
+    fi
+}

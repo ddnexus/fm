@@ -1,0 +1,31 @@
+#!/usr/bin/env zsh
+
+fm::rename() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local -P item new_name old_name source_dir sudo
+    local num=0 message='Items renamed'
+    fm::open-dialog -yellow 'Rename Selected Items' items
+    {
+        for item in $items; do
+        old_name=$item:t ; new_name=$old_name ; source_dir=$item:h
+            if [[ -w $item:h ]] { sudo='' } else { sudo=$FM_CMD_SUDO }
+            vared -p "%F{yellow}Enter the new name for $old_name (empty to skip)>%f " new_name
+            if [[ -z $new_name || $new_name == $old_name ]] { fm::print -yellow 'Skipped!' ; continue }
+            if [[ -e $source_dir/$new_name ]]; then
+                fm::print -n -red "Override $new_name? (y/n)> "
+                if read -q yn; then
+                    print ; $=sudo mv -f $item $source_dir/$new_name
+                    ((num+=1))
+                    fm::print -red 'Overridden!'
+                else
+                    fm::print -yellow '\nSkipped!'
+                fi
+                continue
+            fi
+            $=sudo mv -f $item $source_dir/$new_name
+            ((num+=1))
+        done
+    } always {
+        fm::close-dialog
+    }
+}

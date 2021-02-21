@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+fm::close-dialog() {
+    local -P sleep_time=${1:-1} note res=$?
+
+    if [[ $TRY_BLOCK_INTERRUPT -gt 0 ]]; then
+        TRY_BLOCK_INTERRUPT=0
+        note=' [INTERRUPTED]'
+    elif [[ $res -gt 0 ]]; then
+        note=" [ERROR $res]"
+    fi
+
+    fm::notify "$num $message$note"
+    fm::print -magenta "\n$num $message$note" > /dev/tty
+    sleep $sleep_time
+
+    tput csr 0 $(tput lines)
+}

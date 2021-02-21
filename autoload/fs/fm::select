@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+fm::select() {
+    clipboard[mode]=$1
+    fm::reduce-items
+    clipboard[sources]=${(@F)items}
+    fm::write -tmp clipboard
+    print
+    fm::notify "$#items Items $clipboard[mode]"
+}

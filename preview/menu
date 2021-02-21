@@ -716,14 +716,14 @@ case $id in
 
 			${C}Available Variables${E}
 
-			* Your functions will run in the context of the ${B}__fm-panel${E} function, so your own tool will have all the variables available in that context. For example:
+			* Your functions will run in the context of the ${B}fm::panel${E} function, so your own tool will have all the variables available in that context. For example:
 			    * ${Y}\$view${E}       The current FM View (DIR, FIND, GREP, REC, FAV)
 			    * ${Y}\$query${E}      The current fzf query
 			    * ${Y}\$items${E}      The array of the paths of the Selected Items
 			    * ${Y}\$lines${E}      The array of the raw Selected Lines
-			    * ${Y}__fm-notify${E}  The function to write in the header of the FM Panel
+			    * ${Y}fm::notify${E}   The function to write in the header of the FM Panel
 			* Your usage text is rendered in the context of the ${B}\$fm_root/menu${E}, so you can inspect that function to see what may be usefult to you.
-			* Also, all the ${Y}__fm-*${E} function are available, although not all may be useful in your context.
+			* Also, all the ${Y}fm::*${E} function are available, although not all may be useful in your context.
 		notes
 		;;
 	*)

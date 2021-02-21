@@ -1,0 +1,23 @@
+#!/usr/bin/env zsh
+
+fm::view-find() {
+    case $FM_CMD_FIND in
+        fd*)
+            case $hidden in
+                true)  $=FM_CMD_FIND -uu . ;;
+                false) $=FM_CMD_FIND     . ;;
+            esac
+            ;;
+        find*)
+            case $hidden in
+                true)  $=FM_CMD_FIND  ;;
+                false) $=FM_CMD_FIND . -path '*/.*' -prune -o -print ;;
+            esac 2>/dev/null | sed 's/\.\///'
+            ;;
+    esac |
+        if [[ $sort == true && $FM_CMD_SORT ]]; then
+            LC_ALL=C $=FM_CMD_SORT
+        else
+            >&1
+        fi
+}

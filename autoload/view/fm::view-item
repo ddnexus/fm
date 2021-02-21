@@ -1,0 +1,31 @@
+#!/usr/bin/env zsh
+
+fm::view-item() {
+    if [[ -z $FM_CMD_PAGER ]] { fm::notify "No FM_CMD_PAGER command found"; return 0 }
+    local -P esc_name highlight_params
+    if [[ -d $items[1] ]]; then
+        fm::cd $items[1]
+        query=''
+    elif [[ -f $items[1] && $fm_mode != widget ]]; then
+        esc_name=$( sed -E 's/([?:.%\\])/\\\1/g' <<< "${items[1]:t}") # escape for less prompt
+        tput cup $(tput lines) 0
+        case $view in
+            GREP)
+                case ${FM_CMD_CAT%% *} in
+                    bat)
+                        $=FM_CMD_RIPGREP -n --trim $rg_query $items[1] |
+                            { awk -F: '{ print "-H"$1 }'; <<< $items[1] } |
+                                xargs $=FM_CMD_CAT
+                        ;;
+                    cat)
+                        $=FM_CMD_RIPGREP --color always --passthru $rg_query $items[1] | $=FM_CMD_CAT
+                        ;;
+                esac
+                ;;
+            *)
+                fm::cat $items[1]
+                ;;
+        esac |
+            $=FM_CMD_PAGER --prompt="$esc_name (press h for help or q to quit)"
+    fi
+}

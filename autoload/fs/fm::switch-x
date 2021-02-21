@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+
+fm::switch-x() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local -P onoff=$1 sudo item files=() param
+    local num=0 message="File execute bit switched to $onoff"
+    fm::open-dialog -yellow "Switch execute bit $onoff" files
+    {
+        for item in $items; do
+            if [[ -d $item ]] continue
+            if [[ ! -w $item ]] sudo=$FM_CMD_SUDO # any non writable item triggers sudo
+            files+=$item
+        done
+        if [[ $#files -eq 0 ]] return 0 # avoid error 1 later
+
+        case $onoff in
+            ON)  param='+x' ;;
+            OFF) param='-x' ;;
+        esac
+        $=sudo chmod $param $files
+        num=$#files
+    } always {
+        fm::close-dialog 0
+    }
+}

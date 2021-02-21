@@ -10,7 +10,7 @@ shift 3
 local rg_query=$*
 
 local items=()
-__fm-set-items
+fm::set-items
 
 print -nP -- %F{$FM_INFO_COLOR}
     if [[ $items[1] ]]; then
@@ -21,7 +21,7 @@ print -nP -- %F{$FM_INFO_COLOR}
 print -P -- %f
 
 if [[ -d $items[1] ]]; then
-    __fm-view-dir $items[1]
+    fm::view-dir $items[1]
 else
     case $view in
         GREP)
@@ -30,7 +30,7 @@ else
             $=cmd -C1 -p --trim $=rg_query $items[1]
             ;;
         *)
-            __fm-cat $items[1]
+            fm::cat $items[1]
             ;;
     esac
 fi
