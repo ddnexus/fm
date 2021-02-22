@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+fm__cycle-preview() {
+    ((preview[$1]+=1))
+    if [[ $preview[$1] -gt $#FM__PREVIEW_MODES ]] preview[$1]=1
+    fm__write -data preview
+}

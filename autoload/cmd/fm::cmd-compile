@@ -1,5 +1,0 @@
-#!/usr/bin/env zsh
-
-fm::cmd-compile() {
-	$fm_root/fm-compile
-}

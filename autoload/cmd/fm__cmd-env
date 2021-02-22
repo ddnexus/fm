@@ -1,0 +1,83 @@
+#!/usr/bin/env zsh
+
+fm__cmd-env() {
+    local -P var variables=(
+    # FM UI
+        FM__KEY_MENU
+        FM__KEY_PREVIEW
+        FM__KEY_SELECT_ALL
+        FM__KEY_REFRESH
+        FM__KEY_NOTIFY_WD
+        FM__KEY_HIDDEN
+        FM__KEY_SORT
+        FM__KEY_QUIT
+    # FM Views
+        FM__KEY_VIEW_ITEM
+        FM__KEY_VIEW_DIR
+        FM__KEY_VIEW_FIND
+        FM__KEY_VIEW_GREP
+        FM__KEY_VIEW_REC
+        FM__KEY_VIEW_FAV
+    # FS Navigation
+        FM__KEY_CD_HOME
+        FM__KEY_CD_ROOT
+        FM__KEY_CD_PARENT
+        FM__KEY_CD_LAST
+        FM__KEY_CD_CONTAIN
+        FM__KEY_CD_START
+    # FS Commands
+        FM__KEY_NEW_FILE
+        FM__KEY_NEW_DIR
+        FM__KEY_COPY
+        FM__KEY_CUT
+        FM__KEY_PASTE
+        FM__KEY_FAV_ADD_WD
+        FM__KEY_FAV_ADD
+        FM__KEY_MARK
+        FM__KEY_LINK
+        FM__KEY_RENAME
+        FM__KEY_REMOVE
+        FM__KEY_EXEC_ON
+        FM__KEY_EXEC_OFF
+    # Tools
+        FM__KEY_OPEN
+        FM__KEY_EDIT
+        FM__KEY_NEW_SHELL
+        FM__KEY_COPY_PATH
+    # CMD vars
+        FM__CMD_CAT
+        FM__CMD_LS
+        FM__CMD_FIND
+        FM__CMD_EDIT
+        FM__CMD_OPEN
+        FM__CMD_PAGER
+        FM__CMD_RIPGREP
+        FM__CMD_TERMINAL
+        FM__CMD_SHELL
+        FM__CMD_XCLIP
+        FM__CMD_SUDO
+        FM__CMD_STAT
+        FM__CMD_SORT
+    # Other vars
+        FM__MAX_GREP_FILES
+        FM__MAX_RECENT_DIRS
+        FM__MAX_DIALOG_RECAP
+        FM__MAX_MENU_RECAP
+        FM__MENU_WIDTH
+        FM__HINTS
+        FM__INFO_COLOR
+        FM__PREVIEW_MODES
+        FM__COMMAND_FZF_OPTS
+        FM__WIDGET_FZF_OPTS
+        FM__DATA
+    # Internal vars
+        fm__version
+        fm__root
+    )
+
+    local -P length
+    for var in $variables
+        if [[ $#var -gt $length ]] length=$#var
+    for var in $variables
+        print "    ${(r:$length:)var}  ${(P)var}"
+}

@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+setopt EXTENDED_GLOB
+
+local fnc dir=${fm__root:-$PWD}
+for fnc in $dir/autoload/**/^*.zwc(.); zcompile -Uz $fnc
+for fnc in $dir/preview/^*.zwc(.); zcompile -Uz $fnc

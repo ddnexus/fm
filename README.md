@@ -52,10 +52,10 @@ In order to get the best experience with FM you should also install the followin
 
 - with [zinit](https://github.com/zdharma/zinit)(zplugin):
   ```zsh
-  zinit ice --depth'1' atinit'source fm.zsh' atclone'./fm-compile' atpull'%atclone'
+  zinit ice --depth'1' atinit'source fm.zsh' atclone'./fm__compile' atpull'%atclone'
   zinit light ddnexus/fm
   ```
-- with [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm", hook-build:"./fm-compile"`
+- with [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm", hook-build:"./fm__compile"`
 - with [antigen](https//github.com/zsh-users/antigen): `antigen bundle ddnexus/fm`
 - with [zgen](https://github.com/tarjoilija/zgen): `zgen load ddnexus/fm`
 - manually:
@@ -83,14 +83,14 @@ Run `fm compile` only once, every time you update the repo.
   - Replace the following \<RC-FILE-PATH\> placeholder with the actual path for your shell (e.g. for `bash` it would be `$HOME/.bashrc`), and run:
 
   ```sh
-  zsh -c 'print "\n. $fm_root/launcher/fm.sh" >> <RC-FILE-PATH>'
+  zsh -c 'print "\n. $fm__root/launcher/fm.sh" >> <RC-FILE-PATH>'
   ```
   - Restart your shell
 
 - **Fish shell**
 
   ```sh
-  zsh -c 'mkdir -p $HOME/.config/fish; echo "\nsource $fm_root/launcher/fm.fish" >> $HOME/.config/fish/config.fish'
+  zsh -c 'mkdir -p $HOME/.config/fish; echo "\nsource $fm__root/launcher/fm.fish" >> $HOME/.config/fish/config.fish'
   ```
   - Restart your shell
 
@@ -113,7 +113,7 @@ The FM favorites are working in any shell, however the favorite `widget` and the
 
 ## Customization
 
-All the FM customizations consist in redefining some `FM_*` variable in the `~/.zshrc` file _regardless the shell you use_. You can read the `fm help` and the inline documentation in the FM menu (`ctrl-space`) for details.
+All the FM customizations consist in redefining some `FM__*` variable in the `~/.zshrc` file _regardless the shell you use_. You can read the `fm help` and the inline documentation in the FM menu (`ctrl-space`) for details.
 
 ## Add your own tools
 

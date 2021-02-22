@@ -18,7 +18,7 @@ sed -E "s/[[:space:]][[:space:]]+/\n/g" <<< $1 | for var in id title key; read $
 print ${C}${title//_/}${E}
 print
 
-local details=${:-${g}Shortcut key variable${e}: FM_KEY_$id ${Y}"'$key'"${E}.
+local details=${:-${g}Shortcut key variable${e}: FM__KEY_$id ${Y}"'$key'"${E}.
 See ${B}fm env${E} to see all the current environment.}
 
 case $id in
@@ -59,7 +59,7 @@ case $id in
 			Shows the current View and the the abbreviated current path
 
 			${B}Widget${E}
-			Press the FM_WIDGET_KEY from the zsh prompt in order to get into the FM Widget (by default press ${Y}'alt-f'${E} twice very fast). From there you can use the menu to get more informations about the Widget section.
+			Press the FM__WIDGET_KEY from the zsh prompt in order to get into the FM Widget (by default press ${Y}'alt-f'${E} twice very fast). From there you can use the menu to get more informations about the Widget section.
 
 			${C}Usage Tips${E}
 
@@ -80,11 +80,11 @@ case $id in
 			${B}Shortcut Keys${E}
 			The default shortcut keys are chosen with care so you will likely be fine with them, however you can customize them with any alternative combination supported by ${B}fzf${E} (see ${B}man fzf${E} for details). Just edit the ${g}"Shortcut key variable"${e} indicated at the bottom of each menu usage note.
 
-			The FM_KEY_MENU, FM_KEY_VIEW_ITEM, FM_KEY_PREVIEW, FM_KEY_SELECT_ALL are essential and can be customized but not removed.
+			The FM__KEY_MENU, FM__KEY_VIEW_ITEM, FM__KEY_PREVIEW, FM__KEY_SELECT_ALL are essential and can be customized but not removed.
 			All the other keys are also removable by setting them to "". In that case you can still pick their menu from the Menu Panel (and maybe use their key for more important or added menus)
 
 			${B}Hint Message${E}
-			Save one line by removing the hints below the FM Panel prompt by setting ${B}FM_HINTS${E} to ${g}false${e}.
+			Save one line by removing the hints below the FM Panel prompt by setting ${B}FM__HINTS${E} to ${g}false${e}.
 		notes
 		;;
 	MENU)
@@ -107,7 +107,7 @@ case $id in
 		cat <<-notes
 			Cycle the Preview Window mode in the FM Panel or Menu Panel.
 
-			There are 3 default modes in the FM_PREVIEW_MODES array that basically set the preview on the right, bottom or hidden.
+			There are 3 default modes in the FM__PREVIEW_MODES array that basically set the preview on the right, bottom or hidden.
 			Cycling between them may be useful to reveal long paths hidden below it, adapt it to the layout of your window and/or your own preference.
 
 			Notice
@@ -116,8 +116,8 @@ case $id in
 
 			${C}Advanced Configuration${E}
 
-			You can edit the FM_PREVIEW_MODES adding different properties or add more modes. See the ${B}man fzf${E} and search for ${Y}--preview-window${E}.
-			If you know what you are doing, you may want to edit also other FM_FZF_OPTS to change the layout of the panels more drastically.
+			You can edit the FM__PREVIEW_MODES adding different properties or add more modes. See the ${B}man fzf${E} and search for ${Y}--preview-window${E}.
+			If you know what you are doing, you may want to edit also other FM__FZF_OPTS to change the layout of the panels more drastically.
 
 			$details
 		notes
@@ -210,13 +210,13 @@ case $id in
 
 			${C}If the Selected Item is a DIR${E}
 
-			FM will ${B}cd${E} into the DIR using the command in the FM_CMD_LS variable.
-			The FM_CMD_LS supports ${B}exa${E} or ${B}ls${E}. ${B}exa${E} is picked by default if it's available because it offers better feedback.
+			FM will ${B}cd${E} into the DIR using the command in the FM__CMD_LS variable.
+			The FM__CMD_LS supports ${B}exa${E} or ${B}ls${E}. ${B}exa${E} is picked by default if it's available because it offers better feedback.
 
 			${C}If the Selected Item is a FILE${E}
 
-			FM will show the FILE content using the command in the FM_CMD_CAT variable, paginated and searchable by ${B}less${E}.
-			The FM_CMD_CAT supports ${B}bat${E} or ${B}cat${E}. ${B}bat${E} is picked by default if it's available because it offers better feedback.
+			FM will show the FILE content using the command in the FM__CMD_CAT variable, paginated and searchable by ${B}less${E}.
+			The FM__CMD_CAT supports ${B}bat${E} or ${B}cat${E}. ${B}bat${E} is picked by default if it's available because it offers better feedback.
 
 			${C}If the Selected Item is a GREPped FILE${E}
 
@@ -239,7 +239,7 @@ case $id in
 			The DIR view will be persisted until you will explicitly switch to another view or until some menu you picked switches to another view.
 
 			Notice
-			This menu uses the command in the FM_CMD_LS variable. It supports ${B}exa${E} or ${B}ls${E}.
+			This menu uses the command in the FM__CMD_LS variable. It supports ${B}exa${E} or ${B}ls${E}.
 			${B}exa${E} is picked by default if it's available because it offers better feedback.
 
 			$details
@@ -253,13 +253,13 @@ case $id in
 			The FIND View will be persisted until you will explicitly switch to another view or until some menu you picked switches to another view.
 
 			Notice
-			This menu uses the command in the FM_CMD_FIND variable. It supports ${B}fg${E} or ${B}find${E} commands.
+			This menu uses the command in the FM__CMD_FIND variable. It supports ${B}fg${E} or ${B}find${E} commands.
 			${B}fg${E} is picked by default if it's available because it offers faster performance.
 
 			The result paths can be sorted with the ${Y}Toggle Path Sorting${E} menu. See its inline help for details.
 
 			${B}fg${E} has a fancy ${Y}--color${E} param that is not enabled by default because it slows down the output quite a lot in dirs with many entries.
-			If despite the performance hit you prefer the color coolness, you can add ${Y}--color${E} to the FM_CMD_FIND variable.
+			If despite the performance hit you prefer the color coolness, you can add ${Y}--color${E} to the FM__CMD_FIND variable.
 
 			$details
 		notes
@@ -277,12 +277,12 @@ case $id in
 			The GREP view will be persisted until you will explicitly switch to another view or until some menu you picked will switch to another view.
 
 			Notice
-			This menu uses the command in the FM_CMD_RIPGREP variable, and stops grep after FM_MAX_GREP_FILES found with matches.
+			This menu uses the command in the FM__CMD_RIPGREP variable, and stops grep after FM__MAX_GREP_FILES found with matches.
 
 			The result paths can be sorted with the ${Y}Toggle Path Sorting${E} menu. See its inline help for details.
 
 			${C}Advanced Usage${E}
-			The PATTERN that you are asked to enter for grepping is concatenated at the end of the FM_CMD_RIPGREP command and other parameters. If you know what you are doing you can also enter extra parameters in the query before the contet PATTERN, and they will be part of the command that will be executed.
+			The PATTERN that you are asked to enter for grepping is concatenated at the end of the FM__CMD_RIPGREP command and other parameters. If you know what you are doing you can also enter extra parameters in the query before the contet PATTERN, and they will be part of the command that will be executed.
 
 			For example: ${g}-i MyPatTtern${e} will look for insensitive matches, etc. (see ${B}man rg${E} for details)
 
@@ -293,7 +293,7 @@ case $id in
 		;;
 	VIEW_REC)
 		cat <<-notes
-			Show the last FM_MAX_RECENT_DIRS that you visited in the current FM session.
+			Show the last FM__MAX_RECENT_DIRS that you visited in the current FM session.
 
 			This is a ${Y}recently visited${E} list, designed to be easy to navigate. The most recent dirs are added or (if already visited) moved on the top of the list. That way there are no duplicates and they are kept sorted by recency.
 
@@ -301,7 +301,7 @@ case $id in
 
 			Notice
 			* The content of the list will be persisted and will work also across sessions of the same user.
-			* This recent dirs list is pruned at FM_MAX_RECENT_DIRS.
+			* This recent dirs list is pruned at FM__MAX_RECENT_DIRS.
 			* Recent dirs that have been deleted or moved are automatucally purged from the list.
 
 			$details
@@ -415,7 +415,7 @@ case $id in
 			Create a new empty file using ${B}touch${E} in the current dir.
 
 			Notice
-			If your current dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			If your current dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable).
 
 			$details
 		notes
@@ -425,7 +425,7 @@ case $id in
 			Create a new dir using ${B}mkdir${E} in the current dir.
 
 			Notice
-			If your current dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			If your current dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable).
 
 			$details
 
@@ -471,7 +471,7 @@ case $id in
 			Paste all the items previously copied/cut into the current dir.
 
 			Notice
-			* If any source or destination is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			* If any source or destination is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable).
 			* If any item is already present in the destination dir, the ${g}"(pasted[-n])"${e} suffix will be appended to the name root, preserving the eventual extension of the file. E.g. ${g}"file.txt"${e}, ${g}"file(pasted).txt"${e}, ${g}"file(pasted-2).txt"${e}, ...
 
 			$details
@@ -535,7 +535,7 @@ case $id in
 			You use this menu only after marking the target paths with the ${Y}Mark Selected Target${E} menu.
 
 			Notice
-			* If your destination dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			* If your destination dir is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable).
 			* If any target-name is already present in the destination dir, the ${g}"(linked[-n])"${e} suffix will be appended to the name root, preserving the eventual extension of the file. E.g. ${g}"file.txt"${e}, ${g}"file(linked).txt"${e}, ${g}"file(linked-2).txt"${e}, ...
 
 			$details
@@ -546,7 +546,7 @@ case $id in
 			Rename all the Selected Items interactively.
 
 			Notice
-			If the item is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			If the item is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable).
 
 			IMPORTANT
 			While in the FAV View this menu refers to the Favorites themselves not the dirs/files they are pointing to. The particular ${g}"Elements"${e} word indicates that they applies to either Items (dirs/files) or Favorites.
@@ -559,7 +559,7 @@ case $id in
 			Removes all the Selected Items interactively.
 
 			Notice
-			If the item is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable).
+			If the item is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable).
 
 			IMPORTANT
 			While in the FAV View this menu refers to the Favorites themselves not the dirs/files they are pointing to. The particular ${g}"Elements"${e} word indicates that they applies to either Items (dirs/files) or Favorites.
@@ -572,7 +572,7 @@ case $id in
 			Switch the execute bit of the Selected Files ON. Dir Items are silently skipped.
 
 			Notice
-			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable)
+			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable)
 
 			$details
 		notes
@@ -582,7 +582,7 @@ case $id in
 			Switch the exeuted bit of the Selected Files OFF. Dir Items are silently skipped.
 
 			Notice
-			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable)
+			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable)
 
 			$details
 		notes
@@ -602,8 +602,8 @@ case $id in
 			Edit the Selected Files with the ${B}EDITOR${E} of your system. Dir Items are silently skipped.
 
 			Notice
-			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM_CMD_SUDO variable)
-			* This menu use the command in the FM_CMD_EDIT variable. It is set to the ${B}EDITOR${E} variable of your system or to the first available editor.
+			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable)
+			* This menu use the command in the FM__CMD_EDIT variable. It is set to the ${B}EDITOR${E} variable of your system or to the first available editor.
 
 			$details
 		notes
@@ -613,7 +613,7 @@ case $id in
 			Open all the Selected Items (single or multiple files or dirs) in the user's preferred application.
 
 			Notice
-			This menu use the command in the FM_CMD_OPEN variable: ${B}xdg-open${E} by default.$caveats
+			This menu use the command in the FM__CMD_OPEN variable: ${B}xdg-open${E} by default.$caveats
 
 			$details
 		notes
@@ -628,7 +628,7 @@ case $id in
 			3. if also that fails then it opens a new regular shell in the current terminal session
 
 			Notice
-			This menu uses the comands in the FM_CMD_TERMINAL and FM_CMD_SHELL variables as described above. You might need to customize them to your terminal/shell.$caveats
+			This menu uses the comands in the FM__CMD_TERMINAL and FM__CMD_SHELL variables as described above. You might need to customize them to your terminal/shell.$caveats
 
 			$details
 		notes
@@ -640,8 +640,8 @@ case $id in
 			This menu copies the quoted paths of the Selected Items that you can paste in any other application or shell.
 
 			Notice
-			* This menu uses the command in the FM_CMD_XCLIP variable. It supports ${B}xclip${E} or ${B}xsel${E}, or any other command capable of reading from STDIN and copying to the x-server selection.
-			* It uses the clipboard selection, which is more exportable but it does not work with the middle click. Edit the FM_CMD_XCLIP if you prefer to switch to the primary selection.
+			* This menu uses the command in the FM__CMD_XCLIP variable. It supports ${B}xclip${E} or ${B}xsel${E}, or any other command capable of reading from STDIN and copying to the x-server selection.
+			* It uses the clipboard selection, which is more exportable but it does not work with the middle click. Edit the FM__CMD_XCLIP if you prefer to switch to the primary selection.
 
 			$details
 		notes
@@ -652,7 +652,7 @@ case $id in
 
 			The FM widget is particularly useful when you just need to cd to some dir or when you are in the middle of a command and need to pick and place some path in the prompt. For that you don't need the full featured ${B}fm${E} command, and you can actually save some typing/clicking getting what you want faster with the widget.
 
-			Press the FM_WIDGET_KEY from the zsh prompt in order to get into the FM Widget (by default press ${Y}'alt-f'${E} twice very fast).
+			Press the FM__WIDGET_KEY from the zsh prompt in order to get into the FM Widget (by default press ${Y}'alt-f'${E} twice very fast).
 
 			The FM Widget offers a quick subset of the full ${B}fm${E} command: missing the ${Y}FS Commands${E}, ${Y}Tools${E} and ${Y}Added Tools${E} sections.
 
@@ -710,30 +710,30 @@ case $id in
 			${e}
 			That will add the ${g}'Show Added Tools Example  ctrl-k'${e} menu and key to this section, which will will execute your function on press.
 
-			You can analize a few complete examples in the ${g}$fm_root/added-tools-examples${e} file. Source it in your ${g}~/.zshrc${e} in order to actually try it in FM:
+			You can analize a few complete examples in the ${g}$fm__root/added-tools-examples${e} file. Source it in your ${g}~/.zshrc${e} in order to actually try it in FM:
 
-			${g}source \$fm_root/added-tools-examples${e}
+			${g}source \$fm__root/added-tools-examples${e}
 
 			${C}Available Variables${E}
 
-			* Your functions will run in the context of the ${B}fm::panel${E} function, so your own tool will have all the variables available in that context. For example:
+			* Your functions will run in the context of the ${B}fm__panel${E} function, so your own tool will have all the variables available in that context. For example:
 			    * ${Y}\$view${E}       The current FM View (DIR, FIND, GREP, REC, FAV)
 			    * ${Y}\$query${E}      The current fzf query
 			    * ${Y}\$items${E}      The array of the paths of the Selected Items
 			    * ${Y}\$lines${E}      The array of the raw Selected Lines
-			    * ${Y}fm::notify${E}   The function to write in the header of the FM Panel
-			* Your usage text is rendered in the context of the ${B}\$fm_root/menu${E}, so you can inspect that function to see what may be usefult to you.
-			* Also, all the ${Y}fm::*${E} function are available, although not all may be useful in your context.
+			    * ${Y}fm__notify${E}   The function to write in the header of the FM Panel
+			* Your usage text is rendered in the context of the ${B}\$fm__root/menu${E}, so you can inspect that function to see what may be usefult to you.
+			* Also, all the ${Y}fm__*${E} function are available, although not all may be useful in your context.
 		notes
 		;;
 	*)
 		local added_menu=()
-		source $FM_TMP/added_menu
+		source $FM__TMP/added_menu
 		print -- ${${added_menu[$id]%%$'\t'*}:-No usage available for this added tool}
 		;;
 esac |
 	sed -E "s/^(IMPORTANT)$/${R}&${E}/;
 			s/^(Notice|\*|[[:digit:]]+\.)/${B}&${E}/;
-			s/(FM_[^[:space:].]+|FM Panel|Menu Panel|FM Preview Window|Menu Preview Window|Preview Window)/${B}&${E}/g;
+			s/(FM__[^[:space:].]+|FM Panel|Menu Panel|FM Preview Window|Menu Preview Window|Preview Window)/${B}&${E}/g;
 			s/\b(DIR|FIND|GREP|REC|FAV)\b/${g}&${e}/g;
 		   "

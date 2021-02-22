@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+
+fm__edit() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local -P sudo item files=()
+    local num=0 message='Edited Files'
+    fm__open-dialog -yellow 'Edit Selected Files' 'files'
+    {
+        for item in $items; do
+            if [[ -d $item ]] continue
+            if [[ ! -w $item ]] sudo=$FM__CMD_SUDO # any non writable item triggers sudo
+            files+=$item
+        done
+        if [[ $#files -eq 0 ]] return 0 # avoid opening new buffer
+
+        $=sudo $=FM__CMD_EDIT $files
+        num=$#files
+    } always {
+        fm__close-dialog 0
+    }
+}

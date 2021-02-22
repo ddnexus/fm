@@ -1,0 +1,47 @@
+#!/usr/bin/env zsh
+
+fm__paste() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local -P source source_sudo dest_sudo
+    local num=0 message='Items pasted here' name
+    fm__read -tmp clipboard
+    local sources=( "${(@f)${clipboard[sources]}}" )
+    fm__open-dialog -green 'Paste Items' sources
+    {
+        fm__print -n -green "Paste the Items in $PWD? (y/n)> "
+        if read -q yn; then
+            print
+            if [[ ! -w $PWD ]] { dest_sudo=$FM__CMD_SUDO }
+            for source in $sources; do
+                if [[ ! -e $source ]] continue
+                name=$source:t && fm__dest-name 'pasted'
+                case $clipboard[mode] in
+                    copied)
+                        $=dest_sudo cp -r $source ./$name
+                        ((num+=1))
+                        ;;
+                    cut)
+                        if [[ -w $source:h ]] { source_sudo='' } else { source_sudo=$FM__CMD_SUDO }
+                        if [[ $source_sudo == $dest_sudo || $dest_sudo ]]; then  # mv
+                            $=dest_sudo mv $source ./$name
+                            ((num+=1))
+                        else  # cp & rm
+                            $=dest_sudo cp -r $source ./$name
+                            ((num+=1))
+                            $=source_sudo rm -rf $source
+                        fi
+                        ;;
+                esac
+            done
+            if [[ $num -gt 0 && $clipboard[mode] == cut ]]; then
+                clipboard=()
+                fm__write -tmp clipboard
+                view=$fs_view
+            fi
+        else
+            fm__print -yellow '\nSkippeed!'
+        fi
+    } always {
+        fm__close-dialog
+    }
+}

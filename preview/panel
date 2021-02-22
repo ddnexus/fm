@@ -3,16 +3,16 @@
 setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_POSIX_IDENTIFIERS
 
 zmodload zsh/param/private
-autoload -Uz $fm_root/autoload/**/*(.)
+autoload -Uz $fm__root/autoload/**/*(.)
 
 local lines=($1) view=$2 hidden=$3
 shift 3
 local rg_query=$*
 
 local items=()
-fm::set-items
+fm__set-items
 
-print -nP -- %F{$FM_INFO_COLOR}
+print -nP -- %F{$FM__INFO_COLOR}
     if [[ $items[1] ]]; then
         print -- ${items[1]:t}: $(file -b -- $items[1]) | fmt -w $FZF_PREVIEW_COLUMNS
     else
@@ -21,16 +21,16 @@ print -nP -- %F{$FM_INFO_COLOR}
 print -P -- %f
 
 if [[ -d $items[1] ]]; then
-    fm::view-dir $items[1]
+    fm__view-dir $items[1]
 else
     case $view in
         GREP)
-            local -P cmd=$FM_CMD_RIPGREP
+            local -P cmd=$FM__CMD_RIPGREP
             $hidden && cmd+=' --hidden'
             $=cmd -C1 -p --trim $=rg_query $items[1]
             ;;
         *)
-            fm::cat $items[1]
+            fm__cat $items[1]
             ;;
     esac
 fi

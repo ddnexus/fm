@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+fm__run-added() {
+    setopt LOCAL_OPTIONS ERR_RETURN
+    local -P menu elements=() res
+    {
+        for menu in $added_menu; do
+            elements=( "${(ps|\t|)menu}" )
+            if [[ $elements[5] == $key || $elements[3] == $key ]] eval $elements[2]
+        done
+    } always {
+        res=$?
+        if [[ $res -gt 0 ]] fm__notify "Added Tool failed [ERROR $res]"
+    }
+}

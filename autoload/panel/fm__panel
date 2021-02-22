@@ -1,0 +1,82 @@
+#!/usr/bin/env zsh
+
+fm__panel() {
+    local query key items=()
+    local -P n=0 expect res
+
+    fm__view-${view:l} |
+        fzf ${(P)=${:-FM__${(U)fm_mode}_FZF_OPTS}} \
+                --prompt="$(fm__prompt)" \
+                --expect=${(Pj|,|)${:-fm__${fm_mode}_keys}} \
+                --preview="$fm__root/preview/panel {} $view $hidden $rg_query" \
+                --bind="${FM__KEY_SELECT_ALL}:select-all" \
+                --preview-window=$FM__PREVIEW_MODES[$preview[${fm_mode}-panel]] \
+                --print-query \
+                --ansi \
+                --multi \
+                --no-clear \
+                $@ |
+            local lines=( "${(@f)$(</dev/stdin)}" )
+
+    res=$?; if [[ $res -gt 1 ]] return $res # 1 fzf no match
+    query=$lines[1]
+    key=$lines[2]
+    lines=( ${lines:2} )
+
+    header=()
+    sort=false
+    fm__set-items
+
+    if [[ $key == $FM__KEY_MENU ]] fm__menu
+
+    case $key in
+    # FM UI
+        $FM__KEY_REFRESH|REFRESH|MENU|'')     : ;; # explicit refresh / MENU toggles back from menu panel / no key
+        $FM__KEY_PREVIEW|PREVIEW)             fm__cycle-preview ${fm_mode}-panel ;;
+        #FM__KEY_SELECT_ALL is a bind key
+        $FM__KEY_NOTIFY_WD|NOTIFY_WD)         fm__notify "Working Dir: $PWD" ;;
+        $FM__KEY_HIDDEN|HIDDEN)               fm__toggle-hidden ;;
+        $FM__KEY_SORT|SORT)                   fm__sort-items ;;
+        esc|ctrl-c|ctrl-z|$FM__KEY_QUIT|QUIT) return 0 ;;
+    # FM Views
+        double-click|$FM__KEY_VIEW_ITEM|VIEW_ITEM) fm__view-item ;;
+        $FM__KEY_VIEW_DIR|VIEW_DIR)           view=DIR;  fs_view=DIR ;;
+        $FM__KEY_VIEW_FIND|VIEW_FIND)         view=FIND; fs_view=FIND ;;
+        $FM__KEY_VIEW_GREP|VIEW_GREP)         fm__set-grep ;;
+        $FM__KEY_VIEW_REC|VIEW_REC)           if [[ $view != REC ]] { view=REC } else { view=$fs_view } ;;
+        $FM__KEY_VIEW_FAV|VIEW_FAV)           if [[ $view != FAV ]] { view=FAV } else { view=$fs_view } ;;
+    # Navigation
+        $FM__KEY_CD_HOME|CD_HOME)             fm__cd $HOME ;;
+        $FM__KEY_CD_ROOT|CD_ROOT)             fm__cd / ;;
+        $FM__KEY_CD_PARENT|CD_PARENT)         fm__cd .. ;;
+        $FM__KEY_CD_LAST|CD_LAST)             fm__cd $OLDPWD ;;
+        $FM__KEY_CD_CONTAIN|CD_CONTAIN)       fm__cd ${items[1]:h} ;;
+        $FM__KEY_CD_START|CD_START)           fm__cd $fm__start_dir ;;
+    # FS Commands
+        $FM__KEY_COPY|COPY)                   fm__select copied ;;
+        $FM__KEY_CUT|CUT)                     fm__select cut ;;
+        $FM__KEY_PASTE|PASTE)                 fm__paste ;;
+        $FM__KEY_NEW_FILE|NEW_FILE)           fm__create File touch ;;
+        $FM__KEY_NEW_DIR|NEW_DIR)             fm__create Dir mkdir ;;
+        $FM__KEY_FAV_ADD_WD|FAV_ADD_WD)       fm__fav-add $PWD ;;
+        $FM__KEY_FAV_ADD|FAV_ADD)             fm__fav-add ;;
+        $FM__KEY_MARK|MARK)                   fm__mark ;;
+        $FM__KEY_LINK|LINK)                   fm__link ;;
+        $FM__KEY_RENAME|RENAME)               if [[ $view == FAV ]] { fm__fav-rename } else { fm__rename } ;;
+        $FM__KEY_REMOVE|REMOVE)               if [[ $view == FAV ]] { fm__fav-remove } else { fm__remove } ;;
+        $FM__KEY_EXEC_ON|EXEC_ON)             fm__switch-x ON ;;
+        $FM__KEY_EXEC_OFF|EXEC_OFF)           fm__switch-x OFF ;;
+    # Tools
+        $FM__KEY_EDIT|EDIT)                   fm__edit ;;
+        $FM__KEY_OPEN|OPEN)                   fm__open ;;
+        $FM__KEY_NEW_SHELL|NEW_SHELL)         fm__new-shell ;;
+        $FM__KEY_COPY_PATH|COPY_PATH)         fm__copy-paths ;;
+    # Widget
+        $FM__KEY_PICK|PICK)                   print -- "${(Dq@)items}"; return 0 ;; # widget only
+        $FM__KEY_PICK_WD|PICK_WD)             print -- "${(Dq)PWD}"; return 0 ;; # widget only
+    # Added Tools
+        *)                                    fm__run-added ;;
+    esac
+
+    fm__panel-start
+}

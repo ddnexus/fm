@@ -1,0 +1,8 @@
+#!/usr/bin/env zsh
+
+fm__mark() {
+    fm__reduce-items
+    targets=( $items )
+    fm__write -tmp targets
+    fm__notify "$#targets Targets marked"
+}

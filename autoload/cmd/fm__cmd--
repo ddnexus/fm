@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+fm__cmd--() {
+	cd $fm__start_dir
+}

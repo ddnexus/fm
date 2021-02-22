@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+
+fm__prompt() {
+    print -- ${(%):-%F{$FM__INFO_COLOR}%B%S $view %s%b%B}${(D)PWD}${(%):-%b%f}' '
+}
+

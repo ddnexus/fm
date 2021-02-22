@@ -1,0 +1,8 @@
+#!/usr/bin/env zsh
+
+fm__fav-rm() {
+    if [[ $# -eq 0 ]] return 0
+    sed -i ${(j|d;|)@}d $FM__DATA/favorites
+    hash -drf
+    source $FM__DATA/favorites
+}

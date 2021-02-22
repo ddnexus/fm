@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+fm__cmd-compile() {
+	$fm__root/fm__compile
+}
