@@ -10,7 +10,10 @@ local E=${(%):-%b%f}
 local g=${(%):-%F{green}}
 local e=${(%):-%f}
 
-if [[ $TRY_FM ]] local caveats=${(%):-$'\n'%F{red}COMMAND NOT AVAILABLE OR LIMITED IN TRY-FM SESSIONS%f}
+if [[ $TRY_FM ]]; then
+	local caveats=${(%):-$'\n'%F{red}COMMAND NOT AVAILABLE OR LIMITED IN THE TRY-FM SESSION%f}
+	local preview_caveats=${(%):-$'\n'%F{red}Use ctrl-p and ctrl-r to refresh properly%f}
+fi
 
 local var id title key
 sed -E "s/[[:space:]][[:space:]]+/\n/g" <<< $1 | for var in id title key; read $var
@@ -105,7 +108,7 @@ case $id in
 		;;
 	PREVIEW)
 		cat <<-notes
-			Cycle the Preview Window mode in the FM Panel or Menu Panel.
+			Cycle the Preview Window mode in the FM Panel or Menu Panel.$caveats$preview_caveats
 
 			There are 3 default modes in the FM__PREVIEW_MODES array that basically set the preview on the right, bottom or hidden.
 			Cycling between them may be useful to reveal long paths hidden below it, adapt it to the layout of your window and/or your own preference.
@@ -610,17 +613,17 @@ case $id in
 	;;
 	OPEN)
 		cat <<-notes
-			Open all the Selected Items (single or multiple files or dirs) in the user's preferred application.
+			Open all the Selected Items (single or multiple files or dirs) in the user's preferred application.$caveats
 
 			Notice
-			This menu use the command in the FM__CMD_OPEN variable: ${B}xdg-open${E} by default.$caveats
+			This menu use the command in the FM__CMD_OPEN variable: ${B}xdg-open${E} by default.
 
 			$details
 		notes
 		;;
 	NEW_SHELL)
 		cat <<-notes
-			Opens a new shell in the current dir.
+			Opens a new shell in the current dir.$caveats
 
 			Depending on the context available:
 			1. it tries to open a TMUX session
@@ -628,7 +631,7 @@ case $id in
 			3. if also that fails then it opens a new regular shell in the current terminal session
 
 			Notice
-			This menu uses the comands in the FM__CMD_TERMINAL and FM__CMD_SHELL variables as described above. You might need to customize them to your terminal/shell.$caveats
+			This menu uses the comands in the FM__CMD_TERMINAL and FM__CMD_SHELL variables as described above. You might need to customize them to your terminal/shell.
 
 			$details
 		notes
