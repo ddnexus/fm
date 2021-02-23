@@ -3,7 +3,7 @@
 setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB NO_POSIX_IDENTIFIERS
 
 fm__version=0.1.0
-fm__root=${$(readlink -f $0):h}
+fm__root=$0:A:h
 
 zmodload zsh/param/private
 autoload -Uz $fm__root/autoload/**/*(.)
