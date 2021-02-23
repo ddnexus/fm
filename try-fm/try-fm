@@ -1,0 +1,179 @@
+#!/usr/bin/env sh
+
+set -e
+
+self=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")")
+root="$(dirname "$self")"
+
+check_docker() {
+	if ! docker info 1>/dev/null 2>&1; then
+		echo "Docker is not running!"
+		exit
+	fi
+}
+
+case "$*" in
+	run)
+		check_docker
+		if ! docker image inspect try-fm 1>/dev/null 2>&1; then
+
+			cat <<-BUILDING
+
+				=============================== TRY_FM BUILD ==================================
+				NOTICE: All the required packages will be installed and relegated to the
+				'try-fm' docker image. Your system will not be changed in any way by the
+				installation, however your filesystem will be mounted and writable, so
+				don't do anything stupid with your own files. :)
+				You can cleanup the docker stuff at any time by running '~/try-fm purge'
+				===============================================================================
+			BUILDING
+			sleep 1
+
+			while true; do
+				printf '%s ' 'Create your user password for the docker image:'
+				stty -echo; read password; stty echo; echo
+				if [ -z $password ]; then
+					echo 'The password cannot be blank'
+					continue
+				fi
+				printf '%s ' 'Confirm your password:'
+				stty -echo; read confirm; stty echo; echo
+				if [ "$password" != "$confirm" ]; then
+					echo 'The passwords did not match'
+					continue
+				fi
+				echo 'Please, remember your password or you will have to re-build this image.'
+				break
+			done
+
+			DOCKER_BUILDKIT=0 docker build -t try-fm \
+					--build-arg password="$password" \
+					--build-arg user="$(id -un)" \
+					--build-arg uid=$(id -u) \
+					--build-arg gid=$(id -g) \
+					https://github.com/ddnexus/fm.git#master:try-fm/docker
+
+			echo "The 'try-fm' docker image has been built!"
+		fi
+
+		if ! [ -e "$root/try-fm.ran" ]; then
+			unameOut="$(uname -s)"
+			case "${unameOut}" in
+				Linux*)     machine=linux ;;
+				Darwin*)    machine=mac ;;
+				CYGWIN*)    machine=cygwin ;;
+				MINGW*)     machine=minGw ;;
+				*)          machine="UNKNOWN:${unameOut}"
+			esac
+			if [ "$machine" = "mac" ]; then
+				cat <<-WARNING
+
+				=============================== MACOS CAVEATS =================================
+				1. FM uses the alt key as meta character in many shortcuts, and requires a
+					specific preference enabled in your terminal app.
+					Dependng on your app, ensure that the following is enabled:
+					* Terminal > Preferences > Profiles > Keyboard > Use Option as Meta key
+					* iTerm > Preferences > Profiles > Keyboard > Option Key > Esc+
+
+				2. The FIND view (alt-f) may be very slow in docker bind mounted paths: that
+					will work a lot faster when FM will be installed directly in the mac
+				===============================================================================
+				WARNING
+				sleep 3
+			fi
+		fi
+
+		cat <<-WELCOME
+
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! WARNING !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			FM and this demo is safe and requires you to confirm deletions and enter the
+			sudo password for protected items, however your filesystem will be mounted
+			and writable at /$(hostname), so don't do anything stupid with
+			your own files. If you want to try deletions, create dummy files first ;)
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+			============================== IMPORTANT INFO =================================
+			Starting a zsh shell session in the FM docker container...
+			* Your own filesystem will be writable and mounted at /$(hostname)
+			* Your original home dir will be writable and available at /$(hostname)$HOME
+			* Session Login: $USER   Password: fm
+			* The \$HOME in the docker container will be /home/$USER
+			* Edit the /home/$USER/.zshrc to experiment with it
+			* Your changes in /home/$USER will survive rebooting
+			* You can reset /home/$USER by running '~/try-fm reset' after exiting
+			the docker session
+			* You can reclaim your disk space by removing all the docker objects related
+			to 'try-fm' by running '~/try-fm purge' after exiting the docker session
+
+			=============================== BASIC USAGE ===================================
+			* Run the fm command to start, then press 'ctrl-space' to get the menu with
+			the inline documentation.
+			* Press 'alt-f' twice (rapidly) in the prompt to get the widget
+			* Quit FM or the widget with 'ctrl-q', 'ctrl-c' or 'esc'
+			* Exit from the docker session with the usual 'exit'
+
+		WELCOME
+
+		read -p "Please, confirm that you have read and understood the above messages (y/n)> " input
+		if [ "$input" = y ] || [ "$input" = Y ]; then
+			echo "Running the 'try-fm' docker container..."
+		else
+			echo "OK, see you next time"
+			exit
+		fi
+
+		if ! docker volume inspect fm_user 1>/dev/null 2>&1; then
+			cat <<-NOTICE
+
+				================================ TRY_FM SETUP =================================
+				 Populating the docker user HOME and the 'fm_user' docker volume by installing
+				 a few plugins to improve the user experience...
+				===============================================================================
+			NOTICE
+		sleep 1
+		fi
+
+		touch "$root/try-fm.ran"
+
+		docker run --rm \
+				-v fm_user:/home/$USER \
+				-v /:/$(hostname) \
+				-w /$(hostname)$HOME \
+				-it try-fm
+		;;
+
+	reset)
+		echo "The docker volume 'fm_user' has been removed"
+		docker volume rm fm_user 1>/dev/null 2>&1 || :
+		rm -f "$root/try-fm.ran"
+		exec "$root/try-fm" run
+		;;
+
+	purge)
+		check_docker
+		read -p "Please, confirm that you want to purge everything related to 'try-fm' (y/n)> " input
+		if [ "$input" = y ] || [ "$input" = Y ]; then
+			docker rmi try-fm zshusers/zsh:5.8
+			docker volume rm fm_user
+			rm -fv "$root/try-fm" "$root/try-fm.ran"
+			echo "'try-fm' has been completely purged from your system!"
+			echo "Suggestion: you may also want to manually run 'docker system prune' periodically, in order to remove the dangling objects and reclaim a lot of disk space."
+		fi
+		;;
+
+	usage|'')
+		cat <<-USAGE
+
+			==================================== USAGE ====================================
+			~/try-fm run      Run the 'try-fm' docker session (also set it up if needed)
+			~/try-fm reset    Reset the setup and reinstall a clean HOME and plugins
+			~/try-fm purge    Purge everything related to 'try-fm' from your system
+			~/try-fm usage    Show this screen
+			===============================================================================
+		USAGE
+		;;
+
+	*)
+		echo "The subcommand '$*' is not supported!"
+		;;
+esac

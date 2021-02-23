@@ -30,7 +30,7 @@ FM has all the features that you would expect from a CLI but also from a Desktop
 
 ## Try it without installing it
 
-You can try FM on your system with the [`try-fm`](https://github.com/ddnexus/try-fm) docker image. It's a very quick and clean way to try it on your own filesystem without the need of installing it.
+You can try FM on your system with the [`try-fm`](https://github.com/ddnexus/fm/tree/master/try-fm) docker image. It's a very quick and clean way to try it on your own filesystem without the need of installing it.
 
 ## Installation
 

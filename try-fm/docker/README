@@ -1,0 +1,7 @@
+This is the docker session home dir.
+It contains the dot-files that will be persisted between sessions.
+
+Press ctrl-h in FM in order to toggle the visibility of hidden files.
+
+You can reset this dir by exiting the docker session and running
+'~/try-fm reset' in your terminal.
