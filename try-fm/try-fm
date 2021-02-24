@@ -12,18 +12,15 @@ check_docker() {
 	fi
 }
 
-case "$*" in
-	run)
+case "$1" in
+	start)
 		check_docker
 		if ! docker image inspect try-fm 1>/dev/null 2>&1; then
-
 			cat <<-BUILDING
 
 				=============================== TRY_FM BUILD ==================================
 				NOTICE: All the required packages will be installed and relegated to the
-				'try-fm' docker image. Your system will not be changed in any way by the
-				installation, however your filesystem will be mounted and writable, so
-				don't do anything stupid with your own files. :)
+				'try-fm' docker image. The installation will not change your system in any way.
 				You can cleanup the docker stuff at any time by running '~/try-fm purge'
 				===============================================================================
 			BUILDING
@@ -82,28 +79,51 @@ case "$*" in
 				sleep 3
 			fi
 		fi
+		case "$2" in
+			''|--fs-mount)
+				cat <<-WARNING
+
+					%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! WARNING !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+					FM and this demo is safe and requires you to confirm deletions and enter the
+					sudo password for protected items, however:
+					* Your own filesystem will be writable and mounted at /$(hostname)
+					* Your original home dir will be writable and available at /$(hostname)$HOME
+					Don't do anything stupid with your own files.
+					If you want to try deletions, create dummy files first ;)
+					%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+				WARNING
+				;;
+			--home-mount)
+				cat <<-WARNING
+
+					%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! WARNING !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+					FM and this demo is safe and requires you to confirm deletions and enter the
+					sudo password for protected items, however:
+					* Your original home dir will be writable and available at /$(hostname)-$USER
+					Don't do anything stupid with your own files.
+					If you want to try deletions, create dummy files first ;)
+					%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+				WARNING
+				;;
+			--no-mount) : ;;
+			*)
+				echo "The option '$2' is not supported"
+				exit
+				;;
+		esac
 
 		cat <<-WELCOME
 
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! WARNING !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			FM and this demo is safe and requires you to confirm deletions and enter the
-			sudo password for protected items, however your filesystem will be mounted
-			and writable at /$(hostname), so don't do anything stupid with
-			your own files. If you want to try deletions, create dummy files first ;)
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 			============================== IMPORTANT INFO =================================
 			Starting a zsh shell session in the FM docker container...
-			* Your own filesystem will be writable and mounted at /$(hostname)
-			* Your original home dir will be writable and available at /$(hostname)$HOME
 			* Session Login: $USER   Password: fm
 			* The \$HOME in the docker container will be /home/$USER
 			* Edit the /home/$USER/.zshrc to experiment with it
 			* Your changes in /home/$USER will survive rebooting
 			* You can reset /home/$USER by running '~/try-fm reset' after exiting
-			the docker session
+			  the docker session
 			* You can reclaim your disk space by removing all the docker objects related
-			to 'try-fm' by running '~/try-fm purge' after exiting the docker session
+			  to 'try-fm' by running '~/try-fm purge' after exiting the docker session
 
 			=============================== BASIC USAGE ===================================
 			* Run the fm command to start, then press 'ctrl-space' to get the menu with
@@ -111,7 +131,7 @@ case "$*" in
 			* Press 'alt-f' twice (rapidly) in the prompt to get the widget
 			* Quit FM or the widget with 'ctrl-q', 'ctrl-c' or 'esc'
 			* Exit from the docker session with the usual 'exit'
-
+			===============================================================================
 		WELCOME
 
 		read -p "Please, confirm that you have read and understood the above messages (y/n)> " input
@@ -135,18 +155,37 @@ case "$*" in
 
 		touch "$root/try-fm.ran"
 
-		docker run --rm \
-				-v fm_user:/home/$USER \
-				-v /:/$(hostname) \
-				-w /$(hostname)$HOME \
-				-it try-fm
+		case "$2" in
+			'')
+				docker run --rm \
+						-v fm_user:/home/$USER \
+						-v /:/$(hostname) \
+						-w /$(hostname)$HOME \
+						-it try-fm
+				;;
+			--no-mount)
+				docker run --rm \
+						-v fm_user:/home/$USER \
+						-it try-fm
+				;;
+			--home-mount)
+				docker run --rm \
+						-v fm_user:/home/$USER \
+						-v $HOME:/$(hostname)-$USER \
+						-w /$(hostname)-$USER \
+						-it try-fm
+				;;
+			*)
+				echo "The option '$2' is not supported."
+				exit
+				;;
+		esac
 		;;
 
 	reset)
 		echo "The docker volume 'fm_user' has been removed"
 		docker volume rm fm_user 1>/dev/null 2>&1 || :
 		rm -f "$root/try-fm.ran"
-		exec "$root/try-fm" run
 		;;
 
 	purge)
@@ -165,8 +204,12 @@ case "$*" in
 		cat <<-USAGE
 
 			==================================== USAGE ====================================
-			~/try-fm run      Run the 'try-fm' docker session (also set it up if needed)
-			~/try-fm reset    Reset the setup and reinstall a clean HOME and plugins
+			~/try-fm start    Setup and start the docker session...
+			                  ...mounting / at /$(hostname)
+			    --home-mount  ...mounting only $HOME at /$(hostname)-$USER
+			    --no-mount    ...mounting nothing
+
+			~/try-fm reset    Reset so the next start will reinstall HOME and plugins
 			~/try-fm purge    Purge everything related to 'try-fm' from your system
 			~/try-fm usage    Show this screen
 			===============================================================================
@@ -174,6 +217,6 @@ case "$*" in
 		;;
 
 	*)
-		echo "The subcommand '$*' is not supported!"
+		echo "The subcommand '$1' is not supported!"
 		;;
 esac

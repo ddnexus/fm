@@ -3,5 +3,6 @@ It contains the dot-files that will be persisted between sessions.
 
 Press ctrl-h in FM in order to toggle the visibility of hidden files.
 
-You can reset this dir by exiting the docker session and running
-'~/try-fm reset' in your terminal.
+If you mess things up while experimenting, you can reset this dir
+by exiting the docker session and running ´~/try-fm reset' in your
+terminal: the next start will reinstall HOME and plugins.
