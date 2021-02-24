@@ -165,9 +165,8 @@ export FZF_DEFAULT_OPTS="--height 50% --reverse --ansi --exact --info=inline --c
 
 
 ############# fm #############
-zinit ice wait lucid --depth:1 atinit:'source fm.zsh' atclone:'./fm__compile' atpull:'%atclone'
+zinit ice wait lucid --depth:1 atinit:'source fm.zsh' atload:'source added-tools-examples' atclone:./fm__compile atpull:%atclone
 zinit light ddnexus/fm
-source $fm__root/added-tools-examples
 alias f=fm
 
 

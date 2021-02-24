@@ -61,7 +61,7 @@ case "$1" in
 				===============================================================================
 			NOTICE
 			sleep 1
-			docker run --rm -v fm_user:/home/$USER try-fm env TERM="${TERM}" zsh -is
+			docker run --rm -v fm_user:/home/$USER try-fm env TERM="${TERM}" zsh -isc "@zinit-scheduler burst"
 		fi
 
 		if ! [ -e "$root/.try-fm" ]; then
