@@ -2,8 +2,7 @@
 
 set -e
 
-self=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")")
-root="$(dirname "$self")"
+root="$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")"
 
 check_docker() {
 	if ! docker info 1>/dev/null 2>&1; then
@@ -53,7 +52,19 @@ case "$1" in
 			echo "The 'try-fm' docker image has been built!"
 		fi
 
-		if ! [ -e "$root/try-fm.ran" ]; then
+		if ! docker volume inspect fm_user 1>/dev/null 2>&1; then
+			cat <<-NOTICE
+
+				================================ TRY_FM SETUP =================================
+				 Populating the docker user HOME and the 'fm_user' docker volume by installing
+				 a few plugins to improve the user experience...
+				===============================================================================
+			NOTICE
+			sleep 1
+			docker run --rm -v fm_user:/home/$USER try-fm env TERM="${TERM}" zsh -is
+		fi
+
+		if ! [ -e "$root/.try-fm" ]; then
 			unameOut="$(uname -s)"
 			case "${unameOut}" in
 				Linux*)     machine=linux ;;
@@ -78,9 +89,10 @@ case "$1" in
 				WARNING
 				sleep 3
 			fi
+			touch "$root/.try-fm"
 		fi
 		case "$2" in
-			''|--fs-mount)
+			'')
 				cat <<-WARNING
 
 					%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! WARNING !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,6 +144,7 @@ case "$1" in
 			* Quit FM or the widget with 'ctrl-q', 'ctrl-c' or 'esc'
 			* Exit from the docker session with the usual 'exit'
 			===============================================================================
+
 		WELCOME
 
 		read -p "Please, confirm that you have read and understood the above messages (y/n)> " input
@@ -142,19 +155,6 @@ case "$1" in
 			exit
 		fi
 
-		if ! docker volume inspect fm_user 1>/dev/null 2>&1; then
-			cat <<-NOTICE
-
-				================================ TRY_FM SETUP =================================
-				 Populating the docker user HOME and the 'fm_user' docker volume by installing
-				 a few plugins to improve the user experience...
-				===============================================================================
-			NOTICE
-		sleep 1
-		fi
-
-		touch "$root/try-fm.ran"
-
 		case "$2" in
 			'')
 				docker run --rm \
@@ -163,16 +163,16 @@ case "$1" in
 						-w /$(hostname)$HOME \
 						-it try-fm
 				;;
-			--no-mount)
-				docker run --rm \
-						-v fm_user:/home/$USER \
-						-it try-fm
-				;;
 			--home-mount)
 				docker run --rm \
 						-v fm_user:/home/$USER \
 						-v $HOME:/$(hostname)-$USER \
 						-w /$(hostname)-$USER \
+						-it try-fm
+				;;
+			--no-mount)
+				docker run --rm \
+						-v fm_user:/home/$USER \
 						-it try-fm
 				;;
 			*)
@@ -183,18 +183,21 @@ case "$1" in
 		;;
 
 	reset)
-		echo "The docker volume 'fm_user' has been removed"
-		docker volume rm fm_user 1>/dev/null 2>&1 || :
-		rm -f "$root/try-fm.ran"
+		read -p "Reset so the next start will reinstall HOME and plugins? (y/n)> " input
+		if [ "$input" = y ] || [ "$input" = Y ]; then
+			docker volume rm -f fm_user 1>/dev/null 2>&1 || :
+			echo "Reset done! Restart 'try-fm' to reinstall HOME and plugins"
+			rm -f "$root/.try-fm"
+		fi
 		;;
 
 	purge)
 		check_docker
-		read -p "Please, confirm that you want to purge everything related to 'try-fm' (y/n)> " input
+		read -p "Purge everything related to 'try-fm' from your system? (y/n)> " input
 		if [ "$input" = y ] || [ "$input" = Y ]; then
 			docker rmi try-fm zshusers/zsh:5.8
 			docker volume rm fm_user
-			rm -fv "$root/try-fm" "$root/try-fm.ran"
+			rm -fv "$root/try-fm" "$root/.try-fm"
 			echo "'try-fm' has been completely purged from your system!"
 			echo "Suggestion: you may also want to manually run 'docker system prune' periodically, in order to remove the dangling objects and reclaim a lot of disk space."
 		fi
