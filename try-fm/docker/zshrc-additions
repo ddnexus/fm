@@ -7,6 +7,7 @@ zinit light-mode for \
     zinit-zsh/z-a-patch-dl \
     zinit-zsh/z-a-bin-gem-node
 
+
 ############# options #############
 setopt AUTO_CD
 setopt CDABLE_VARS
@@ -49,12 +50,13 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export TERM=xterm-256color
 export EDITOR=nano
-export PROMPT=$'\n%F{green}%B%S %~ %s%b%f\n$ '
+export PROMPT=$'\n%F{green}%B%S %(?.√.?%?) %~ %s%b%f\n%# '
 
 
 ############# completion #############
-zinit ice depth'1'
+zinit ice wait lucid depth:1 blockf atpull:'zinit creinstall -q .'
 zinit light zsh-users/zsh-completions
+zinit wait lucid depth:1 for light-mode Aloxaf/fzf-tab
 
 # If a completion is performed with the cursor within a word, and a full
 # completion is inserted, the cursor is moved to the end of the word
@@ -97,8 +99,7 @@ autoload -U compinit compdef && compinit
 
 
 ############# history #############
-zinit ice depth'1'
-zinit light zsh-users/zsh-history-substring-search
+zinit wait lucid depth:1 for light-mode zsh-users/zsh-history-substring-search
 
 # Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
 HISTSIZE=2000
@@ -146,19 +147,17 @@ bindkey "$terminfo[kcud1]" history-substring-search-down
 
 
 ############# zsh-autosuggestions #############
-zinit ice depth'1'
-zinit light zsh-users/zsh-autosuggestions
+zinit wait lucid depth:1 atload:_zsh_autosuggest_start for light-mode zsh-users/zsh-autosuggestions
+
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=240
-
-
-############# fzf-tab #############
-zinit ice depth'1'
-zinit light Aloxaf/fzf-tab
+ZSH_AUTOSUGGEST_USE_ASYNC=true
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=30
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 
 ############# fzf #############
-zinit ice  --depth'1' as'command' atclone'./install --all' atpull'%atclone'
-zinit load junegunn/fzf
+zinit ice wait lucid --depth:1 as:command atclone:'./install --all' atpull:'%atclone'
+zinit light junegunn/fzf
 
 export FZF_DEFAULT_COMMAND="fdfind --type file --color=always"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -166,13 +165,12 @@ export FZF_DEFAULT_OPTS="--height 50% --reverse --ansi --exact --info=inline --c
 
 
 ############# fm #############
-zinit ice --depth'1' atinit'source fm.zsh' atclone'./fm__compile' atpull'%atclone'
-zinit load ddnexus/fm
+zinit ice wait lucid --depth:1 atinit:'source fm.zsh' atclone:'./fm__compile' atpull:'%atclone'
+zinit light ddnexus/fm
 source $fm__root/added-tools-examples
 alias f=fm
 
 
-############# fast-syntax-highlighting #############
-zinit ice depth'1'
+############# syntax highlighting #############
+zinit ice depth:1 wait lucid atinit'zpcompinit; zpcdreplay'
 zinit light zdharma/fast-syntax-highlighting
-
