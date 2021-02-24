@@ -59,8 +59,8 @@ In order to get the best experience with FM you should also install the followin
 - with [antigen](https//github.com/zsh-users/antigen): `antigen bundle ddnexus/fm`
 - with [zgen](https://github.com/tarjoilija/zgen): `zgen load ddnexus/fm`
 - manually:
-  - Clone or download the repo in your preferred \<FM-DIR-PATH\>
-  - Replace the following \<FM-DIR-PATH\> placeholder with the actual path  and run:
+  - Clone or download the repo in your preferred `<FM-DIR-PATH>`
+  - Replace the following `<FM-DIR-PATH>` placeholder with the actual path  and run:
 
   ```sh
   echo "source <FM-DIR-PATH>/fm.zsh" >> $HOME/.zshrc
@@ -80,7 +80,7 @@ Run `fm compile` only once, every time you update the repo.
   - No need for any configuration
 
 - **POSIX compatible shells**: `bash`, `sh`, etc.:
-  - Replace the following \<RC-FILE-PATH\> placeholder with the actual path for your shell (e.g. for `bash` it would be `$HOME/.bashrc`), and run:
+  - Replace the following `<RC-FILE-PATH>` placeholder with the actual path for your shell (e.g. for `bash` it would be `$HOME/.bashrc`), and run:
 
   ```sh
   zsh -c 'print "\n. $fm__root/launcher/fm.sh" >> <RC-FILE-PATH>'
