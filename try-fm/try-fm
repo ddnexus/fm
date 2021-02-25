@@ -63,13 +63,13 @@ case "$1" in
 				*)          machine="UNKNOWN:${unameOut}"
 			esac
 			if [ "$machine" = "mac" ]; then
-				cat <<-WARNING
+				cat <<-CAVEATS
 
 				=============================== MACOS CAVEATS =================================
 				The FIND view (alt-f) may be very slow in docker bind mounted paths: that
 				will work a lot faster when FM will be installed directly in the mac
 				===============================================================================
-				WARNING
+				CAVEATS
 				sleep 3
 			fi
 			cat <<-CAVEATS
