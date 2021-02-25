@@ -47,21 +47,10 @@ case "$1" in
 					--build-arg user="$(id -un)" \
 					--build-arg uid=$(id -u) \
 					--build-arg gid=$(id -g) \
+					--build-arg term="$TERM" \
 					https://github.com/ddnexus/fm.git#master:try-fm/docker
 
 			echo "The 'try-fm' docker image has been built!"
-		fi
-
-		if ! docker volume inspect fm_user 1>/dev/null 2>&1; then
-			cat <<-NOTICE
-
-				================================ TRY_FM SETUP =================================
-				 Populating the docker user HOME and the 'fm_user' docker volume by installing
-				 a few plugins to improve the user experience...
-				===============================================================================
-			NOTICE
-			sleep 1
-			docker run --rm -v fm_user:/home/$USER try-fm env TERM="${TERM}" zsh -isc "@zinit-scheduler burst"
 		fi
 
 		if ! [ -e "$root/.try-fm" ]; then
@@ -77,18 +66,20 @@ case "$1" in
 				cat <<-WARNING
 
 				=============================== MACOS CAVEATS =================================
-				1. FM uses the alt key as meta character in many shortcuts, and requires a
-					specific preference enabled in your terminal app.
-					Dependng on your app, ensure that the following is enabled:
-					* Terminal > Preferences > Profiles > Keyboard > Use Option as Meta key
-					* iTerm > Preferences > Profiles > Keyboard > Option Key > Esc+
-
-				2. The FIND view (alt-f) may be very slow in docker bind mounted paths: that
-					will work a lot faster when FM will be installed directly in the mac
+				The FIND view (alt-f) may be very slow in docker bind mounted paths: that
+				will work a lot faster when FM will be installed directly in the mac
 				===============================================================================
 				WARNING
 				sleep 3
 			fi
+			cat <<-CAVEATS
+
+				============================= TERMINAL CAVEATS ================================
+				FM uses the alt/option key as meta character in many shortcuts. If the alt key
+				does not work as a shortcut modifier, then read:
+				https://github.com/ddnexus/fm/tree/master/try-fm#Q&A for a solution.
+				===============================================================================
+			CAVEATS
 			touch "$root/.try-fm"
 		fi
 		case "$2" in
@@ -183,10 +174,10 @@ case "$1" in
 		;;
 
 	reset)
-		read -p "Reset so the next start will reinstall HOME and plugins? (y/n)> " input
+		read -p "Reset HOME and plugins? (y/n)> " input
 		if [ "$input" = y ] || [ "$input" = Y ]; then
 			docker volume rm -f fm_user 1>/dev/null 2>&1 || :
-			echo "Reset done! Restart 'try-fm' to reinstall HOME and plugins"
+			echo "Reset done! You can start 'try-fm'"
 			rm -f "$root/.try-fm"
 		fi
 		;;

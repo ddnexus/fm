@@ -54,3 +54,19 @@ A few menus that work perfectly in the FM installed version don't work, or are l
 - `Open Selected Items` -> `ctrl-o` is meant to open files and dirs in your desktop and it cannot work because the docker image does not offer a desktop environment
 - `Open New Shell Here` -> `ctrl-n` it may open a new shell in your regular terminal session instead of opening it in the docker session
 - `Switch to FIND View` -> `alt-f` on MacOS is very slow when performed in docker bind mounted paths (i.e. your mounted filesystem)
+
+## Q&A
+
+### The alt key does not work in my terminal app. How can I fix it?
+
+FM uses the `alt` key as shortcut modifier in many of its menu. If you get some weird character printed in the filter area instead of getting the action related to the shortcut, then you need to enable a specific preference in your app. Here are a few examples:
+
+- MacOS Terminal: `Preferences`>`Profiles`>`Keyboard`> `Use Option as Meta key`
+- MacOS iTerm: `Preferences`>`Profiles`>`Keyboard`>`Option Key`>`Esc+`
+- Xterm: `echo 'XTerm*metaSendsEscape: true' >> ~/.Xresources`
+
+For a more comprehensive guide about the problem, please read: [Meta Key Problems](https://www.emacswiki.org/emacs/MetaKeyProblems)
+
+### How can I remember all that shortcuts?
+
+Quickly oggle the FM Menu ON/OFF with `ctrl-space` , in order to peek the shortcut that you need. You can also filter the list by typing some letter if that helps. Then you can select the menu or press its shortcut from the Menu Panel itself or go back to the FM Panel and press it from there.

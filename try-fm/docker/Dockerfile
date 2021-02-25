@@ -33,6 +33,7 @@ ARG password
 ARG user
 ARG uid
 ARG gid
+ARG term
 
 RUN groupadd --gid=$gid --force $user \
     && useradd --uid=$uid --gid=$gid -G sudo --shell=/usr/bin/zsh --create-home $user \
@@ -47,7 +48,9 @@ USER $user
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
 
 COPY zshrc-additions /tmp/
-RUN cat /tmp/zshrc-additions >> /home/$user/.zshrc
+RUN cat /tmp/zshrc-additions >> /home/$user/.zshrc \
+    && env TERM="$term" zsh -isc "@zinit-scheduler burst"
+
 COPY README /home/$user/
 
 VOLUME /home/$user
