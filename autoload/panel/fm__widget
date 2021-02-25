@@ -2,7 +2,7 @@
 
 fm__widget() {
     setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_POSIX_IDENTIFIERS
-
+    if [[ $CONTEXT == vared ]] return 0
     local fs_view=DIR view=DIR fm_mode=widget
     local hidden=false sort=false
     local rg_query rg_message
