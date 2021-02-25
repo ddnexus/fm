@@ -15,7 +15,7 @@ fm__cat() {
             if [[ -L $file && $(file -b -- $file) == broken* ]]; then
                 return 0
             elif [[ -s $file && ! -L $file && $(file -b --mime-encoding -- $file) == binary ]]; then
-                fm__print -red "> Binary content <" | fmt -w $FZF_PREVIEW_COLUMNS
+                fm__print -red "> Binary content <"
                 print
                 if [[ $FM__CMD_STAT ]] $=FM__CMD_STAT -- $file
             else
