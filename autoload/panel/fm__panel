@@ -18,7 +18,7 @@ fm__panel() {
                 $@ |
             local lines=( "${(@f)$(</dev/stdin)}" )
 
-    res=$?; if [[ $res -gt 1 ]] return $res # 1 fzf no match
+    res=$?; if [[ $res -gt 1 && $res -ne 141 ]] return $res # 1 fzf no match; 141 list pipe interrupted with fm command
     query=$lines[1]
     key=$lines[2]
     lines=( ${lines:2} )
