@@ -2,7 +2,7 @@
 
 fm__panel() {
     local query key items=()
-    local -P n=0 expect res ignored
+    local -P n=0 expect res
 
     fm__view-${view:l} |
         fzf ${(P)=${:-FM__${(U)fm_mode}_FZF_OPTS}} \
@@ -77,8 +77,6 @@ fm__panel() {
     # Added Tools
         *)                                    fm__run-added ;;
     esac
-
-    stty -echo; sleep .1; read -t ignored; stty echo # fix error 1 when keeping a shortcut pressed for a few seconds
 
     fm__panel-start
 }
