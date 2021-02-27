@@ -25,6 +25,7 @@ RUN install_packages -y \
 ADD https://github.com/sharkdp/bat/releases/download/v0.17.1/bat-musl_0.17.1_amd64.deb /tmp/
 
 RUN dpkg -i /tmp/bat-musl_0.17.1_amd64.deb \
+    && rm /tmp/bat-musl_0.17.1_amd64.deb \
     && ln -s /usr/bin/fdfind /usr/bin/fd \
     && sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen \
     && locale-gen
@@ -45,13 +46,12 @@ RUN groupadd --gid=$gid --force $user \
 ENV TRY_FM=true
 
 USER $user
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
+WORKDIR /home/$user
 
-COPY zshrc-additions /tmp/
-RUN cat /tmp/zshrc-additions >> /home/$user/.zshrc \
+COPY --chown=$user:$user .zshrc-additions README ./
+
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)" \
+    && echo 'source ~/.zshrc-additions' >> .zshrc \
     && env TERM="$term" zsh -isc "@zinit-scheduler burst"
 
-COPY README /home/$user/
-
 VOLUME /home/$user
-WORKDIR /home/$user

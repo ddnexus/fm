@@ -1,3 +1,7 @@
+#!/usr/bin/env zsh
+
+# this file will be sourced, but the shebang above
+ will provide the clue for the right synax highlighting
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
