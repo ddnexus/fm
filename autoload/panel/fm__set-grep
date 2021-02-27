@@ -1,26 +1,26 @@
 #!/usr/bin/env zsh
 
 fm__set-grep() {
-    if [[ -z $FM__CMD_RIPGREP ]] { fm__notify 'No FM__CMD_RIPGREP command found'; return 0 }
-    local -P num=0 message='Matching files' cmd=$FM__CMD_RIPGREP res note
-    rg_query=$query; query='';
-    if [[ $rg_query ]]; then
-        message+=" for: $rg_query"
-    else
-        fm__notify 'You must enter a query to GREP [ERROR 1]'
-        return 1
-    fi
-    view=GREP; rg_message=''; : > $FM__TMP/matches
-    $hidden && cmd+=' --hidden'
+	if [[ -z $FM__CMD_RIPGREP ]] { fm__notify 'No FM__CMD_RIPGREP command found'; return 0 }
+	local -P num=0 message='Matching files' cmd=$FM__CMD_RIPGREP res note
+	rg_query=$query; query='';
+	if [[ $rg_query ]]; then
+		message+=" for: $rg_query"
+	else
+		fm__notify 'You must enter a query to GREP [ERROR 1]'
+		return 1
+	fi
+	view=GREP; rg_message=''; : > $FM__TMP/matches
+	$hidden && cmd+=' --hidden'
 
-    $=cmd --color never --one-file-system --no-messages -p -c $=rg_query 2>/dev/null |
-        head -n $FM__MAX_GREP_FILES > $FM__TMP/matches || res=$?
+	$=cmd --color never --one-file-system --no-messages -p -c $=rg_query 2>/dev/null |
+		head -n $FM__MAX_GREP_FILES > $FM__TMP/matches || res=$?
 
-    num=$(wc -l < $FM__TMP/matches)
-    if [[ $num -ge $FM__MAX_GREP_FILES ]]; then
-        num+='+'
-        message+='\n(FM__MAX_GREP_FILES limit exceeded)'
-    fi
-    if [[ $res > 0 ]] note=" [ERROR $res]"
-    rg_message="$num $message$note"
+	num=$(wc -l < $FM__TMP/matches)
+	if [[ $num -ge $FM__MAX_GREP_FILES ]]; then
+		num+='+'
+		message+='\n(FM__MAX_GREP_FILES limit exceeded)'
+	fi
+	if [[ $res > 0 ]] note=" [ERROR $res]"
+	rg_message="$num $message$note"
 }

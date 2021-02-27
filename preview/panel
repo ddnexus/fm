@@ -13,24 +13,24 @@ local items=()
 fm__set-items
 
 print -nP -- %F{$FM__INFO_COLOR}
-    if [[ $items[1] ]]; then
-        print -- ${items[1]:t}: $(file -b -- $items[1]) | fmt -w $FZF_PREVIEW_COLUMNS
-    else
-        print 'No item to display'
-    fi
+	if [[ $items[1] ]]; then
+		print -- ${items[1]:t}: $(file -b -- $items[1]) | fmt -w $FZF_PREVIEW_COLUMNS
+	else
+		print 'No item to display'
+	fi
 print -P -- %f
 
 if [[ -d $items[1] ]]; then
-    fm__view-dir $items[1]
+	fm__view-dir $items[1]
 else
-    case $view in
-        GREP)
-            local -P cmd=$FM__CMD_RIPGREP
-            $hidden && cmd+=' --hidden'
-            $=cmd -C1 -p --trim $=rg_query $items[1]
-            ;;
-        *)
-            fm__cat $items[1]
-            ;;
-    esac
+	case $view in
+		GREP)
+			local -P cmd=$FM__CMD_RIPGREP
+			$hidden && cmd+=' --hidden'
+			$=cmd -C1 -p --trim $=rg_query $items[1]
+			;;
+		*)
+			fm__cat $items[1]
+			;;
+	esac
 fi

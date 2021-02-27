@@ -1,27 +1,27 @@
 #!/usr/bin/env zsh
 
 fm__create() {
-    setopt LOCAL_OPTIONS ERR_RETURN
-    local -P label=$1 cmd=$2 sudo name yn
-    local num=0 message="$label created"
-    fm__open-dialog -green "Create New $label"
-    {
-        if [[ ! -w $PWD ]] sudo=$FM__CMD_SUDO
-        vared -p "%F{green}Enter a name for the new $label>%f " name
-        if [[ -e $name ]]; then
-            fm__print -n -red "Override $name? (y/n)> "
-            if read -q yn; then
-                print ; $=sudo rm -rf $name
-                fm__print -red 'Overridden!'
-            else
-                fm__print -yellow '\nSkipped!'
-                return 1
-            fi
-        fi
-        $=sudo $=cmd $name
-        ((num+=1))
-        view=$fs_view
-    } always {
-        fm__close-dialog
-    }
+	setopt LOCAL_OPTIONS ERR_RETURN
+	local -P label=$1 cmd=$2 sudo name yn
+	local num=0 message="$label created"
+	fm__open-dialog -green "Create New $label"
+	{
+		if [[ ! -w $PWD ]] sudo=$FM__CMD_SUDO
+		vared -p "%F{green}Enter a name for the new $label>%f " name
+		if [[ -e $name ]]; then
+			fm__print -n -red "Override $name? (y/n)> "
+			if read -q yn; then
+				print ; $=sudo rm -rf $name
+				fm__print -red 'Overridden!'
+			else
+				fm__print -yellow '\nSkipped!'
+				return 1
+			fi
+		fi
+		$=sudo $=cmd $name
+		((num+=1))
+		view=$fs_view
+	} always {
+		fm__close-dialog
+	}
 }

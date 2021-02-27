@@ -6,6 +6,8 @@ root="$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")"
 
 fm_name='try-fm'
 
+context=${TRY_FM_CONTEXT:-https://github.com/ddnexus/fm.git#master:try-fm/docker}
+
 fm_image="$fm_name"
 fm_vol='fm_user_home'
 zsh_image='zshusers/zsh:5.8'
@@ -57,13 +59,14 @@ case "$1" in
 				break
 			done
 
-			DOCKER_BUILDKIT=0 docker build -t $fm_image \
+			DOCKER_BUILDKIT=0 docker build \
+					--tag $fm_image \
 					--build-arg password="$password" \
 					--build-arg user="$(id -un)" \
 					--build-arg uid=$(id -u) \
 					--build-arg gid=$(id -g) \
 					--build-arg term="$TERM" \
-					https://github.com/ddnexus/fm.git#master:try-fm/docker
+					$context
 
 			echo "The '$fm_name' docker image has been built!"
 		fi
@@ -165,26 +168,35 @@ case "$1" in
 
 		case "$2" in
 			'')
-				docker run --rm \
+				docker run \
 						--name $fm_name \
-						-v $fm_vol:/home/$USER \
-						-v /:/$(hostname) \
-						-w /$(hostname)$HOME \
-						-it $fm_image
+						--volume $fm_vol:/home/$USER \
+						--volume /:/$(hostname) \
+						--workdir /$(hostname)$HOME \
+						--interactive \
+						--tty \
+						--rm \
+						$fm_image
 				;;
 			--home-mount)
-				docker run --rm \
+				docker run \
 						--name $fm_name \
-						-v $fm_vol:/home/$USER \
-						-v $HOME:/$(hostname)-$USER \
-						-w /$(hostname)-$USER \
-						-it $fm_image
+						--volume $fm_vol:/home/$USER \
+						--volume $HOME:/$(hostname)-$USER \
+						--workdir /$(hostname)-$USER \
+						--interactive \
+						--tty \
+						--rm \
+						 $fm_image
 				;;
 			--no-mount)
-				docker run --rm \
+				docker run \
 						--name $fm_name \
-						-v $fm_vol:/home/$USER \
-						-it $fm_image
+						--colume $fm_vol:/home/$USER \
+						--interactive \
+						--tty \
+						--rm \
+						 $fm_image
 				;;
 			*)
 				echo "The option '$2' is not supported."
@@ -207,11 +219,17 @@ case "$1" in
 		check_docker
 		read -p "Purge everything related to '$fm_name' from your system? (y/n)> " input
 		if [ "$input" = y ] || [ "$input" = Y ]; then
-			if ! [ -e "$zsh_file" ]; then
+			if [ -e "$zsh_file" ]; then
+				docker rmi $fm_image
+			else
 				docker rmi $fm_image $zsh_image
 			fi
 			docker volume rm $fm_vol
-			rm -fv "$script_file" "$vol_file" "$zsh_file"
+			if [ $TRY_FM_CONTEXT = 'docker' ]; then
+				rm -fv "$vol_file"
+			else
+				rm -fv "$script_file" "$vol_file" "$zsh_file"
+			fi
 			echo "'$fm_name' has been completely purged from your system!"
 			echo "Suggestion: you may also want to manually run 'docker system prune' periodically, in order to remove the dangling objects and reclaim a lot of disk space."
 		fi

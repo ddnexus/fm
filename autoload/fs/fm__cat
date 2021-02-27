@@ -1,26 +1,26 @@
 #!/usr/bin/env zsh
 
 fm__cat() {
-    local -P file=$1
-    case $file in
-        *.pdf)     pdftotext   $file - | $=FM__CMD_CAT ;;
-        *.zip)     unzip -l    $file   | $=FM__CMD_CAT ;;
-        *.tar)     tar -tvf    $file   | $=FM__CMD_CAT ;;
-        *.tar.gz)  tar -ztvf   $file   | $=FM__CMD_CAT ;;
-        *.tar.xz)  tar -Jtvf   $file   | $=FM__CMD_CAT ;;
-        *.tar.bz2) tar -jtvf   $file   | $=FM__CMD_CAT ;;
-        *.deb) type dpkg-deb >/dev/null &&
-                     dpkg-deb -I $file | $=FM__CMD_CAT ;;
-        *)
-            if [[ -L $file && $(file -b -- $file) == broken* ]]; then
-                return 0
-            elif [[ -s $file && ! -L $file && $(file -b --mime-encoding -- $file) == binary ]]; then
-                fm__print -red "> Binary content <"
-                print
-                if [[ $FM__CMD_STAT ]] $=FM__CMD_STAT -- $file
-            else
-                $=FM__CMD_CAT -- $file
-            fi
-            ;;
-    esac
+	local -P file=$1
+	case $file in
+		*.pdf)     pdftotext   $file - | $=FM__CMD_CAT ;;
+		*.zip)     unzip -l    $file   | $=FM__CMD_CAT ;;
+		*.tar)     tar -tvf    $file   | $=FM__CMD_CAT ;;
+		*.tar.gz)  tar -ztvf   $file   | $=FM__CMD_CAT ;;
+		*.tar.xz)  tar -Jtvf   $file   | $=FM__CMD_CAT ;;
+		*.tar.bz2) tar -jtvf   $file   | $=FM__CMD_CAT ;;
+		*.deb) type dpkg-deb >/dev/null &&
+					 dpkg-deb -I $file | $=FM__CMD_CAT ;;
+		*)
+			if [[ -L $file && $(file -b -- $file) == broken* ]]; then
+				return 0
+			elif [[ -s $file && ! -L $file && $(file -b --mime-encoding -- $file) == binary ]]; then
+				fm__print -red "> Binary content <"
+				print
+				if [[ $FM__CMD_STAT ]] $=FM__CMD_STAT -- $file
+			else
+				$=FM__CMD_CAT -- $file
+			fi
+			;;
+	esac
 }

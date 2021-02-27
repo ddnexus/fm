@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 
 fm__view-grep() {
-    if [[ $sort == true && $FM__CMD_SORT ]]; then
-        LC_ALL=C $=FM__CMD_SORT < $FM__TMP/matches
-    else
-        cat $FM__TMP/matches
-    fi
+	if [[ $sort == true && $FM__CMD_SORT ]]; then
+		LC_ALL=C $=FM__CMD_SORT < $FM__TMP/matches
+	else
+		cat $FM__TMP/matches
+	fi
 }
 

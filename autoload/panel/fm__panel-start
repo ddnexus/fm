@@ -1,12 +1,12 @@
 #!/usr/bin/env zsh
 
 fm__panel-start() {
-    if [[ $view == GREP ]] fm__notify $rg_message # survives reload
-    $FM__HINTS && header+=${(%):-Press a shortcut or %F{yellow}$FM__KEY_MENU%f for the menu}
+	if [[ $view == GREP ]] fm__notify $rg_message # survives reload
+	$FM__HINTS && header+=${(%):-Press a shortcut or %F{yellow}$FM__KEY_MENU%f for the menu}
 
-    local -P cmd='fm__panel --query=$query'
-    if [[ $view == FAV ]] cmd+=' --with-nth=2..'
-    if [[ $#header -gt 0 ]] cmd+=' --header=${(@F)header}'
-    eval $cmd
+	local -P cmd='fm__panel --query=$query'
+	if [[ $view == FAV ]] cmd+=' --with-nth=2..'
+	if [[ $#header -gt 0 ]] cmd+=' --header=${(@F)header}'
+	eval $cmd
 }
 

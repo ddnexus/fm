@@ -1,17 +1,17 @@
 #!/usr/bin/env zsh
 
 fm__open-dialog() {
-    local -P color=$1 title=$2 elements=$3
-    {
-        tput smcup
-        tput home
-        tput csr 1 $(( $(tput lines)-1 ))
-        print -P -- "%F{${color:1}%S%B  ${(r:(($COLUMNS-15)):)title}  %b\^C Cancel  %s%f"
-        if [[ $elements ]]; then
-            fm__print-recap $color $elements $FM__MAX_DIALOG_RECAP
-        else
-            fm__print $color "Working Dir: $PWD"
-        fi
-        print
-    } > /dev/tty
+	local -P color=$1 title=$2 elements=$3
+	{
+		tput smcup
+		tput home
+		tput csr 1 $(( $(tput lines)-1 ))
+		print -P -- "%F{${color:1}%S%B  ${(r:(($COLUMNS-15)):)title}  %b\^C Cancel  %s%f"
+		if [[ $elements ]]; then
+			fm__print-recap $color $elements $FM__MAX_DIALOG_RECAP
+		else
+			fm__print $color "Working Dir: $PWD"
+		fi
+		print
+	} > /dev/tty
 }

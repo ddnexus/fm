@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 fm__open() {
-    if [[ -z $FM__CMD_OPEN ]] { fm__notify 'No FM__CMD_OPEN command found'; return 0 }
-    for item in $items
-        sh -i -c "$=FM__CMD_OPEN ${(q)item} &" || fm__notify "Cannot open $item [ERROR $?]"
+	if [[ -z $FM__CMD_OPEN ]] { fm__notify 'No FM__CMD_OPEN command found'; return 0 }
+	for item in $items
+		sh -i -c "$=FM__CMD_OPEN ${(q)item} &" || fm__notify "Cannot open $item [ERROR $?]"
 }

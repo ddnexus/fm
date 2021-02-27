@@ -67,7 +67,8 @@ fm__menu() {
 				print -- ${(%):-$id  %F{$col}}${(r:((w+2)):)title}$k${(%):-%f}
 			fi
 		done |
-			fzf ${(P)=${:-FM__${(U)fm_mode}_FZF_OPTS}} \
+			fzf \
+					${(P)=${:-FM__${(U)fm_mode}_FZF_OPTS}} \
 					--prompt="$(fm__prompt)" \
 					--header="$(fm__menu-header)" \
 					--expect=${(Pj|,|)${:-fm__${fm_mode}_keys}} \

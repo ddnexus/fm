@@ -1,19 +1,19 @@
 #!/usr/bin/env zsh
 
 fm__cmd-add() {
-    local -PA p
-    local added_menu=()
-    for ((n = 1; n <= $#; n++)) argv[n]=${argv[n]//$'\t'/  } # tabs used as field delimiters, converted to double-space
-    zparseopts -F -A p -tool: -title: -key:: -usage::
-    type ${p[--tool]%% *} &>/dev/null || { fm__print -red "[FM ERROR] '$p[--tool]' is not a defined command or function!" >&2 ; return 1 }
-    if [[ $p[--key] ]]; then
-        if (( $fm__command_keys[(Ie)$p[--key]] )); then
-            fm__print -red "[FM ERROR] The key '$p[--key]' is already assigned!" >&2
-        else
-            fm__command_keys+=$p[--key]
-        fi
-    fi
-    fm__read -tmp added_menu
-    added_menu+=$p[--usage]$'\t'$p[--tool]$'\t'$(($#added_menu+1))$'\t'$p[--title]$'\t'$p[--key]
-    fm__write -tmp added_menu
+	local -PA p
+	local added_menu=()
+	for ((n = 1; n <= $#; n++)) argv[n]=${argv[n]//$'\t'/  } # tabs used as field delimiters, converted to double-space
+	zparseopts -F -A p -tool: -title: -key:: -usage::
+	type ${p[--tool]%% *} &>/dev/null || { fm__print -red "[FM ERROR] '$p[--tool]' is not a defined command or function!" >&2 ; return 1 }
+	if [[ $p[--key] ]]; then
+		if (( $fm__command_keys[(Ie)$p[--key]] )); then
+			fm__print -red "[FM ERROR] The key '$p[--key]' is already assigned!" >&2
+		else
+			fm__command_keys+=$p[--key]
+		fi
+	fi
+	fm__read -tmp added_menu
+	added_menu+=$p[--usage]$'\t'$p[--tool]$'\t'$(($#added_menu+1))$'\t'$p[--title]$'\t'$p[--key]
+	fm__write -tmp added_menu
 }

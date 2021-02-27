@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 
 fm__get-cmd() {
-    local -P cmd
-    for cmd; do
-        type ${cmd%% *} &>/dev/null && { print -- $cmd; return 0 }
-    done
-    return 1
+	local -P cmd
+	for cmd; do
+		type ${cmd%% *} &>/dev/null && { print -- $cmd; return 0 }
+	done
+	return 1
 }
 

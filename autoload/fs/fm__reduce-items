@@ -2,7 +2,7 @@
 
 # remove redundant childs of already included parent dirs
 fm__reduce-items() {
-    local -P item
-    for item in $items
-        items=( ${items:#$item/*} )
+	local -P item
+	for item in $items
+		items=( ${items:#$item/*} )
 }

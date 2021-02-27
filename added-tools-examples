@@ -1,29 +1,34 @@
 #!/usr/bin/env zsh
 
 show-variables() {
-    cat <<-VARS |
-This function shows a few internal variables available to your tools.
-view: $view
-query: $query
-items:
-${(@F)items}
-lines:
-${(@F)lines}
-VARS
-    less && fm__notify "The 'show-variable' function works!"
+	cat <<-VARS |
+		This function shows a few internal variables available to your tools.
+		Retry it after filtering with a query and/or selecting multiple items.
+
+		view: $view
+		query: $query
+		items:
+		${(@F)items}
+		lines:
+		${(@F)lines}
+	VARS
+	less && fm__notify "The 'show-variable' function works!"
 }
-fm add --tool  'show-variables' \
-       --title 'Show Variables Example' \
-       --key   'f6' \
-       --usage 'Show a few internal variables available to your tools'
+fm add \
+		--tool  'show-variables' \
+		--title 'Show Variables Example' \
+		--key   'f6' \
+		--usage 'Show a few internal variables available to your tools'
 
 
 
-fm add --tool  'ls -l $items[1] | less' \
-       --title 'Direct Command Example' \
-       --usage "$( print "Example of running a direct command as an added tool, even passing the selected dir without defining any function.\n\nSelect a dir and run it: you will get the ls of the selected dir paginated with less.\n\nNotice that there is no --key defined for this menu, so you must select the dir and pick this menu from the Menu Panel")"
+fm add \
+		--tool  'ls -l $items[1] | less' \
+		--title 'Direct Command Example' \
+		--usage "$( print "Example of running a direct command as an added tool, even passing the selected dir without defining any function.\n\nSelect a dir and run it: you will get the ls of the selected dir paginated with less.\n\nNotice that there is no --key defined for this menu, so you must select the dir and pick this menu from the Menu Panel")"
 
 
 
-fm add --tool  'return 2' \
-       --title 'Will Fail Command Example'
+fm add \
+		--tool  'return 2' \
+		--title 'Will Fail Command Example'

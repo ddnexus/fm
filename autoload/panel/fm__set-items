@@ -1,23 +1,23 @@
 #!/usr/bin/env zsh
 
 fm__set-items() {
-    local -P line rest item
-    case $view in
-        DIR)
-            for line in $lines; do
-                read $=fm__ls_fields <<< ${(b)line}
-                item=${rest#* } # preserve initial space of name field
-                if [[ $line == l* ]]; then
-                    until [[ $item != *\ -\>\ * || -L $item && -e $item ]]; do
-                        item=${item% -> *}
-                    done
-                fi
-                items+=${item:a}
-            done
-            ;;
-        FIND) items=( $lines:a         ) ;;
-        GREP) items=( ${${lines%:*}:a} ) ;;
-        FAV)  items=( ${(M)lines%%/*}  ) ;;
-        REC)  items=( $lines:a         ) ;;
-    esac
+	local -P line rest item
+	case $view in
+		DIR)
+			for line in $lines; do
+				read $=fm__ls_fields <<< ${(b)line}
+				item=${rest#* } # preserve initial space of name field
+				if [[ $line == l* ]]; then
+					until [[ $item != *\ -\>\ * || -L $item && -e $item ]]; do
+						item=${item% -> *}
+					done
+				fi
+				items+=${item:a}
+			done
+			;;
+		FIND) items=( $lines:a         ) ;;
+		GREP) items=( ${${lines%:*}:a} ) ;;
+		FAV)  items=( ${(M)lines%%/*}  ) ;;
+		REC)  items=( $lines:a         ) ;;
+	esac
 }

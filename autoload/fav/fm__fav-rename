@@ -1,29 +1,29 @@
 #!/usr/bin/env zsh
 
 fm__fav-rename() {
-    setopt LOCAL_OPTIONS ERR_RETURN
-    local -P line ln old_name new_name
-    local num=0 message='Favorites renamed' name
-    local fav_names=(); for line in $lines; fav_names+=${${=line}[2]}
-    fm__open-dialog -yellow 'reName Selected Favorites' fav_names
-    {
-        for line in $lines; do
-            ln=${${=line}[1]}; old_name=${${=line}[2]}; new_name=$old_name
-            vared -p "%F{yellow}Enter the new name for the Favorite $old_name (empty to skip)>%f " new_name
-            if [[ -z $new_name || $new_name == $old_name ]] { fm__print -yellow 'Skipped!' ; continue }
-            name=$new_name && fm__fav-accept-name -yellow
-            if [[ $name ]]; then
-                sed -i -E "${ln}s/[^[:space:]]+=/${name}=/" $FM__DATA/favorites
-                ((num+=1))
-                fm__print -yellow 'Renamed!'
-            else
-                fm__print -yellow 'Skipped!'
-                continue
-            fi
-        done
+	setopt LOCAL_OPTIONS ERR_RETURN
+	local -P line ln old_name new_name
+	local num=0 message='Favorites renamed' name
+	local fav_names=(); for line in $lines; fav_names+=${${=line}[2]}
+	fm__open-dialog -yellow 'reName Selected Favorites' fav_names
+	{
+		for line in $lines; do
+			ln=${${=line}[1]}; old_name=${${=line}[2]}; new_name=$old_name
+			vared -p "%F{yellow}Enter the new name for the Favorite $old_name (empty to skip)>%f " new_name
+			if [[ -z $new_name || $new_name == $old_name ]] { fm__print -yellow 'Skipped!' ; continue }
+			name=$new_name && fm__fav-accept-name -yellow
+			if [[ $name ]]; then
+				sed -i -E "${ln}s/[^[:space:]]+=/${name}=/" $FM__DATA/favorites
+				((num+=1))
+				fm__print -yellow 'Renamed!'
+			else
+				fm__print -yellow 'Skipped!'
+				continue
+			fi
+		done
 
-        if [[ $num -gt 0 ]] { hash -drf ; source $FM__DATA/favorites }
-    } always {
-        fm__close-dialog
-    }
+		if [[ $num -gt 0 ]] { hash -drf ; source $FM__DATA/favorites }
+	} always {
+		fm__close-dialog
+	}
 }

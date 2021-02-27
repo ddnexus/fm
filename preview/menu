@@ -735,8 +735,8 @@ case $id in
 		print -- ${${added_menu[$id]%%$'\t'*}:-No usage available for this added tool}
 		;;
 esac |
-	sed -E "s/^(IMPORTANT)$/${R}&${E}/;
-			s/^(Notice|\*|[[:digit:]]+\.)/${B}&${E}/;
-			s/(FM__[^[:space:].]+|FM Panel|Menu Panel|FM Preview Window|Menu Preview Window|Preview Window)/${B}&${E}/g;
-			s/\b(DIR|FIND|GREP|REC|FAV)\b/${g}&${e}/g;
-		   "
+	sed -E \
+			"s/^(IMPORTANT)$/${R}&${E}/
+			s/^(Notice|\*|[[:digit:]]+\.)/${B}&${E}/
+			s/(FM__[^[:space:].]+|FM Panel|Menu Panel|FM Preview Window|Menu Preview Window|Preview Window)/${B}&${E}/g
+			s/\b(DIR|FIND|GREP|REC|FAV)\b/${g}&${e}/g"

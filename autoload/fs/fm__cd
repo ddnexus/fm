@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 
 fm__cd() {
-    local -P dir=$1:a
-    recent_dirs=( $dir ${recent_dirs:#$dir} )
-    fm__write -data recent_dirs
-    cd $dir
-    query=''
-    view=$fs_view
+	local -P dir=$1:a
+	recent_dirs=( $dir ${recent_dirs:#$dir} )
+	fm__write -data recent_dirs
+	cd $dir
+	query=''
+	view=$fs_view
 }

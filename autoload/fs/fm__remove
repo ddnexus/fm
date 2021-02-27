@@ -1,25 +1,25 @@
 #!/usr/bin/env zsh
 
 fm__remove() {
-    setopt LOCAL_OPTIONS ERR_RETURN
-    local -P item sudo name yn
-    local num=0 message='Items removed'
-    fm__open-dialog -red 'Remove Selected Items' items
-    {
-        for item in $items; do
-            name=$item:t
-            if [[ -w $item:h ]] { sudo='' } else { sudo=$FM__CMD_SUDO }
-            fm__print -n -red "Remove $name? (y/n)> "
-            if read -q yn; then
-                print ; $=sudo rm -rf $item
-                ((num+=1))
-                fm__print -red 'Removed!'
-            else
-                fm__print -yellow '\nSkippeed!'
-                continue
-            fi
-        done
-    } always {
-        fm__close-dialog
-    }
+	setopt LOCAL_OPTIONS ERR_RETURN
+	local -P item sudo name yn
+	local num=0 message='Items removed'
+	fm__open-dialog -red 'Remove Selected Items' items
+	{
+		for item in $items; do
+			name=$item:t
+			if [[ -w $item:h ]] { sudo='' } else { sudo=$FM__CMD_SUDO }
+			fm__print -n -red "Remove $name? (y/n)> "
+			if read -q yn; then
+				print ; $=sudo rm -rf $item
+				((num+=1))
+				fm__print -red 'Removed!'
+			else
+				fm__print -yellow '\nSkippeed!'
+				continue
+			fi
+		done
+	} always {
+		fm__close-dialog
+	}
 }

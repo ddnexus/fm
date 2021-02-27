@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
 
 fm__notify() {
-    header+=$(fm__print -magenta "$*")
+	header+=$(fm__print -magenta "$*")
 }
