@@ -164,7 +164,7 @@ bindkey "$terminfo[kcud1]" history-substring-search-down
 
 
 ############# fzf #############
-zinit ice wait lucid --depth:1 \
+zinit ice wait lucid depth:1 \
 		as:command \
 		atclone:'./install --all' \
 		atpull:'%atclone'
@@ -176,7 +176,7 @@ export FZF_DEFAULT_OPTS="--height 50% --reverse --ansi --exact --info=inline --c
 
 
 ############# fm #############
-zinit ice wait lucid --depth:1 \
+zinit ice wait lucid depth:1 \
 		atinit:'source fm.zsh' \
 		atload:'source added-tools-examples' \
 		atclone:'./fm__compile; rm -rf ./try-fm' \
