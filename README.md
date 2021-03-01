@@ -121,6 +121,14 @@ You can easily add your own functions/commands to the FM Menu and execute them a
 
 You can read the inline documentation in the FM menu section `Added Tools` and try the provided working examples for more details.
 
+## Q&A
+
+See [Q&A](https://github.com/ddnexus/fm/tree/master/try-fm#qa)
+
+## Caveats
+
+- The `exa --git ...` option is not fully git compliant nor consistent between platforms and OSs to be considered useful at this time, so it is not supported by FM. Specifically: if you add it to the `FM__CMD_LS` variable it will break the `DIR` view if the current dir is inside a working tree.
+
 ## Contributions
 
 - If you like FM, please, give it a star and share it with friends and collegues. That's the most needed contribution ATM.
