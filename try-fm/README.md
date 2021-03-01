@@ -58,9 +58,9 @@ A few menus that work perfectly in the FM installed version don't work, or are l
 
 ## Q&A
 
-### 1. The docker build process fails
+### 1. The docker build process fails. What's wrong?
 
-While running the `~/try-fm start` for the first time, you may find a `Failed to fetch http://deb.debian.org/... Temporary failure resolving 'deb.debian.org'` in the output. [Here is the solution](https://stackoverflow.com/questions/51034120/docker-could-not-resolve-deb-debian-org)
+While running the `~/try-fm start` for the first time, you may find a `Failed to fetch http://deb.debian.org/... Temporary failure resolving 'deb.debian.org'` in the output. That is a local problem not related to `try-fm` and [here is the solution](https://stackoverflow.com/questions/51034120/docker-could-not-resolve-deb-debian-org)
 
 ### 2. The alt key does not work in my terminal app. How can I fix it?
 
@@ -74,4 +74,4 @@ For a more comprehensive guide including different apps and platforms, please re
 
 ### 3. How can I remember all that shortcuts?
 
-Quickly toggle the FM Menu ON/OFF with `ctrl-space` in order to peek the shortcut that you need. You can also filter the list by typing some letter if that helps. Then you can select the menu (arrows keys or mouse) or press its shortcut from the Menu Panel itself or go back to the FM Panel and press it from there. When you will remember everything it will be super fast.
+Quickly toggle the FM Menu ON/OFF with `ctrl-space` in order to peek the shortcut that you need. You can also filter the list by typing some letter if that helps. Then you can select the menu (with arrows keys or mouse) or press its shortcut right from the Menu Panel itself or go back to the FM Panel and press it from there. When you will remember everything it will be super fast.

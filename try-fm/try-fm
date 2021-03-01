@@ -89,7 +89,7 @@ case "$1" in
 
 				=============================== MACOS CAVEATS =================================
 				The FIND view (alt-f) may be very slow in docker bind mounted paths: that
-				will work a lot faster when FM will be installed directly in the mac
+				will work super fast when FM will be installed and run directly
 				===============================================================================
 				CAVEATS
 				sleep 2
@@ -192,7 +192,7 @@ case "$1" in
 						--interactive \
 						--tty \
 						--rm \
-						 $fm_image
+						$fm_image
 				;;
 			--no-mount)
 				docker run \
@@ -201,7 +201,7 @@ case "$1" in
 						--interactive \
 						--tty \
 						--rm \
-						 $fm_image
+						$fm_image
 				;;
 			*)
 				echo "The option '$2' is not supported."
@@ -211,6 +211,7 @@ case "$1" in
 		;;
 
 	reset)
+		check_docker
 		read -p "Reset HOME and plugins? (y/n)> " input
 		if [ "$input" = y ] || [ "$input" = Y ]; then
 			echo "Removing the '$fm_vol' docker volume..."
@@ -236,7 +237,6 @@ case "$1" in
 				rm -fv "$script_file" "$vol_file" "$zsh_file"
 			fi
 			echo "'$fm_name' has been completely purged from your system!"
-			echo "Suggestion: you may also want to manually run 'docker system prune' periodically, in order to remove the dangling objects and reclaim a lot of disk space."
 		fi
 		;;
 
@@ -249,7 +249,7 @@ case "$1" in
 			    --home-mount  ...mounting only $HOME at /$(hostname)-$USER
 			    --no-mount    ...mounting nothing
 
-			~/$fm_name reset    Reset so the next start will reinstall HOME and plugins
+			~/$fm_name reset    Reset so the next start will restore HOME and plugins
 			~/$fm_name purge    Purge everything related to '$fm_name' from your system
 			~/$fm_name usage    Show this screen
 			===============================================================================
