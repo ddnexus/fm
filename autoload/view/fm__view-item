@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 fm__view-item() {
 	if [[ -z $FM__CMD_PAGER ]] { fm__notify "No FM__CMD_PAGER command found"; return 0 }
 	local -P esc_name highlight_params

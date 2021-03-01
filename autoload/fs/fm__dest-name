@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 fm__dest-name() {
 	local -P n=1 suffix=$1 ext root
 	if [[ -d $source || $name == .* || $name == *. || $name != *.* ]]; then

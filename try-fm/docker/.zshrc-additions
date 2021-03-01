@@ -1,7 +1,9 @@
 #!/usr/bin/env zsh
 
-# this file will be sourced, but the shebang above
-# will provide the clue for the right synax highlighting
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)

@@ -1,4 +1,9 @@
-# Copyright (c) 2020 Domizio Demichelis - dd.nexus@gmail.com - https://github/com/ddnexus
+#!/usr/bin/env zsh
+
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
 
 setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB NO_POSIX_IDENTIFIERS
 

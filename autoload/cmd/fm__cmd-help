@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 fm__cmd-help() {
 	cat <<-HELP
 		FM $fm__version - Copyright (c) 2020 Domizio Demichelis - dd.nexus@gmail.com

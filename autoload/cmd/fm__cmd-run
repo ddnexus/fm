@@ -1,10 +1,15 @@
 #!/usr/bin/env zsh
 
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 fm__cmd-run() {
 	local fs_view=DIR view=DIR fm_mode=command
 	local hidden=false sort=false
 	local rg_query rg_message
-	local -a targets recent_dirs added_menu header=("FM $fm__version (c) 2021 Domizio Demichelis")
+	local -a targets recent_dirs added_menu header=("FM $fm__version (c) 2021 Domizio Demichelis - GPL3 License")
 	local -A clipboard preview
 	fm__read -tmp added_menu
 	fm__read -data preview

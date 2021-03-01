@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 fm__fav-add() {
 	setopt LOCAL_OPTIONS ERR_RETURN
 	local list=(${1:-$items}) num=0 message='Favorites added' name=''

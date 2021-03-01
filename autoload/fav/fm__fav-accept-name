@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 fm__fav-accept-name() {
 	local -P color=$1 wanted=$2 n=2
 	name=$( sed -E 's/[^A-Za-z0-9._-]/_/g; s/^[^A-Za-z]*//' <<< $name )

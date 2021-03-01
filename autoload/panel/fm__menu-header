@@ -1,5 +1,10 @@
 #!/usr/bin/env zsh
 
+# Copyright (c) 2021 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 fm__menu-header() {
 	local -P w=$(($FM__MENU_WIDTH / 2))
 	if [[ $FM__MAX_MENU_RECAP -gt 0 ]] fm__print -yellow 'Selected Items:'
