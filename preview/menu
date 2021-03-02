@@ -729,7 +729,7 @@ case $id in
 			    * ${Y}\$query${E}      The current fzf query
 			    * ${Y}\$items${E}      The array of the paths of the Selected Items
 			    * ${Y}\$lines${E}      The array of the raw Selected Lines
-			    * ${Y}fm__notify${E}   The function to write in the header of the FM Panel
+			    * ${Y}fm__notify${E}  The function to write in the header of the FM Panel
 			* Your usage text is rendered in the context of the ${B}\$fm__root/menu${E}, so you can inspect that function to see what may be usefult to you.
 			* Also, all the ${Y}fm__*${E} function are available, although not all may be useful in your context.
 		notes

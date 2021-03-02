@@ -20,6 +20,8 @@ RUN install_packages -y \
 		fd-find \
 		poppler-utils \
 		bzip2 \
+		tmux \
+		xsel \
 		unzip
 
 ADD https://github.com/sharkdp/bat/releases/download/v0.17.1/bat-musl_0.17.1_amd64.deb /tmp/
@@ -55,6 +57,6 @@ COPY --chown=$user:$user .zshrc-additions README ./
 RUN \
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)" && \
 	echo 'source ~/.zshrc-additions' >> .zshrc && \
-	env TERM="$term" zsh -isc "@zinit-scheduler burst"
+	env TERM="${term:-xterm-256color}" zsh -isc "@zinit-scheduler burst"
 
 VOLUME /home/$user
