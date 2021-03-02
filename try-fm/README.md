@@ -7,10 +7,10 @@ All the packages required will be installed and relegated in a docker image and 
 ## Prerequisites
 
 - Ensure to have [docker](https://www.docker.com) and `curl` installed on your system
-- Linux works out of the box, but - on systems that use the "Docker Desktop" application (e.g. MacOS) - you should check whether the local root `/` is among the shared paths. If it is not the case, add it. (`try-fm` mounts it in order to make you try FM as it was installed in your own system).
-- If you have unsolvable problems setting up your "Docker Desktop" as indicated, you can start `try-fm` with:
+- Linux systems work out of the box, but - on systems that use the "Docker Desktop" application (e.g. MacOS) - you should check whether the local root `/` is among the shared paths. If it is not the case, add it. (`try-fm` mounts it in order to make you try FM as it was installed in your own system: see below for details)
+- If you have unsolvable problems setting up your "Docker Desktop" as indicated, you can start `try-fm` with one of the following mount restrictions:
   - `~/try-fm start --home-mount` in order to mount only your `HOME` dir (which should work on any system)
-  - `~/try-fm start --no-mount` in order to skip the mounting altogether (use it only as the last resort, because your user experience will be quite limited)
+  - `~/try-fm start --no-mount` in order to skip the mounting altogether. Use this option only if nothing else works or if you are paranoid about messing up your own filesystem by mistake. However keep in mind that your user experience will be limited to the container filesystem.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ sh -c "curl -fsSL https://raw.githubusercontent.com/ddnexus/fm/master/try-fm/try
 
 1. DO NOT SHARE THE BUILT IMAGE! The `try-fm` docker image that you build on your system is meant to be private and used locally. It contains information about your user that you may not want to share with others (notably: _username_, _userid_, _groupid_, and the _password_ you created). Just keep it local and don't push it anywhere or share it with anyone.
 
-2. In order to make you try FM as it was installed in your own system, the `try-fm` docker container will usually bind mount your own filesystem. As for any mounted disk that you can write to, __all the changes__ that you may make to your own filesystem from the docker session and from the FM TUI __will be made to your real files__! So don't delete anything important!
+2. In order to make you try FM as it was installed in your own system, the `try-fm` docker container will usually bind mount your own filesystem. Notice that as for any mounted disk that you can write to, __all the changes__ that you may make to your own filesystem from the docker session and from the FM TUI __will be made to your real files__! So don't delete anything important!
 
 ## Filesystem info
 
@@ -40,7 +40,7 @@ So to recap the behavior of the filesystem in the docker session:
 
 - The mounted FS is your own writable filesystem, so don't do anything stupid with it :)
 - `~` is the docker container HOME and is persisted between sessions, so use it to experiment with dot-files. You can reset it with `~/try-fm reset` at any time
-- everything else will get restored the next session (i.e. the next time you will start it `~/try-fm start`)
+- everything else will get restored the next session (i.e. the next time you will start it with `~/try-fm start`)
 
 ## Purge
 
