@@ -33,7 +33,6 @@ RUN \
 	sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && \
 	locale-gen
 
-ARG password
 ARG user
 ARG uid
 ARG gid
@@ -42,12 +41,12 @@ ARG term
 RUN \
 	groupadd --gid=$gid --force $user && \
 	useradd --uid=$uid --gid=$gid -G sudo --shell=/usr/bin/zsh --create-home $user && \
-	echo $user:$password | chpasswd && \
-	echo root:$password | chpasswd && \
+	echo $user:fm | chpasswd && \
+	echo root:fm | chpasswd && \
 	echo "Defaults  lecture=never" >> /etc/sudoers && \
 	chown -R $user:$user /home/$user
 
-ENV TRY_FM=true
+ENV TRY_FM=true SUDO_PROMPT="[sudo] enter 'fm' as the password for %p: "
 
 USER $user
 WORKDIR /home/$user
