@@ -2,7 +2,10 @@ FROM zshusers/zsh:5.8
 LABEL maintainer="Domizio Demichelis (dd.nexus@gmail.com)"
 
 RUN install_packages -y \
-		locales \
+	locales && \
+	sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && \
+	locale-gen && \
+	install_packages -y \
 		ca-certificates \
 		libncursesw6 \
 		libncurses6 \
@@ -29,9 +32,7 @@ ADD https://github.com/sharkdp/bat/releases/download/v0.17.1/bat-musl_0.17.1_amd
 RUN \
 	dpkg -i /tmp/bat-musl_0.17.1_amd64.deb && \
 	rm /tmp/bat-musl_0.17.1_amd64.deb && \
-	ln -s /usr/bin/fdfind /usr/bin/fd && \
-	sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && \
-	locale-gen
+	ln -s /usr/bin/fdfind /usr/bin/fd
 
 ARG user
 ARG uid

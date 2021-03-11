@@ -191,14 +191,14 @@ case "$1" in
 		fi
 		;;
 
-	usage|u|'')
+	usage|help|u|h|'')
 		cat <<-USAGE
 
 			==================================== USAGE ====================================
 			~/$fm_name start|s    Setup and start the docker session...
 			 [--root-mount|-r]  ...with default mount of / at /$(hostname)
-			  --home-mount|-m   ...with mount of $HOME at /$(hostname)-$USER
-			    --no-mount|-n   ...without any mount
+			  --home-mount|-m   ...with mount of $HOME at /$(hostname)-$USER only
+			    --no-mount|-n   ...with no mount
 
 			~/$fm_name reset|r    Reset so the next start will restore HOME and plugins
 			~/$fm_name purge|p    Purge everything related to '$fm_name' from your system

@@ -46,7 +46,7 @@ So to recap the behavior of the filesystem in the docker session:
 
 Just run `~/try-fm purge` to remove anything related to 'try-fm' and reclaim the disk space used by docker.
 
-## Known limitation of the docker session
+## Known limitations of the docker session
 
 A few menus that __work perfectly in the FM installed version__ don't work, or are limited, in the `try-fm` docker session:
 
