@@ -149,7 +149,7 @@ Expect any other branch to be experimental, force-rebased and/or deleted even wi
 
 ## License
 
-This software is available as open source under the terms of the [GPS3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
+This software is available as open source under the terms of the [GPL3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 ---
 
