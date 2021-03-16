@@ -347,7 +347,8 @@ case $id in
 		* ${Y}FM Contining${E} dir of the Selected Item
 
 		Notice
-		Since it's common navigation all the shortcuts in this section use the simplest/easiest ${Y}alt${E} key combined with a meaningful letter. That should also be very easy to memorize.
+		Since it's common navigation, all the shortcuts in this section use the simplest/easiest ${Y}alt${E} key combined with a meaningful letter. That should also be very easy to memorize.
+
 		notes
 		;;
 	CD_HOME)

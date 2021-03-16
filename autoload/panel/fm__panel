@@ -43,7 +43,7 @@ fm__panel() {
 		$FM__KEY_NOTIFY_WD|NOTIFY_WD)         fm__notify "Working Dir: $PWD" ;;
 		$FM__KEY_HIDDEN|HIDDEN)               fm__toggle-hidden ;;
 		$FM__KEY_SORT|SORT)                   fm__sort-items ;;
-		esc|ctrl-c|ctrl-z|$FM__KEY_QUIT|QUIT) return 0 ;;
+		ctrl-z|$FM__KEY_QUIT|QUIT)            return 0 ;;
 	# FM Views
 		double-click|$FM__KEY_VIEW_ITEM|VIEW_ITEM) fm__view-item ;;
 		$FM__KEY_VIEW_DIR|VIEW_DIR)           view=DIR;  fs_view=DIR ;;

@@ -59,8 +59,8 @@ fm__command_keys=(
 	${FM__KEY_NEW_SHELL=ctrl-n}
 	${FM__KEY_COPY_PATH=ctrl-t}
 # extra keys
-	double-click       # default fzf alternative of accept
-	esc ctrl-c ctrl-z  # exit/interrupt/suspend
+	double-click   # default fzf alternative of accept
+	ctrl-z         # disable suspend
 )
 : ${FM__CMD_CAT:=$( fm__get-cmd 'bat -f --style=numbers --wrap=never' 'cat -n' )}
 : ${FM__CMD_LS:=$( fm__get-cmd 'exa -lbg --color=always --color-scale --group-directories-first' 'ls -lh --color --group-directories-first' )}
@@ -168,7 +168,7 @@ fm__widget_keys=(
 	${FM__KEY_PICK_WD=ctrl-d}  # widget only
 # extra keys
 	double-click       # default fzf alternative of accept
-	esc ctrl-c ctrl-z  # exit/interrupt/suspend
+	ctrl-z             # disable suspend
 )
 
 : ${FM__WIDGET_FZF_OPTS:="--exact --no-sort --reverse --height=40% --info=inline --color=info:$FM__INFO_COLOR"}
