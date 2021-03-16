@@ -7,5 +7,5 @@
 function fm
 	test "$argv[1]" = '-' && cd $fm__start_dir && return 0
 	set fm__start_dir $PWD
-	cd (zsh -i -c "fm $argv >/dev/tty; print -- \$PWD")
+	cd (zsh -i -c "source $fm__root/fm.zsh; fm $argv >/dev/tty; print -- \$PWD")
 end
