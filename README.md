@@ -109,7 +109,7 @@ The `fm help` command will give you an overview about the FM environment and the
 
 ### Zsh-only features
 
-The FM favorites are working in any shell, however the favorite `widget` and the shell favorite `aliases` are available only in the `zsh` shell.
+The FM favorites are working in any shell, however the `widget` and the shell favorite `aliases` are available only in the `zsh` shell.
 
 ## Customization
 

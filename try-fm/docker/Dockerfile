@@ -18,6 +18,7 @@ RUN install_packages -y \
 		less \
 		file \
 		sudo \
+		fish \
 		exa \
 		ripgrep \
 		fd-find \
@@ -27,19 +28,19 @@ RUN install_packages -y \
 		xsel \
 		unzip
 
-ADD https://github.com/sharkdp/bat/releases/download/v0.17.1/bat-musl_0.17.1_amd64.deb /tmp/
-
-RUN \
-	dpkg -i /tmp/bat-musl_0.17.1_amd64.deb && \
-	rm /tmp/bat-musl_0.17.1_amd64.deb && \
-	ln -s /usr/bin/fdfind /usr/bin/fd
-
 ARG user
 ARG uid
 ARG gid
 ARG term
+ARG bat_v=0.18.0
+ARG arch=amd64
+
+ADD https://github.com/sharkdp/bat/releases/download/v${bat_v}/bat_${bat_v}_${arch}.deb /tmp/
 
 RUN \
+	dpkg -i /tmp/bat_${bat_v}_${arch}.deb && \
+	rm /tmp/bat_${bat_v}_${arch}.deb && \
+	ln -s /usr/bin/fdfind /usr/bin/fd && \
 	groupadd --gid=$gid --force $user && \
 	useradd --uid=$uid --gid=$gid -G sudo --shell=/usr/bin/zsh --create-home $user && \
 	echo $user:fm | chpasswd && \
@@ -57,6 +58,8 @@ COPY --chown=$user:$user .zshrc-additions README ./
 RUN \
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)" && \
 	echo 'source ~/.zshrc-additions' >> .zshrc && \
-	env TERM="${term:-xterm-256color}" zsh -isc "@zinit-scheduler burst"
+	env TERM="${term:-xterm-256color}" zsh -isc "@zinit-scheduler burst" && \
+	zsh -c 'print "\n. \$HOME/.zinit/plugins/ddnexus---fm/launcher/fm.sh" >> $HOME/.bashrc' && \
+	zsh -c 'mkdir -p $HOME/.config/fish; echo "\nsource \$HOME/.zinit/plugins/ddnexus---fm/launcher/fm.fish" >> $HOME/.config/fish/config.fish'
 
 VOLUME /home/$user

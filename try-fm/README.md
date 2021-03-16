@@ -24,6 +24,8 @@ sh -c "curl -fsSL https://raw.githubusercontent.com/ddnexus/fm/master/try-fm/try
 - Notice that the first run will also automatically build the docker image and setup the docker container HOME (that will install a lot of stuff in the docker space and you can purge it completely with `~/try-fm purge` when you are done)
 - When you are in the docker session (green prompt) start FM by running `fm` there.
 
+__Notice__: The default shell in the docker session is `zsh`. If you want to experiment with `bash` or `fish` just enter it in the prompt and `fm` will work as well.
+
 ## Warnings
 
 1. DO NOT SHARE THE BUILT IMAGE! The `try-fm` docker image that you build on your system is meant to be private and used locally. It contains information about your user that you may not want to share with others (notably: _username_, _userid_, _groupid_, and the _password_ you created). Just keep it local and don't push it anywhere or share it with anyone.
