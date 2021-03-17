@@ -126,9 +126,9 @@ case "$1" in
 			=============================== BASIC USAGE ===================================
 			* Run the fm command to start, then press 'ctrl-space' to get the menu with
 			  the inline documentation.
-			* Press 'alt-f' twice (rapidly) in the prompt to get the widget
 			* Quit FM or the widget with 'ctrl-q', 'ctrl-c' or 'esc'
 			* Exit from the docker session with the usual 'exit'
+			* You can get the widget by pressing 'alt-f' twice (rapidly) in the zsh prompt
 		INFO
 
 		if [ -n "$warning" ]; then
