@@ -12,7 +12,7 @@ fm__view-item() {
 		fm__cd $items[1]
 		query=''
 	elif [[ -f $items[1] && $fm_mode != widget ]]; then
-		esc_name=$( sed -E 's/([?:.%\\])/\\\1/g' <<< "${items[1]:t}") # escape for less prompt
+		esc_name=$( sed -E 's/([?:.%\\])/\\\1/g' <<< "${(D)items[1]}") # escape for less prompt
 		tput cup $(tput lines) 0
 		case $view in
 			GREP)
