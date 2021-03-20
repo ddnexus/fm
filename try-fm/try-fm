@@ -48,8 +48,9 @@ case "$1" in
 
 				================================= BUILD IMAGE =================================
 				IMPORTANT: This installation will not change your system in any way.
-				All the required packages will be installed and relegated in the docker space.
-				You can purge it completely with '~/$fm_name purge' when you are done.
+				All the packages/plugins will be installed and relegated in the docker space.
+				This environment has also a lot of not required stuff that is very cool to try.
+				You can completely purge everything with '~/$fm_name purge' when you are done.
 				===============================================================================
 			BUILDING
 			read -p "Press enter to start... " input
