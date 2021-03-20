@@ -165,6 +165,11 @@ bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
 
 
+############# colored man pages #############
+zinit ice wait lucid depth:1
+zinit light ael-code/zsh-colored-man-pages
+
+
 ############# fzf #############
 zinit ice wait lucid depth:1 \
 		as:command \

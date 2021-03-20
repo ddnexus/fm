@@ -26,7 +26,8 @@ RUN install_packages -y \
 		bzip2 \
 		tmux \
 		xsel \
-		unzip
+		unzip \
+		man
 
 ARG user
 ARG uid
