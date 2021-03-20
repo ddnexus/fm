@@ -56,7 +56,7 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export TERM=xterm-256color
 export EDITOR=nano
-export PROMPT=$'\n%F{green}%B%S %(?.√.?%?) %~ %s%b%f\n%# '
+export PROMPT=$'%F{green}%B%~ %#%b%f '
 
 
 ############# zsh-autosuggestions #############

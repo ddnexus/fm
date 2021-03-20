@@ -59,7 +59,12 @@ RUN \
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)" && \
 	echo 'source ~/.zshrc-additions' >> .zshrc && \
 	env TERM="${term:-xterm-256color}" zsh -isc "@zinit-scheduler burst" && \
-	zsh -c 'print "\n. \$HOME/.zinit/plugins/ddnexus---fm/launcher/fm.sh" >> $HOME/.bashrc' && \
-	zsh -c 'mkdir -p $HOME/.config/fish; echo "\nsource \$HOME/.zinit/plugins/ddnexus---fm/launcher/fm.fish" >> $HOME/.config/fish/config.fish'
+	echo '$HOME/.zinit/plugins/ddnexus---fm/launcher/fm.sh\n\
+	PS1="\[\033[01;32m\]\w \$\[\033[00m\] "' >> /home/$user/.bashrc && \
+	mkdir -p /home/$user/.config/fish && mkdir -p /home/$user/.config/fish/functions && \
+	echo 'source $HOME/.zinit/plugins/ddnexus---fm/launcher/fm.fish' >> /home/$user/.config/fish/config.fish && \
+	echo 'function fish_prompt\n\
+	set_color --bold green; echo -n "$PWD > "\n\
+end' >> /home/$user/.config/fish/functions/fish_prompt.fish
 
 VOLUME /home/$user
