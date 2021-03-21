@@ -255,8 +255,8 @@ case $id in
 		;;
 	VIEW_FIND)
 		cat <<-notes
-			Show all the paths for each file/dir in the ${Y}current and nested dirs${E}.
-			This mode works better for finding or listing together deeply nested dirs/files.
+			Show all the paths for each file/dir in the ${Y}current and nested dirs${E}, which you can filter by entering some string in the query field.
+			This mode works better for finding named items or listing together deeply nested dirs/files.
 
 			The FIND View will be persisted until you will explicitly switch to another view or until some menu you picked switches to another view.
 
@@ -274,12 +274,14 @@ case $id in
 		;;
 	VIEW_GREP)
 		cat <<-notes
-			This menu expects to find a grep pattern entered the query field, and uses ripgrep to find all the files with matches.
+			This menu expects to find a grep pattern entered the query field, and uses ripgrep to find all the files with matching content.
 
 			${R}IMPORTANT: This menu requires the ripgrep (rg) command.${E}
 
 			Each file found shows the number of matching lines. You can get a preview of the content lines around the matching by selecting any file in the list.
 			Double-clik/enter any item listed in the GREP view to get its full view with the higlighted matches and paginated and searchable with less.
+
+			You can also filter the matching item list by file name, by just typing some string.
 
 			In this view you can use any menu that applies to the items that you select.
 			The GREP view will be persisted until you will explicitly switch to another view or until some menu you picked will switch to another view.
@@ -439,7 +441,7 @@ case $id in
 			$details
 
 			${R}WARNING Gnome Desktop${E}
-			The default shortcut for this menu (${Y}ctrl-alt-d${E}) is also a shortcut redundantly used by the Gnome/Ubuntu desktop: it hides all windows and show the desktop.
+			The default shortcut for this menu (${Y}ctrl-alt-d${E}) is also a shortcut redundantly used by the Gnome/Ubuntu desktop: it hides all windows and shows the desktop.
 
 			You may want to disable the conflicting desktop shortcut still allowing the other 2 shortcuts that do the same (${Y}ctrl-super-d${E} and ${Y}super-d${E}). That way all the FM menu keys will be consistent.
 

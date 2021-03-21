@@ -9,6 +9,6 @@ fm__menu-header() {
 	local -P w=$(($FM__MENU_WIDTH / 2))
 	if [[ $FM__MAX_MENU_RECAP -gt 0 ]] fm__print -yellow 'Selected Items:'
 	fm__print-recap -yellow items $FM__MAX_MENU_RECAP
-	$FM__HINTS && fm__print -red ${(l:$w::<:: :r:$w::>:: :)${:-Pick a menu or press a sortcut}}
+	$FM__HINTS && fm__print -red ${(l:$w::<:: :r:$w::>:: :):-Pick a menu or press a sortcut}
 }
 

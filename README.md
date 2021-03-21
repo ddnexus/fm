@@ -36,7 +36,7 @@ You can try FM on your system with the [`try-fm`](https://github.com/ddnexus/fm/
 
 ### Install Prerequisites
 
-- [`zsh`](https://www.zsh.org): The base shell scripting. **Notice** that you just need `zsh` installed with the default config, but you can use FM with any shell. Use your package manager to install it (e.g. for Ubuntu: `sudo apt-get install zsh`)
+- [`zsh`](https://www.zsh.org): The base shell scripting. **Notice** that you just need `zsh` installed with the default config, but you can use FM with any shell. While MacOS adopted it as the default shell since Catalina, you can install it with the default package manager of any other system (e.g. for Ubuntu: `sudo apt-get install zsh`).
 - [`fzf`](https://github.com/junegunn/fzf): Fundamental part of the TUI ([fzf installation](https://github.com/junegunn/fzf#installation))
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep): Faster replacement for grep ([ripgrep installation](https://github.com/BurntSushi/ripgrep#installation))
 

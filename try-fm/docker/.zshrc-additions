@@ -179,7 +179,7 @@ zinit light junegunn/fzf
 
 export FZF_DEFAULT_COMMAND="fdfind --type file --color=always"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_DEFAULT_OPTS="--height 50% --reverse --ansi --exact --info=inline --color=info:2,dark,fg+:#959595,bg+:#1E0825"
+export FZF_DEFAULT_OPTS="--height 50% --reverse --ansi --exact --info=inline --color=info:2,dark,fg+:#959595,bg+:#000000"
 
 
 ############# fm #############
