@@ -50,22 +50,19 @@ In order to get the best experience with FM you should also install the followin
 
 ### Install FM
 
-- with [zinit](https://github.com/zdharma/zinit)(zplugin):
+Add the following to your `$HOME/.zshrc`:
+
+- if you use [zinit](https://github.com/zdharma/zinit)(zplugin):
   ```zsh
   zinit ice --depth'1' atinit'source fm.zsh' atclone'./fm__compile' atpull'%atclone'
   zinit light ddnexus/fm
   ```
-- with [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm", hook-build:"./fm__compile"`
-- with [antigen](https//github.com/zsh-users/antigen): `antigen bundle ddnexus/fm`
-- with [zgen](https://github.com/tarjoilija/zgen): `zgen load ddnexus/fm`
-- manually:
+- if you use [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm", hook-build:"./fm__compile"`
+- if you use [antigen](https//github.com/zsh-users/antigen): `antigen bundle ddnexus/fm`
+- if you use [zgen](https://github.com/tarjoilija/zgen): `zgen load ddnexus/fm`
+- if you don't use anything of the above:
   - Clone or download the repo in your preferred `<FM-DIR-PATH>`
-  - Replace the following `<FM-DIR-PATH>` placeholder with the actual path  and run:
-
-  ```sh
-  echo "source <FM-DIR-PATH>/fm.zsh" >> $HOME/.zshrc
-  ```
-  In this case, remember to pull the repo periodically.
+  - Replace the following `<FM-DIR-PATH>` placeholder with the actual path: `source <FM-DIR-PATH>/fm.zsh` (in this case, remember to pull the repo periodically).
 
 #### Compile after install
 
