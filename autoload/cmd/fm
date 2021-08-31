@@ -16,4 +16,3 @@ fm() {
 	if [[ $1 ]] shift
 	fm__cmd-$cmd $@
 }
-

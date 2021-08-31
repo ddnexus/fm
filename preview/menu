@@ -39,7 +39,7 @@ case $id in
 			${C}UI Components${E}
 
 			FM Panel
-			The main FM panel. You can switch/choose among 4 views:
+			The main FM panel. You can switch/choose among the following views:
 			* DIR  list the detailed content of the current dir
 			* FIND list all the paths in current and nested dirs
 			* GREP list all the files with grep-matches in current and nested dirs
@@ -189,7 +189,7 @@ case $id in
 		cat <<-notes
 			This section groups the menus that interact with the view of the File System.
 
-			You can switch among 5 available views. The current view mode is visible in the prompt, for feedback:
+			You can switch among the available views. The current view mode is visible in the prompt, for feedback:
 
 			1. DIR
 			show the content of the ${Y}current dir${E} (useful for exploring)

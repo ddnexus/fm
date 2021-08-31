@@ -19,4 +19,3 @@ fm__view-dir() {
 		$=cmd $dir
 	fi
 }
-

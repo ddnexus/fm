@@ -12,4 +12,3 @@ fm__get-cmd() {
 	done
 	return 1
 }
-

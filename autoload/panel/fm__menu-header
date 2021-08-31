@@ -11,4 +11,3 @@ fm__menu-header() {
 	fm__print-recap -yellow items $FM__MAX_MENU_RECAP
 	$FM__HINTS && fm__print -red ${(l:$w::<:: :r:$w::>:: :):-Pick a menu or press a sortcut}
 }
-

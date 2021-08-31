@@ -14,4 +14,3 @@ fm__panel-start() {
 	if [[ $#header -gt 0 ]] cmd+=' --header=${(@F)header}'
 	eval $cmd
 }
-
