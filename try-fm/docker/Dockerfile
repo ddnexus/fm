@@ -33,14 +33,13 @@ ARG user
 ARG uid
 ARG gid
 ARG term
-ARG bat_v=0.18.0
+ARG bat_version=0.18.3
 ARG arch=amd64
 
-ADD https://github.com/sharkdp/bat/releases/download/v${bat_v}/bat_${bat_v}_${arch}.deb /tmp/
+ADD https://github.com/sharkdp/bat/releases/download/v${bat_version}/bat_${bat_version}_${arch}.deb /tmp/
 
-RUN \
-	dpkg -i /tmp/bat_${bat_v}_${arch}.deb && \
-	rm /tmp/bat_${bat_v}_${arch}.deb && \
+RUN dpkg -i /tmp/bat_${bat_version}_${arch}.deb && \
+	rm /tmp/bat_${bat_version}_${arch}.deb && \
 	ln -s /usr/bin/fdfind /usr/bin/fd && \
 	groupadd --gid=$gid --force $user && \
 	useradd --uid=$uid --gid=$gid -G sudo --shell=/usr/bin/zsh --create-home $user && \
@@ -49,17 +48,15 @@ RUN \
 	echo "Defaults  lecture=never" >> /etc/sudoers && \
 	chown -R $user:$user /home/$user
 
-ENV TRY_FM=true SUDO_PROMPT="[sudo] enter 'fm' as the password for %p: "
+ENV TRY_FM=true \
+    SUDO_PROMPT="[sudo] enter 'fm' as the password for %p: "
 
 USER $user
 WORKDIR /home/$user
 
-COPY --chown=$user:$user .zshrc-additions README ./
+COPY --chown=$user:$user .zshrc README ./
 
-RUN \
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)" && \
-	echo 'source ~/.zshrc-additions' >> .zshrc && \
-	env TERM="${term:-xterm-256color}" zsh -isc "@zinit-scheduler burst" && \
+RUN env TERM="${term:-xterm-256color}" zsh -isc "@zinit-scheduler burst" && \
 	echo '$HOME/.zinit/plugins/ddnexus---fm/launcher/fm.sh\n\
 	PS1="\[\033[01;32m\]\w \$\[\033[00m\] "' >> /home/$user/.bashrc && \
 	mkdir -p /home/$user/.config/fish && mkdir -p /home/$user/.config/fish/functions && \

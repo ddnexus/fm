@@ -16,7 +16,7 @@ All the packages required will be installed and relegated in a docker image and 
 
 - Copy, paste and enter the following command into your terminal in order to download the `try-fm` command in your `HOME` dir:
 
-```
+```sh
 sh -c "curl -fsSL https://raw.githubusercontent.com/ddnexus/fm/master/try-fm/try-fm -o ~/try-fm; chmod +x ~/try-fm; ~/try-fm"
 ```
 
@@ -52,7 +52,7 @@ Just run `~/try-fm purge` to remove anything related to 'try-fm' and reclaim the
 
 A few menus that __work perfectly in the FM installed version__ don't work, or are limited, in the `try-fm` docker session:
 
-- `Cycle Preview Mode` -> `ctrl-p` does not imediately refresh the preview after the command: you may have to press it twice
+- `Cycle Preview Mode` -> `ctrl-p` does not immediately refresh the preview after the command: you may have to press it twice
 - `Open Selected Items` -> `ctrl-o` is meant to open files and dirs in your desktop and it cannot work because the docker image does not offer a desktop environment
 - `Open New Shell Here` -> `ctrl-n` if you are not in a `tmux` session, it may open a new terminal session in your host instead of opening it in the docker session
 - `Switch to FIND View` -> `alt-f` on MacOS is very slow when performed in docker bind mounted paths (i.e. your mounted filesystem)

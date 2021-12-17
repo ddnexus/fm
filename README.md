@@ -2,7 +2,7 @@
 
 FM is a complete File Manager for any shell. As fast as a CLI and as easy as a desktop UI, it easily integrates also with your own functions/commands.
 
-### Motivation
+## Motivation
 
 Whether you are comfortable with the terminal or not, you spend a lot of time and effort just repeating basic commands like `cd`, `ls`, `cat`, `cp`, `mv`, `ln`, `find`, `grep`, `mkdir`, `touch`... or maybe you are switching back and forth from the Desktop File Manager to the terminal just to avoid it...
 
@@ -10,14 +10,14 @@ FM saves you all that repeated typing and switching, providing automatic feedbac
 
 ### Star and share!
 
-If you like FM, please, give it a star and share it with friends and collegues!
+If you like FM, please, give it a star and share it with friends and colleagues!
 
 ## Features
 
 FM has all the features that you would expect from a CLI but also from a Desktop File Manager... and actually some more. Here is an overview:
 
 - Navigation with mouse or keyboard
-- Unobstrusive, filterable menu with customizable shortcuts
+- Unobtrusive, filterable menu with customizable shortcuts
 - Jump to common dirs, saved favorites and recent visited dirs
 - Automatic inline syntax-highlighted content preview of file/dir/results
 - Search file names and/or file content with context and highlighted matches
@@ -52,11 +52,13 @@ In order to get the best experience with FM you should also install the followin
 
 Add the following to your `$HOME/.zshrc`:
 
-- if you use [zinit](https://github.com/zdharma/zinit)(zplugin):
+- if you use [zinit](https://github.com/zdharma-continuum/zinit)(zplugin):
+
   ```zsh
   zinit ice --depth'1' atinit'source fm.zsh' atclone'./fm__compile' atpull'%atclone'
   zinit light ddnexus/fm
   ```
+
 - if you use [zplug](https://github.com/zplug/zplug): `zplug "ddnexus/fm", hook-build:"./fm__compile"`
 - if you use [antigen](https//github.com/zsh-users/antigen): `antigen bundle ddnexus/fm`
 - if you use [zgen](https://github.com/tarjoilija/zgen): `zgen load ddnexus/fm`
@@ -82,6 +84,7 @@ Run `fm compile` only once, every time you update the repo.
   ```sh
   zsh -c 'print "\n. $fm__root/launcher/fm.sh" >> <RC-FILE-PATH>'
   ```
+
   - Restart your shell
 
 - **Fish shell**
@@ -89,6 +92,7 @@ Run `fm compile` only once, every time you update the repo.
   ```sh
   zsh -c 'mkdir -p $HOME/.config/fish; echo "\nsource $fm__root/launcher/fm.fish" >> $HOME/.config/fish/config.fish'
   ```
+
   - Restart your shell
 
 - **Other shells**
