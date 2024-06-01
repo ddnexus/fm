@@ -63,7 +63,7 @@ fm__command_keys=(
 	ctrl-z         # disable suspend
 )
 : ${FM__CMD_CAT:=$( fm__get-cmd 'bat -f --style=numbers --wrap=never' 'cat -n' )}
-: ${FM__CMD_LS:=$( fm__get-cmd 'exa -lbg --color=always --color-scale --group-directories-first' 'ls -lh --color --group-directories-first' )}
+: ${FM__CMD_LS:=$( fm__get-cmd 'eza -lh --color=always --group-directories-first' 'ls -lh' )}
 : ${FM__CMD_FIND:=$( fm__get-cmd fd find )}
 : ${FM__CMD_EDIT:=${EDITOR:-$( fm__get-cmd nano vim emacs vi )}}
 : ${FM__CMD_OPEN:=$( fm__get-cmd xdg-open open )}
