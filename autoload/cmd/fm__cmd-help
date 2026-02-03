@@ -41,7 +41,7 @@ fm__cmd-help() {
 
 		CMD OPTIONS
 		    FM__CMD_CAT           Preview command for files (support: bat|cat)
-		    FM__CMD_LS            Command for listing dirs (support: exa|ls)
+		    FM__CMD_LS            Command for listing dirs (support: eza|ls)
 		    FM__CMD_FIND          Find command used in FM Panel list (support: fd|find)
 		    FM__CMD_EDIT          EDITOR command for files
 		    FM__CMD_OPEN          Open files/dirs with desktop command
