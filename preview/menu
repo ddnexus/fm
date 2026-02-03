@@ -219,7 +219,7 @@ case $id in
 			${C}If the Selected Item is a DIR${E}
 
 			FM will ${B}cd${E} into the DIR using the command in the FM__CMD_LS variable.
-			The FM__CMD_LS supports ${B}exa${E} or ${B}ls${E}. ${B}exa${E} is picked by default if it's available because it offers better feedback.
+			The FM__CMD_LS supports ${B}eza${E} or ${B}ls${E}. ${B}eza${E} is picked by default if it's available because it offers better feedback.
 
 			${C}If the Selected Item is a FILE${E}
 
@@ -247,8 +247,8 @@ case $id in
 			The DIR view will be persisted until you will explicitly switch to another view or until some menu you picked switches to another view.
 
 			Notice
-			This menu uses the command in the FM__CMD_LS variable. It supports ${B}exa${E} or ${B}ls${E}.
-			${B}exa${E} is picked by default if it's available because it offers better feedback.
+			This menu uses the command in the FM__CMD_LS variable. It supports ${B}eza${E} or ${B}ls${E}.
+			${B}eza${E} is picked by default if it's available because it offers better feedback.
 
 			$details
 		notes

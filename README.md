@@ -44,7 +44,7 @@ You can try FM on your system with the [`try-fm`](https://github.com/ddnexus/fm/
 
 In order to get the best experience with FM you should also install the following optional packages:
 
-- [`exa`](https://github.com/ogham/exa): Modern replacementy for `ls` with better feedback ([exa installation](https://the.exa.website/install))
+- [`eza`](https://github.com/ogham/eza): Modern replacementy for `ls` with better feedback ([eza installation](https://the.eza.website/install))
 - [`fd` / `fd-find`](https://github.com/sharkdp/fd): Faster replacement for `find` ([fd installation](https://github.com/sharkdp/fd#installation))
 - [`bat`](https://github.com/sharkdp/bat): _"A `cat` clone with wings"_ for syntax-highlighted preview ([bat installation](https://github.com/sharkdp/bat#installation))
 
@@ -128,7 +128,7 @@ See [Q&A](https://github.com/ddnexus/fm/tree/master/try-fm#qa)
 
 ## Caveats
 
-- The `exa --git ...` option is not fully git compliant nor consistent between platforms and OSs to be considered useful at this time, so it is not supported by FM. Specifically: if you add it to the `FM__CMD_LS` variable it will break the `DIR` view if the current dir is inside a working tree.
+- The `eza --git ...` option is not fully git compliant nor consistent between platforms and OSs to be considered useful at this time, so it is not supported by FM. Specifically: if you add it to the `FM__CMD_LS` variable it will break the `DIR` view if the current dir is inside a working tree.
 
 ## Contributions
 
