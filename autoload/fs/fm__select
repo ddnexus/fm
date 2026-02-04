@@ -5,11 +5,9 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-fm__select() {
-	clipboard[mode]=$1
-	fm__reduce-items
-	clipboard[sources]=${(@F)items}
-	fm__write -tmp clipboard
-	print
-	fm__notify "$#items Items $clipboard[mode]"
-}
+clipboard[mode]=$1
+fm__reduce-items
+clipboard[sources]=${(@F)items}
+fm__write -tmp clipboard
+print
+fm__notify "$#items Items $clipboard[mode]"

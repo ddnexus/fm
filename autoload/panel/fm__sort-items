@@ -5,8 +5,6 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-fm__sort-items() {
-	if [[ -z $FM__CMD_SORT ]] { fm__notify "No FM__CMD_SORT command found"; return 0 }
-	sort=true
-	fm__notify "Items temporarily sorted by path"
-}
+if [[ -z $FM__CMD_SORT ]] { fm__notify "No FM__CMD_SORT command found"; return 0 }
+sort=true
+fm__notify "Items temporarily sorted by path"

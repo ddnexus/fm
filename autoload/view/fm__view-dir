@@ -5,17 +5,15 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-fm__view-dir() {
-	local -P dir=$1 cmd=$FM__CMD_LS
-	if $hidden; then
-		case $FM__CMD_LS in
-			eza*) cmd+=' -a' ;;
-			ls*)  cmd+=' -A' ;;
-		esac
-	fi
-	if [[ ${FM__CMD_LS%% *} == ls ]]; then
-		print -l -- ${"${(@f)$($=cmd $dir)}":1}
-	else
-		$=cmd $dir
-	fi
-}
+local -P dir=$1 cmd=$FM__CMD_LS
+if $hidden; then
+	case $FM__CMD_LS in
+		eza*) cmd+=' -a' ;;
+		ls*)  cmd+=' -A' ;;
+	esac
+fi
+if [[ ${FM__CMD_LS%% *} == ls ]]; then
+	print -l -- ${"${(@f)$($=cmd $dir)}":1}
+else
+	$=cmd $dir
+fi

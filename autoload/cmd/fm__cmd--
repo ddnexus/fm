@@ -5,6 +5,4 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-fm__cmd--() {
-	cd $fm__start_dir
-}
+cd $fm__start_dir
