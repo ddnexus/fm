@@ -5,16 +5,14 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-fm__toggle-hidden() {
-	if $hidden; then
-		hidden=false
-		fm__notify 'Hidden Visibility OFF'
-	else
-		hidden=true
-		fm__notify "Hidden Visibility ON"
-	fi
-	if [[ $view == GREP ]]; then
-		query=$rg_query
-		fm__set-grep
-	fi
-}
+if $hidden; then
+	hidden=false
+	fm__notify 'Hidden Visibility OFF'
+else
+	hidden=true
+	fm__notify "Hidden Visibility ON"
+fi
+if [[ $view == GREP ]]; then
+	query=$rg_query
+	fm__set-grep
+fi

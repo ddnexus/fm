@@ -5,10 +5,8 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-fm__view-grep() {
-	if [[ $sort == true && $FM__CMD_SORT ]]; then
-		LC_ALL=C $=FM__CMD_SORT < $FM__TMP/matches
-	else
-		cat $FM__TMP/matches
-	fi
-}
+if [[ $sort == true && $FM__CMD_SORT ]]; then
+	LC_ALL=C $=FM__CMD_SORT < $FM__TMP/matches
+else
+	cat $FM__TMP/matches
+fi

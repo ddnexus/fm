@@ -7,6 +7,6 @@
 
 setopt EXTENDED_GLOB
 
-local fnc dir=${fm__root:-$PWD}
-for fnc in $dir/autoload/**/^*.zwc(.); zcompile -Uz $fnc
-for fnc in $dir/preview/^*.zwc(.); zcompile -Uz $fnc
+local fnc dir=${fm__root:-${0:A:h}}
+for fnc in $dir/autoload/**/^*.zwc(.N); zcompile -Uz $fnc
+for fnc in $dir/preview/^*.zwc(.N); zcompile -Uz $fnc

@@ -5,9 +5,7 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-fm__mark() {
-	fm__reduce-items
-	targets=( $items )
-	fm__write -tmp targets
-	fm__notify "$#targets Targets marked"
-}
+fm__reduce-items
+targets=( $items )
+fm__write -tmp targets
+fm__notify "$#targets Targets marked"
