@@ -63,7 +63,7 @@ fm__command_keys=(
 	ctrl-z         # disable suspend
 )
 : ${FM__CMD_CAT:=$( fm__get-cmd 'bat -f --style=numbers --wrap=never' 'cat -n' )}
-: ${FM__CMD_LS:=$( fm__get-cmd 'eza -lF --color=always --group-directories-first' 'ls -lh --color --group-directories-first' )}
+: ${FM__CMD_LS:=$( fm__get-cmd 'eza -lF --color=always --icons=always --group-directories-first' 'ls -lh --color --group-directories-first' )}
 : ${FM__CMD_FIND:=$( fm__get-cmd fd find )}
 : ${FM__CMD_EDIT:=${EDITOR:-$( fm__get-cmd nano vim emacs vi )}}
 : ${FM__CMD_OPEN:=$( fm__get-cmd xdg-open open )}
@@ -88,18 +88,8 @@ fm__command_keys=(
 if [[ ! -d ${FM__DATA:=$HOME/.fm} ]] mkdir -p $FM__DATA &>/dev/null
 if [[ ! -d ${FM__TMP:=/tmp/fm} ]] mkdir -p $FM__TMP &>/dev/null
 
-local names=( boot dev etc home opt proc sys tmp usr var )
-for line in "${(@f)$($=FM__CMD_LS --color=never /)}"; do
-	if [[ $line == *-\>* ]] continue
-	if [[ $names[(r)${line##* }] ]]; then
-		fm__ls_fields=${=:-$(repeat $((${(w)#line} - 2)) print _) rest}
-		break
-	fi
-done
-
 typeset -gx \
 		fm__root \
-		fm__ls_fields \
 		FM__DATA \
 		FM__TMP \
 		FM__CMD_CAT \

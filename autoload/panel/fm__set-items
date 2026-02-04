@@ -5,18 +5,34 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-local -P line rest item
+local -P line item
 case $view in
 	DIR)
 		for line in $lines; do
-			read $=fm__ls_fields <<< ${(b)line}
-			item=${rest#* } # preserve initial space of name field
-			if [[ $line == l* ]]; then
-				until [[ $item != *\ -\>\ * || -L $item && -e $item ]]; do
-					item=${item% -> *}
-				done
-			fi
-			items+=${item:a}
+			line=${line//$'\e'\[[0-9;]#m/}
+			local i candidate found=false
+			for ((i=1; i<=${#line}; i++)); do
+				candidate=${line[i,-1]}
+				[[ -z $candidate ]] && continue
+				if [[ $line == l* ]]; then
+					local temp=$candidate
+					until [[ $temp != *\ -\>\ * || -L $temp && -e $temp ]]; do
+						temp=${temp% -> *}
+					done
+					if [[ -e $temp ]]; then
+						item=$temp
+						found=true
+						break
+					fi
+				else
+					if [[ -e $candidate ]]; then
+						item=$candidate
+						found=true
+						break
+					fi
+				fi
+			done
+			$found && items+=${item:a}
 		done
 		;;
 	FIND) items=( $lines:a         ) ;;
