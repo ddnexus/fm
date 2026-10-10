@@ -64,10 +64,10 @@ WORKDIR /home/$user
 COPY --chown=$user:$user .zshrc README ./
 
 RUN env TERM="${term:-xterm-256color}" zsh -isc "@zinit-scheduler burst" && \
-	echo '$HOME/.zinit/plugins/ddnexus---fm/launcher/fm.sh\n\
+	echo '. $HOME/.local/share/zinit/plugins/ddnexus---fm/launcher/fm.sh\n\
 	PS1="\[\033[01;32m\]\w \$\[\033[00m\] "' >> /home/$user/.bashrc && \
 	mkdir -p /home/$user/.config/fish && mkdir -p /home/$user/.config/fish/functions && \
-	echo 'source $HOME/.zinit/plugins/ddnexus---fm/launcher/fm.fish' >> /home/$user/.config/fish/config.fish && \
+	echo 'source $HOME/.local/share/zinit/plugins/ddnexus---fm/launcher/fm.fish' >> /home/$user/.config/fish/config.fish && \
 	echo 'function fish_prompt\n\
 	set_color --bold green; echo -n "$PWD > "\n\
 end' >> /home/$user/.config/fish/functions/fish_prompt.fish
