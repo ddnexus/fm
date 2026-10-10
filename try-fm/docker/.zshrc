@@ -54,10 +54,10 @@ bindkey "^[[H"    beginning-of-line
 bindkey "^[[F"    end-of-line
 
 
-############# exa #############
-export EXA_ICON_SPACING=2
-alias x='exa -l'
-alias xx='exa -laF --git'
+############# eza #############
+export EZA_ICON_SPACING=2
+alias x='eza -l'
+alias xx='eza -laF --git'
 
 
 ############# bat #############
