@@ -5,17 +5,17 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-local -P line item
+local -P line item i candidate temp found
 case $view in
 	DIR)
 		for line in $lines; do
 			line=${line//$'\e'\[[0-9;]#m/}
-			local i candidate found=false
+			found=false
 			for ((i=1; i<=${#line}; i++)); do
 				candidate=${line[i,-1]}
 				[[ -z $candidate ]] && continue
 				if [[ $line == l* ]]; then
-					local temp=$candidate
+					temp=$candidate
 					until [[ $temp != *\ -\>\ * || -L $temp && -e $temp ]]; do
 						temp=${temp% -> *}
 					done
