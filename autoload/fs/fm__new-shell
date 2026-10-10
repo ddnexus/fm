@@ -21,5 +21,5 @@ local -P res
 	fi
 } always {
 	res=$?
-	if [[ $res -gt 0 ]] fm-notify "New Shell Tool failed [ERROR $res]"
+	if [[ $res -gt 0 ]] fm__notify "New Shell Tool failed [ERROR $res]"
 }
