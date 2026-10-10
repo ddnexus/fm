@@ -42,7 +42,7 @@ You can try FM without installation using the `try-fm` docker image.
 
 In order to get the best experience with FM you should also install the following optional packages:
 
-- **`eza`**: Modern `ls` replacement with icons and better formatting (eza installation).
+- **`eza`**: Modern `ls` replacement with icons and better formatting (eza installation). FM needs version 0.15.0 or later; the icons need a Nerd Font in your terminal.
 - **`fd`**: Fast `find` replacement (fd installation).
 - **`bat`**: Syntax-highlighting `cat` clone (bat installation).
 
