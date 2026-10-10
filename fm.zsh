@@ -103,7 +103,7 @@ for file in \
 		favorites \
 		recent_dirs \
 		preview
-	[[ -f $file ]] || touch $FM__DATA/$file
+	[[ -f $FM__DATA/$file ]] || touch $FM__DATA/$file
 
 if [[ ! -s $FM__DATA/preview ]]; then
 	local -A preview=( [command-panel]=1 [command-menu]=1 [widget-panel]=1 [widget-menu]=1 )
@@ -115,7 +115,7 @@ for file in \
 		clipboard \
 		matches \
 		targets
-	[[ -f $file ]] || touch $FM__TMP/$file
+	[[ -f $FM__TMP/$file ]] || touch $FM__TMP/$file
 : > $FM__TMP/added_menu
 
 for file in \
