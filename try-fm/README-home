@@ -1,0 +1,8 @@
+This is the home dir of the try-fm session: it persists between sessions (reset it with `~/try-fm reset`).
+
+- Run `fm` here, press ctrl-space for the menu with the usage notes, ctrl-q to quit.
+- `playground` is a tree of files and dirs to try the fs commands (copy, paste, remove...) without risk.
+- `.zshrc` is where the FM__* variables go (press ctrl-h in FM to see the hidden files, ctrl-e to edit).
+- Your own filesystem is mounted at /<your-hostname> (unless you started with --no-mount): changes made there are real.
+- `bash` and `fish` are installed with the FM launchers: type one of them and run `fm` there too.
+- `sudo` asks for the password `fm`.

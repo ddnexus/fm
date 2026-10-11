@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Test suite: `tests/run` (headless tests and tmux-driven TUI tests), `tests/run -c` runs it in the try-fm container
+- try-fm: rebuilt on Fedora with the distro packages only, FM copied from the repo, works with docker and podman, `test` subcommand, playground dir
+- Fixed: broken symlinks could not be selected (DIR view), pasted or linked
+- Fixed: favorites with a space in the path were written as an invalid `hash -d` line
+- Fixed: broken favorites were never removed from the favorites file
+- Fixed: `esc` and `ctrl-c` printed an FM ERROR and returned 130 instead of quitting
+- Fixed: the bash and fish launchers got the `cd` target polluted by sourcing fm.zsh twice, and failed on paths with spaces
+- Fixed: `fm env` lacked the widget keys, `fm help` lacked FM__CMD_XCLIP, the PICK notes lacked their key variable, typos
 - Widget: fixed the empty DIR view with eza (it read the paths from the widget's stdin)
 - Widget: works like a completion: starts from the word at the cursor (dir part and query) and replaces it with the picked paths, in the shorter form between relative to the prompt dir and abbreviated with the shell named dirs (~, ~favorite), quoted, dirs with a trailing /
 - Widget: the panel output goes to the terminal, so dialogs work; FAV_ADD and FAV_ADD_WD available (with the automatic name)

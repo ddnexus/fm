@@ -28,7 +28,7 @@ FM has all the features that you would expect from a CLI but also from a Desktop
 
 ## Try it
 
-You can try FM without installation using the `try-fm` docker image.
+You can try FM without installing it, in a container with every tool ready (docker or podman): see [try-fm](try-fm/README.md).
 
 ## Installation
 

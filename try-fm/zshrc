@@ -1,0 +1,19 @@
+#!/usr/bin/env zsh
+
+# ~/.zshrc of the try-fm session. Edit it to experiment with the FM__* variables (see `fm help`):
+# it persists between sessions, `~/try-fm reset` restores it.
+
+setopt AUTO_CD
+bindkey -e
+export EDITOR=nano
+PROMPT='%F{green}%B%~ %#%b%f '
+HISTFILE=~/.zsh_history HISTSIZE=1000 SAVEHIST=1000
+
+# FM__* variables go before sourcing fm.zsh, e.g.
+# FM__KEY_QUIT=f10
+
+source /opt/fm/fm.zsh
+alias f=fm
+
+# examples of tools added to the FM Menu (fm add ...): the calls go after sourcing fm.zsh
+source /opt/fm/added-tools-examples

@@ -1,80 +1,77 @@
 # Try FM without installing it
 
-You can easily try FM on your own filesystem without the need to install it, i.e. running it from a local docker container.
+`try-fm` runs FM in a container, with every tool it uses already installed. Nothing is installed on your system: the image and the session home live in the container engine, and one command removes them.
 
-All the packages required will be installed and relegated in a docker image and a docker volume. The installation will not change your system at all, and when you are done with trying it, you can purge everything with a single command.
+The same image runs the FM test suite (see below).
 
 ## Prerequisites
 
-- Ensure to have [docker](https://www.docker.com) and `curl` installed on your system
-- Linux systems work out of the box, but - on systems that use the "Docker Desktop" application (e.g. MacOS) - you should check whether the local root `/` is among the shared paths. If it is not the case, add it. (`try-fm` mounts it in order to make you try FM as it was installed in your own system: see below for details)
-- If you have unsolvable problems setting up your "Docker Desktop" as indicated, you can start `try-fm` with one of the following mount restrictions:
-  - `~/try-fm start --home-mount` in order to mount only your `HOME` dir (which should work on any system)
-  - `~/try-fm start --no-mount` in order to skip the mounting altogether. Use this option only if nothing else works or if you are paranoid about messing up your own filesystem by mistake. However keep in mind that your user experience will be limited to the container filesystem.
+- [docker](https://www.docker.com) or [podman](https://podman.io) (rootless podman works)
+- `curl`, to download the script
+- A terminal with a [Nerd Font](https://www.nerdfonts.com), if you want the file icons (FM lists the files with `eza --icons`)
 
-## Quick Start
+## Quick start
 
-- Copy, paste and enter the following command into your terminal in order to download the `try-fm` command in your `HOME` dir:
+Download the script in your home dir and run it:
 
 ```sh
 sh -c "curl -fsSL https://raw.githubusercontent.com/ddnexus/fm/master/try-fm/try-fm -o ~/try-fm; chmod +x ~/try-fm; ~/try-fm"
 ```
 
-- Read the small usage message and start it with `~/try-fm start` or `~/try-fm start ...` if needed (see the above docker prerequisites)
-- Notice that the first run will also automatically build the docker image and setup the docker container HOME (that will install a lot of stuff in the docker space and you can purge it completely with `~/try-fm purge` when you are done)
-- When you are in the docker session (green prompt) start FM by running `fm` there.
+Then start the session (the first start builds the image, a few minutes):
 
-__Notice__: The default shell in the docker session is `zsh`. If you want to experiment with `bash` or `fish` just enter it in the prompt and `fm` will work as well.
+```sh
+~/try-fm start
+```
 
-## Warnings
+In the session (green prompt): run `fm`, press `ctrl-space` for the menu with the usage notes, `ctrl-q` to quit. Press `alt-f` twice while typing a command to get the widget. Type `bash` or `fish` to try FM from those shells. Exit the session with `exit`.
 
-1. DO NOT SHARE THE BUILT IMAGE! The `try-fm` docker image that you build on your system is meant to be private and used locally. It contains information about your user that you may not want to share with others (notably: _username_, _userid_, _groupid_, and the _password_ you created). Just keep it local and don't push it anywhere or share it with anyone.
+## What is in the session
 
-2. In order to make you try FM as it was installed in your own system, the `try-fm` script will usually bind mount your own filesystem to the docker container. Notice that as for any mounted disk that you can write to, __all the changes__ that you may make to your own filesystem from the docker session and from the FM TUI __will be made to your real files__! So don't delete anything important!
+- FM installed in `/opt/fm`, sourced by `~/.zshrc`: edit that file to try the `FM__*` variables (`fm help` lists them). The home dir persists between sessions.
+- `~/playground`: a tree of files and dirs with awkward names, to try the fs commands (copy, paste, rename, remove...) without risk.
+- `bash` and `fish` with the FM launchers.
+- `sudo`, with the password `fm`, to try the automatic sudo of the fs commands on protected items.
+- Your own filesystem, mounted at `/<your-hostname>` (see the mount options below). **The changes made there are real.**
 
-## Filesystem info
+## Commands
 
-In order to allow you to experiment with FM, the `HOME` dir of the docker session (`~`) will persist your changes, so you may want to customize `~/.zshrc` or other dot-files and experiment with it.
+```
+~/try-fm start|s          Build the image if needed and start the session...
+   [--root-mount|-r]  ...with your / mounted at /<hostname> (default)
+    --home-mount|-h   ...with your home dir mounted at /<hostname>/home/<you>
+      --no-mount|-n   ...with nothing of your filesystem mounted
+~/try-fm test|t [ARGS]    Run the FM test suite in the container (ARGS: see tests/run -h)
+~/try-fm build|b          Build the image again (e.g. to update FM)
+~/try-fm reset|r          Remove the session HOME: the next start recreates it
+~/try-fm purge|p          Remove the image and the session HOME
+~/try-fm usage|u          Show this screen
+```
 
-Everything else outside your mounted host filesystem and the docker `~` can be temporarily modified, but will get restored in the next docker session (i.e. the next time you will start it `~/try-fm start`).
+`TRY_FM_ENGINE=docker|podman` forces the engine (default: docker when it is running, else podman). `TRY_FM_CONTEXT` sets the build context (default: the `master` branch on GitHub; a clone of the repo when the script runs from `try-fm/try-fm` inside it).
 
-So to recap the behavior of the filesystem in the docker session:
+## Testing FM
 
-- The mounted FS is your own writable filesystem, so don't do anything stupid with it :)
-- `~` is the docker container HOME and is persisted between sessions, so use it to experiment with dot-files. You can reset it with `~/try-fm reset` at any time
-- everything else will get restored the next session (i.e. the next time you will start it with `~/try-fm start`)
+The FM test suite (`tests/`) runs on your machine with `tests/run`, and in the container, where every tool is installed and nothing of yours is at stake, with:
 
-## Purge
+```sh
+tests/run -c         # from a clone: the working copy is mounted into the container
+~/try-fm test        # standalone: the copy of FM in the image
+```
 
-Just run `~/try-fm purge` to remove anything related to 'try-fm' and reclaim the disk space used by docker.
+Both accept the `tests/run` options and patterns, e.g. `tests/run -c -v items` runs the `items` tests verbosely.
 
-## Known limitations of the docker session
+## Known limitations of the session
 
-A few menus that __work perfectly in the FM installed version__ don't work, or are limited, in the `try-fm` docker session:
-
-- `Cycle Preview Mode` -> `ctrl-p` does not immediately refresh the preview after the command: you may have to press it twice
-- `Open Selected Items` -> `ctrl-o` is meant to open files and dirs in your desktop and it cannot work because the docker image does not offer a desktop environment
-- `Open New Shell Here` -> `ctrl-n` if you are not in a `tmux` session, it may open a new terminal session in your host instead of opening it in the docker session
-- `Switch to FIND View` -> `alt-f` on MacOS is very slow when performed in docker bind mounted paths (i.e. your mounted filesystem)
-- `Copy Selected Path` -> `ctrl-t` may not work in non-linux hosts
-- The existing symbolic links to absolute paths pointing to your filesystem are broken (your filesystem is mounted in a different container path)
+- `Open Selected Items` (`ctrl-o`) and `Copy Selected Paths` (`ctrl-t`) need a desktop: the container has none.
+- `Open New Shell Here` (`ctrl-n`) opens the new shell in the same terminal; in a `tmux` session (installed) it opens a tmux window.
+- With rootless podman, the files of your filesystem that belong to other users appear as owned by `nobody`, and `sudo` in the session cannot change them (it works on the container's own files).
+- Symbolic links of your filesystem pointing to absolute paths are broken in the session, since your filesystem is mounted under `/<hostname>`.
 
 ## Q&A
 
-### 1. The docker build process fails. What's wrong?
+**The alt key prints a character instead of running the shortcut.** Your terminal must send `alt` as the meta key (`esc` prefix): MacOS Terminal: `Preferences > Profiles > Keyboard > Use Option as Meta key`; iTerm: `Preferences > Profiles > Keyboard > Option Key > Esc+`; Xterm: `echo 'XTerm*metaSendsEscape: true' >> ~/.Xresources`. Other terminals: see [Meta Key Problems](https://www.emacswiki.org/emacs/MetaKeyProblems).
 
-While running the `~/try-fm start` for the first time, you may find a `Failed to fetch http://deb.debian.org/... Temporary failure resolving 'deb.debian.org'` in the output. That is your host or your docker DNS problem, and it's not related to `try-fm`. [Here is the solution](https://stackoverflow.com/questions/51034120/docker-could-not-resolve-deb-debian-org)
+**The build fails resolving a host name.** That is the DNS of your container engine, not `try-fm`: [here is the usual solution for docker](https://stackoverflow.com/questions/51034120/docker-could-not-resolve-deb-debian-org).
 
-### 2. The alt key does not work in my terminal app. How can I fix it?
-
-FM uses the `alt` key as a default shortcut modifier in many of its menu items. If you get some weird character printed in the filter area instead of getting the action related to the shortcut, then you need to enable a specific preference in your terminal app. Here are a few examples:
-
-- MacOS Terminal: `Preferences`>`Profiles`>`Keyboard`> `Use Option as Meta key`
-- MacOS iTerm: `Preferences`>`Profiles`>`Keyboard`>`Option Key`>`Esc+`
-- Xterm: `echo 'XTerm*metaSendsEscape: true' >> ~/.Xresources`
-
-For different apps and platforms, please read: [Meta Key Problems](https://www.emacswiki.org/emacs/MetaKeyProblems).
-
-### 3. How can I remember all that shortcuts?
-
-Quickly toggle the FM Menu ON/OFF with `ctrl-space` in order to peek the shortcut that you need. You can also filter the list by typing some letter if that helps. Then you can select the menu (with arrows keys or mouse) or press its shortcut right from the Menu Panel itself or go back to the FM Panel and press it from there. When you will remember everything it will be super fast.
+**How do I remember the shortcuts?** Toggle the menu with `ctrl-space`: it shows every action with its shortcut, filterable by typing; pick one with enter, or press its shortcut right there.

@@ -1,214 +1,166 @@
 #!/usr/bin/env sh
 
-# Copyright (c) 2021 Domizio Demichelis
+# Copyright (c) 2021-2026 Domizio Demichelis
 # Released under GNU3 license
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
+# try-fm: FM in a container (docker or podman), to try it without installing it or to run its test suite.
+# Standalone:  sh -c "curl -fsSL https://raw.githubusercontent.com/ddnexus/fm/master/try-fm/try-fm -o ~/try-fm; chmod +x ~/try-fm; ~/try-fm"
+# From a clone of the repo: try-fm/try-fm (the image is built from the working copy, and `test` mounts it)
+
 set -e
 
-if [ $(id -u) = 0 ]; then
-   echo 'This script is not supposed to be run as root!'
-   exit
+name=try-fm
+image=$name
+volume=${name}_home
+root="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
+if [ -f "$root/../fm.zsh" ]; then
+	repo="$(cd -P -- "$root/.." && pwd -P)"
+	context=${TRY_FM_CONTEXT:-$repo}
+else
+	repo=''
+	context=${TRY_FM_CONTEXT:-https://github.com/ddnexus/fm.git#master}
 fi
 
-root="$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")"
-
-fm_name='try-fm'
-context=${TRY_FM_CONTEXT:-https://github.com/ddnexus/fm.git#master:try-fm/docker}
-
-fm_image="$fm_name"
-fm_vol='try_fm_user_home'
-zsh_image='zshusers/zsh:5.8'
-
-script_file="$root/$fm_name"
-vol_file="$root/.${fm_name}_vol"
-zsh_file="$root/.${fm_name}_zsh"
-
-check_docker() {
-	if ! docker info 1>/dev/null 2>&1; then
-		echo "Docker is not running!"
-		exit
+engine=${TRY_FM_ENGINE:-}
+if [ -z "$engine" ]; then
+	if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+		engine=docker
+	elif command -v podman >/dev/null 2>&1; then
+		engine=podman
+	else
+		echo "Neither docker nor podman is available (install one of them, or set TRY_FM_ENGINE)"
+		exit 1
 	fi
+fi
+run_opts=''
+case $engine in
+	*podman*) run_opts='--userns=keep-id --security-opt label=disable' ;; # rootless: the host files stay owned by the user; no SELinux relabeling
+esac
+
+has_image()  { $engine image inspect $image >/dev/null 2>&1; }
+has_volume() { $engine volume inspect $volume >/dev/null 2>&1; }
+
+build() {
+	echo "Building the '$image' image with $engine from $context (a few minutes the first time)..."
+	$engine build \
+			--tag $image \
+			--file try-fm/Dockerfile \
+			--build-arg user="$(id -un)" \
+			--build-arg uid="$(id -u)" \
+			--build-arg gid="$(id -g)" \
+			"$context"
+	echo "The '$image' image is built"
 }
 
-case "$1" in
+case "${1:-}" in
 	start|s)
-		check_docker
-
-		# try-fm not present
-		if ! docker image inspect $fm_image 1>/dev/null 2>&1; then
-
-			# prevent removing the zsh_image when it was already present before fm-try
-			if docker image inspect $zsh_image 1>/dev/null 2>&1; then
-				touch "$zsh_file"
-			fi
-
-			cat <<-BUILDING
-
-				================================= BUILD IMAGE =================================
-				IMPORTANT: This installation will not change your system in any way.
-				All the packages/plugins will be installed and relegated in the docker space.
-				This environment has also a lot of not required stuff that is very cool to try.
-				You can completely purge everything with '~/$fm_name purge' when you are done.
-				===============================================================================
-			BUILDING
-			read -p "Press enter to start... " input
-
-			DOCKER_BUILDKIT=0 docker build \
-					--tag $fm_image \
-					--build-arg user="$(id -un)" \
-					--build-arg uid=$(id -u) \
-					--build-arg gid=$(id -g) \
-					--build-arg term="$TERM" \
-					$context
-
-			echo "The '$fm_name' docker image has been built!"
-		fi
-
-		# end building / start running
-
-		cat <<-CAVEATS
-
-			================================= CAVEATS =====================================
-			* FM uses the alt/option key as meta character in many shortcuts. If the alt
-			  key does not work as a shortcut modifier, then read the solution in the Q&A:
-			  https://github.com/ddnexus/fm/tree/master/try-fm#Q&A
-		CAVEATS
-
-		case "$(uname -s)" in
-			Linux*)
-				x11_mount="--env DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:rw"
-				;;
-			Darwin*)
-				cat <<-CAVEATS
-				* The FIND view (alt-f) may be very slow in docker bind mounted paths:
-				  that will work super fast when FM will be installed and run directly
-				CAVEATS
-				;;
-			CYGWIN*)  : ;;
-			MINGW*)   : ;;
-			*)        : ;;
-		esac
-
-		case "$2" in
+		has_image || build
+		case "${2:-}" in
 			--root-mount|-r|'')
-				warning="* Your own filesystem will be writable and mounted at /$(hostname)
-* Your original home dir will be writable and available at /$(hostname)$HOME"
-				host_mount="--volume /:/$(hostname) --workdir /$(hostname)$HOME"
+				mount_info="* Your filesystem is mounted at /$(hostname): the changes made there are real"
+				mount_opts="--volume /:/$(hostname) --workdir /$(hostname)$HOME"
 				;;
 			--home-mount|-h)
-				warning="* Your original home dir will be writable and available at /$(hostname)-$USER"
-				host_mount="--volume $HOME:/$(hostname)-$USER --workdir /$(hostname)-$USER"
+				mount_info="* Your home dir is mounted at /$(hostname)$HOME: the changes made there are real"
+				mount_opts="--volume $HOME:/$(hostname)$HOME --workdir /$(hostname)$HOME"
 				;;
 			--no-mount|-n)
-				warning=''
-				host_mount=''
+				mount_info="* Nothing of your filesystem is mounted: experiment freely"
+				mount_opts=''
 				;;
 			*)
 				echo "The option '$2' is not supported"
-				exit
+				exit 1
 				;;
 		esac
-
 		cat <<-INFO
 
-			============================== IMPORTANT INFO =================================
-			Starting a zsh shell session in the '$fm_name' docker container...
-			* Session Login: $USER   Password: fm
-			* The HOME in the docker container will be /home/$USER
-			* Edit the /home/$USER/.zshrc to experiment with it
-			* Your changes in /home/$USER will survive rebooting
-			* You can reset /home/$USER by running '~/$fm_name reset' after exiting
-			  the docker session
-			* You can reclaim your disk space by removing all the docker objects related
-			  to '$fm_name' by running '~/$fm_name purge' after exiting the docker session
-
-			=============================== BASIC USAGE ===================================
-			* Run the fm command to start, then press 'ctrl-space' to get the menu with
-			  the inline documentation.
-			* Quit FM or the widget with 'ctrl-q', 'ctrl-c' or 'esc'
-			* Exit from the docker session with the usual 'exit'
-			* You can get the widget by pressing 'alt-f' twice (rapidly) in the zsh prompt
+			================================ TRY-FM SESSION ================================
+			* Run 'fm' to start FM, ctrl-space for the menu with the usage notes, ctrl-q to quit
+			* The widget: press alt-f twice while typing a command in the zsh prompt
+			* bash and fish are installed with the FM launchers: 'fm' works there too
+			* ~/playground is a tree of files to try the fs commands without risk
+			* ~ persists between sessions, '~/$name reset' restores it; the sudo password is 'fm'
+			$mount_info
+			* Exit the session with 'exit'
+			================================================================================
 		INFO
-
-		if [ -n "$warning" ]; then
-			cat <<-WARNING
-
-				%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% !!! WARNING !!! %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-				FM and this demo is safe and requires you to confirm deletions and enter the
-				sudo password for protected items, however:
-				$warning
-				Don't do anything stupid with your own files.
-				If you want to try deletions, create dummy files first ;)
-				%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			WARNING
+		if ! has_volume && [ -n "$mount_opts" ]; then
+			printf 'Press enter to confirm that you have read the above... '
+			read -r _
 		fi
+		# shellcheck disable=SC2086
+		exec $engine run \
+				--name $name \
+				--hostname $name \
+				--interactive --tty --rm \
+				--env TERM="${TERM:-xterm-256color}" \
+				--volume $volume:/home/"$(id -un)" \
+				$run_opts \
+				$mount_opts \
+				$image
+		;;
 
-		if ! [ -e "$vol_file" ]; then # confirm only once
-			echo
-			read -p "Press enter to confirm that you have read and understood the above messages... " input
-			touch "$vol_file"
+	test|t)
+		shift
+		has_image || build
+		if [ -n "$repo" ]; then
+			mount_opts="--volume $repo:/opt/fm:ro" # the working copy, instead of the copy in the image
+		else
+			mount_opts=''
 		fi
+		# shellcheck disable=SC2086
+		exec $engine run --rm $run_opts $mount_opts --env TERM="${TERM:-xterm-256color}" $image zsh /opt/fm/tests/run "$@"
+		;;
 
-		docker run \
-				--name $fm_name \
-				--volume $fm_vol:/home/$USER \
-				--interactive \
-				--tty \
-				--rm \
-				$x11_mount \
-				$host_mount \
-				$fm_image
-				;;
+	build|b)
+		build
+		;;
 
 	reset|r)
-		check_docker
-		read -p "Reset HOME and plugins? (y/n)> " input
-		if [ "$input" = y ] || [ "$input" = Y ]; then
-			echo "Removing the '$fm_vol' docker volume..."
-			docker volume rm $fm_vol
-			rm -f "$vol_file"
-			echo "Reset done. You can start the '$fm_name'"
-		fi
+		printf "Remove the '%s' volume (the HOME of the session)? (y/n) " $volume
+		read -r input
+		case "$input" in
+			y|Y) $engine volume rm $volume && echo "Done: the next start recreates it" ;;
+		esac
 		;;
 
 	purge|p)
-		check_docker
-		read -p "Purge everything related to '$fm_name' from your system? (y/n)> " input
-		if [ "$input" = y ] || [ "$input" = Y ]; then
-			if [ -e "$zsh_file" ]; then
-				docker rmi $fm_image
-			else
-				docker rmi $fm_image $zsh_image
-			fi
-			docker volume rm $fm_vol
-			if [ "$(printf '%-.1s\n' "$context")" = '/' ]; then
-				rm -fv "$vol_file"
-			else
-				rm -fv "$script_file" "$vol_file" "$zsh_file"
-			fi
-			echo "'$fm_name' has been completely purged from your system!"
-		fi
+		printf "Remove the '%s' image and volume? (y/n) " $name
+		read -r input
+		case "$input" in
+			y|Y)
+				has_volume && $engine volume rm $volume
+				has_image && $engine rmi $image
+				echo "Done. The base image fedora:44 was kept: remove it with '$engine rmi fedora:44' if you do not use it."
+				[ -z "$repo" ] && echo "Remove this script with 'rm $root/$name'"
+				;;
+		esac
 		;;
 
 	usage|help|u|h|'')
 		cat <<-USAGE
 
-			==================================== USAGE ====================================
-			~/$fm_name start|s    Setup and start the docker session...
-			 [--root-mount|-r]  ...with default mount of / at /$(hostname)
-			  --home-mount|-m   ...with mount of $HOME at /$(hostname)-$USER only
-			    --no-mount|-n   ...with no mount
+			==================================== USAGE =====================================
+			$0 start|s          Build the image if needed and start the session...
+			   [--root-mount|-r]  ...with your / mounted at /$(hostname) (default)
+			    --home-mount|-h   ...with your home dir mounted at /$(hostname)$HOME
+			      --no-mount|-n   ...with nothing of your filesystem mounted
+			$0 test|t [ARGS]    Run the FM test suite in the container (ARGS: see tests/run -h)
+			$0 build|b          Build the image again (e.g. to update FM)
+			$0 reset|r          Remove the session HOME: the next start recreates it
+			$0 purge|p          Remove the image and the session HOME
+			$0 usage|u          Show this screen
 
-			~/$fm_name reset|r    Reset so the next start will restore HOME and plugins
-			~/$fm_name purge|p    Purge everything related to '$fm_name' from your system
-			~/$fm_name usage|u    Show this screen
-			===============================================================================
+			Engine: $engine (TRY_FM_ENGINE overrides). Build context: $context (TRY_FM_CONTEXT overrides)
+			================================================================================
 		USAGE
 		;;
 
 	*)
-		echo "The subcommand '$1' is not supported!"
+		echo "The subcommand '$1' is not supported"
+		exit 1
 		;;
 esac
