@@ -91,11 +91,13 @@ case "${1:-}" in
 			printf 'Press enter to confirm that you have read the above... '
 			read -r _
 		fi
+		# --detach-keys='': the default ctrl-p,ctrl-q sequence makes the engine hold every ctrl-p (the FM preview key)
 		# shellcheck disable=SC2086
 		exec $engine run \
 				--name $name \
 				--hostname $name \
 				--interactive --tty --rm \
+				--detach-keys='' \
 				--env TERM="${TERM:-xterm-256color}" \
 				--volume $volume:/home/"$(id -un)" \
 				$run_opts \

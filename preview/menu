@@ -17,7 +17,6 @@ local e=${(%):-%f}
 
 if [[ $TRY_FM ]]; then
 	local caveats=${(%):-$'\n'%F{red}COMMAND NOT AVAILABLE OR LIMITED IN THE TRY-FM SESSION%f}
-	local preview_caveats=${(%):-$'\n'%F{red}Use ctrl-p and ctrl-r to refresh properly%f}
 fi
 
 local var id title key
@@ -113,7 +112,7 @@ case $id in
 		;;
 	PREVIEW)
 		cat <<-notes
-			Cycle the Preview Window mode in the FM Panel or Menu Panel.$caveats$preview_caveats
+			Cycle the Preview Window mode in the FM Panel or Menu Panel.
 
 			There are 3 default modes in the FM__PREVIEW_MODES array that basically set the preview on the right, bottom or hidden.
 			Cycling between them may be useful to reveal long paths hidden below it, adapt it to the layout of your window and/or your own preference.

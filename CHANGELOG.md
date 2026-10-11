@@ -14,6 +14,7 @@
 - The query is reset after creating, renaming, pasting and linking, so the new items are visible
 - Edit and the execute bit switch skip the broken links (no sudo prompt for a dangling link)
 - `FM__CMD_SORT` default is `sort -fb`: with `-i` the non-ASCII bytes were ignored in the C locale
+- try-fm: `ctrl-p` works at the first press (the engine's detach key sequence is disabled)
 - Widget: fixed the empty DIR view with eza (it read the paths from the widget's stdin)
 - Widget: works like a completion: starts from the word at the cursor (dir part and query) and replaces it with the picked paths, in the shorter form between relative to the prompt dir and abbreviated with the shell named dirs (~, ~favorite), quoted, dirs with a trailing /
 - Widget: the panel output goes to the terminal, so dialogs work; FAV_ADD and FAV_ADD_WD available (with the automatic name)
