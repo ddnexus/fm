@@ -16,10 +16,10 @@ case $view in
 				[[ -z $candidate ]] && continue
 				if [[ $line == l* ]]; then
 					temp=$candidate
-					until [[ $temp != *\ -\>\ * || -L $temp && -e $temp ]]; do
+					until [[ $temp != *\ -\>\ * || -L $temp ]]; do
 						temp=${temp% -> *}
 					done
-					if [[ -e $temp ]]; then
+					if [[ -e $temp || -L $temp ]]; then # -L: broken links are items too
 						item=$temp
 						found=true
 						break

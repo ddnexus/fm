@@ -16,14 +16,14 @@ fm__open-dialog -green 'Create Links for Targets' targets
 		print
 		if [[ ! -w $PWD ]] sudo=$FM__CMD_SUDO
 		for target in $targets; do
-			if [[ ! -e $target ]] continue
+			if [[ ! -e $target && ! -L $target ]] continue # -L: broken links are linked too
 			name=$target:t && fm__dest-name 'linked'
 			$=sudo ln -s $target ./$name
 			((num+=1))
 		done
 		if [[ $num -gt 0 ]] view=$fs_view
 	else
-		fm__print -yellow '\nSkippeed!'
+		fm__print -yellow '\nSkipped!'
 	fi
 } always {
 	fm__close-dialog

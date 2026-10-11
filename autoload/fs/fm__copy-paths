@@ -6,7 +6,7 @@
 
 
 local -P res
-if [[ -z $FM__CMD_XCLIP ]] { fm__notify 'No FM__CMD_XPLIP command found'; return 0 }
+if [[ -z $FM__CMD_XCLIP ]] { fm__notify 'No FM__CMD_XCLIP command found'; return 0 }
 print -n -- ${(@qqq)items} | $=FM__CMD_XCLIP
 res=$?
 if [[ $res -gt 0 ]]; then

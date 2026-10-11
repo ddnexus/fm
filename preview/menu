@@ -679,6 +679,8 @@ case $id in
 			The widget starts from the word at the cursor: its dir part (~, ~favorite and absolute dirs included) is the start dir, the rest is the initial query. E.g. after "vim src/fo" the widget opens in src with the query "fo".
 
 			You may want to enable the AUTO_CD zsh option in order to get zsh to cd automatically.
+
+			$details
 		notes
 		;;
 	PICK_WD)
@@ -686,6 +688,8 @@ case $id in
 			This menu picks the current Working Dir, closes the widget and automatically places it in the zsh prompt, replacing the word at the cursor. The path is "." for the prompt dir itself, otherwise the shorter form between the path relative to the prompt dir and the path abbreviated with the shell named dirs (~, ~favorite, ...), quoted for the shell.
 
 			You may want to enable the AUTO_CD zsh option in order to get cd into it automatically.
+
+			$details
 		notes
 		;;
 	-added)

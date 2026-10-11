@@ -23,7 +23,9 @@ fm__view-${view:l} |
 			$@ |
 		local lines=( "${(@f)$(</dev/stdin)}" )
 
-res=$?; if [[ $res -gt 1 && $res -ne 141 ]] return $res # 1 fzf no match; 141 list pipe interrupted with fm command
+res=$?
+if [[ $res -eq 130 ]] return 0                       # esc/ctrl-c in fzf: quit like FM__KEY_QUIT
+if [[ $res -gt 1 && $res -ne 141 ]] return $res      # 1 fzf no match; 141 list pipe interrupted with fm command
 query=$lines[1]
 key=$lines[2]
 lines=( ${lines:2} )

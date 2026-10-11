@@ -17,7 +17,7 @@ fm__open-dialog -green 'Paste Items' sources
 		print
 		if [[ ! -w $PWD ]] { dest_sudo=$FM__CMD_SUDO }
 		for source in $sources; do
-			if [[ ! -e $source ]] continue
+			if [[ ! -e $source && ! -L $source ]] continue # -L: broken links are pasted too
 			name=$source:t && fm__dest-name 'pasted'
 			case $clipboard[mode] in
 				copied)
@@ -43,7 +43,7 @@ fm__open-dialog -green 'Paste Items' sources
 			view=$fs_view
 		fi
 	else
-		fm__print -yellow '\nSkippeed!'
+		fm__print -yellow '\nSkipped!'
 	fi
 } always {
 	fm__close-dialog

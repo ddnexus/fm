@@ -49,6 +49,7 @@ cat <<-HELP
 	    FM__CMD_RIPGREP       Ripgrep command used for grep
 	    FM__CMD_TERMINAL      New terminal session command (when no TMUX session found)
 	    FM__CMD_SHELL         New shell command (when no FM__CMD_TERMINAL found) (*$SHELL)
+	    FM__CMD_XCLIP         Clipboard command for copying the paths (support: xclip|xsel)
 	    FM__CMD_SUDO          Sudo command (can be disabled with "")
 	    FM__CMD_STAT          Stat command or equivalent (for unhandled binary files preview)
 	    FM__CMD_SORT          Sort command

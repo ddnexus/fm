@@ -18,7 +18,7 @@ fm__open-dialog -red 'Remove Selected Favorites' fav_names
 			line_numbers+=$ln
 			fm__print -red '\nRemove...'
 		else
-			fm__print -yellow '\nSkippeed!'
+			fm__print -yellow '\nSkipped!'
 		fi
 	done
 	num=$#line_numbers

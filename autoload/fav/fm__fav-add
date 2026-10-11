@@ -13,7 +13,7 @@ fm__open-dialog -green 'Add Selected Favorites' list
 	for item in $list; do
 		name=$item:t && fm__fav-accept-name -green
 		if [[ -z $name ]] { fm__print -yellow 'Skipped!' ; continue }
-		print "hash -d ${name}=${(q)item}" >> $FM__DATA/favorites
+		print -r -- "hash -d ${name}=${(q)item}" >> $FM__DATA/favorites
 		((num+=1))
 		fm__print -green 'Added!'
 	done

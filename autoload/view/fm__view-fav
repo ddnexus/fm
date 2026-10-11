@@ -5,28 +5,28 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-local -P fav_lines=("${(@f)$(<$FM__DATA/favorites)}") line length max_length name fav_path ln=1 broken=()
+local -P fav_lines=("${(@f)$(<$FM__DATA/favorites)}") line length max_length name fav_path ln=1 out=() broken=()
 
 for line in $fav_lines; do
 	length=${#${line:8}%%=*}
 	if [[ $length -gt $max_length ]] max_length=$length
 done
-for line in $fav_lines; do
+for line in $fav_lines; do # no pipeline here: broken must be set in this shell
 	line=${line:8}
-	name=${line%%=*}; fav_path=${line#*=}
+	name=${line%%=*}; fav_path=${(Q)${line#*=}} # the path is stored quoted for hash -d
 	if  [[ -d $fav_path ]]; then
-		fm__print -blue "$ln  ${(r:$max_length:)name}  $fav_path"
+		out+=$(fm__print -blue "$ln  ${(r:$max_length:)name}  $fav_path")
 	elif [[ -f $fav_path ]]; then
-		print -- "$ln  ${(r:$max_length:)name}  $fav_path"
+		out+="$ln  ${(r:$max_length:)name}  $fav_path"
 	else
 		broken+=$ln
 	fi
 	((ln+=1))
-done |
-	if [[ $sort == true && $FM__CMD_SORT ]]; then
-		LC_ALL=C $=FM__CMD_SORT -k3
-	else
-		>&1
-	fi
+done
+if [[ $sort == true && $FM__CMD_SORT ]]; then
+	print -l -- $out | LC_ALL=C $=FM__CMD_SORT -k3
+elif [[ $#out -gt 0 ]]; then
+	print -l -- $out
+fi
 
 fm__fav-rm $broken

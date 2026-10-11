@@ -23,8 +23,11 @@ fm__start_dir=$PWD
 } always {
 	local -P res=$?
 	tput rmcup
-	if [[ $TRY_BLOCK_INTERRUPT -eq 0 && $res -gt 0 ]]; then
+	if [[ $TRY_BLOCK_INTERRUPT -gt 0 ]]; then
+		TRY_BLOCK_INTERRUPT=0 # ctrl-c quits FM like FM__KEY_QUIT, without interrupting the shell
+	elif [[ $res -gt 0 ]]; then
 		fm__print -red "\n\n[FM ERROR] Error $res returned from FM Panel!"
 		return $res
 	fi
 }
+return 0

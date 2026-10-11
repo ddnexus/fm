@@ -7,5 +7,5 @@
 fm() {
 	test "$1" = '-' && cd "$fm__start_dir" && return 0
 	fm__start_dir="$PWD"
-	cd $(zsh -i -c '. $fm__root/fm.zsh; fm $@ >/dev/tty; print -- ${(q)PWD}')
+	cd "$(zsh -i -c 'type fm >/dev/null || . $fm__root/fm.zsh; fm "$@" >/dev/tty; print -r -- $PWD' fm "$@")"
 }

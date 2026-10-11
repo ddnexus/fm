@@ -19,7 +19,7 @@ fm__open-dialog -red 'Remove Selected Items' items
 			((num+=1))
 			fm__print -red 'Removed!'
 		else
-			fm__print -yellow '\nSkippeed!'
+			fm__print -yellow '\nSkipped!'
 			continue
 		fi
 	done

@@ -98,25 +98,27 @@ typeset -gx \
 		FM__CMD_STAT \
 		FM__INFO_COLOR
 
-local file
-for file in \
-		favorites \
-		recent_dirs \
-		preview
-	[[ -f $FM__DATA/$file ]] || touch $FM__DATA/$file
+() { # anonymous function: no top-level locals, so sourcing this file again prints nothing (the launchers rely on it)
+	local file
+	for file in \
+			favorites \
+			recent_dirs \
+			preview
+		[[ -f $FM__DATA/$file ]] || touch $FM__DATA/$file
 
-if [[ ! -s $FM__DATA/preview ]]; then
-	local -A preview=( [command-panel]=1 [command-menu]=1 [widget-panel]=1 [widget-menu]=1 )
-	fm__write -data preview
-fi
+	if [[ ! -s $FM__DATA/preview ]]; then
+		local -A preview=( [command-panel]=1 [command-menu]=1 [widget-panel]=1 [widget-menu]=1 )
+		fm__write -data preview
+	fi
 
-for file in \
-		added_menu \
-		clipboard \
-		matches \
-		targets
-	[[ -f $FM__TMP/$file ]] || touch $FM__TMP/$file
-: > $FM__TMP/added_menu
+	for file in \
+			added_menu \
+			clipboard \
+			matches \
+			targets
+		[[ -f $FM__TMP/$file ]] || touch $FM__TMP/$file
+	: > $FM__TMP/added_menu
+}
 
 for file in \
 		$fm__root/preview/panel \

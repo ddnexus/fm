@@ -48,6 +48,10 @@ local -P var variables=(
 	FM__KEY_EDIT
 	FM__KEY_NEW_SHELL
 	FM__KEY_COPY_PATH
+# Widget
+	FM__KEY_PICK
+	FM__KEY_PICK_WD
+	FM__WIDGET_KEY
 # CMD vars
 	FM__CMD_CAT
 	FM__CMD_LS
