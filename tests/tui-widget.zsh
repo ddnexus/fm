@@ -197,13 +197,18 @@ test_widget_menu_shows_only_the_widget_rows() {
 test_widget_adds_favorites_with_the_automatic_name() {
 	fm_load
 	tui_zsh
+	tui_type 'echo earlier output'
+	tui_send Enter
+	tui_wait 'earlier output'
 	widget
 	tui_wait_view DIR
 	tui_send C-M-w
 	tui_wait '1 Favorites added'
 	tui_wait_view FAV '~fx'
+	assert_contains 'earlier output' "$(tui_screen)" 'the dialog left the alternate screen: the prompt screen is back'
 	tui_send Escape
 	tui_wait_gone ' FAV '
+	assert_eq 0 "$(tmux display -p -t $test_id '#{alternate_on}')" 'the terminal is back in the normal screen'
 	assert_eq "hash -d fx=$sb/fx" "$(<$FM__DATA/favorites)"
 	tui_type "print -r -- ~fx > $sb/expanded"
 	tui_send Enter
