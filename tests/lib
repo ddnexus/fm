@@ -183,6 +183,11 @@ tui_query() {
 }
 tui_screen() { tmux capture-pane -t $test_id -p -J | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' } # trailing blank lines removed
 tui_alive()  { tmux has-session -t $test_id 2>/dev/null }
+# tui_dump [screen]: the screen as TAP diagnostic lines, without the rows that hold only blanks and box borders
+tui_dump() {
+	local -P screen=${1:-$(tui_screen)}
+	print -r -- "${(F)${(M)${(f)screen}:#*[^[:space:]│╭╮╰╯─]*}/#/#   }"
+}
 
 # tui_wait text [timeout_s]: poll the screen until it contains the literal text (default timeout 5s)
 tui_wait() {
@@ -194,7 +199,7 @@ tui_wait() {
 		sleep 0.05
 	done
 	print -r -- "# timeout waiting for ${(q+)1}${3:+ ($3)}; screen:"
-	print -r -- "${(F)${(f)screen}/#/#   }"
+	tui_dump "$screen"
 	exit 1
 }
 # tui_wait_gone text [timeout_s]: poll until the literal text disappears from the screen
@@ -207,7 +212,7 @@ tui_wait_gone() {
 		sleep 0.05
 	done
 	print -r -- "# timeout waiting for ${(q+)1} to disappear; screen:"
-	print -r -- "${(F)${(f)screen}/#/#   }"
+	tui_dump "$screen"
 	exit 1
 }
 # tui_exit [timeout_s]: wait for fm (started by tui_start) to exit and set tui_status and tui_pwd
@@ -217,7 +222,7 @@ tui_exit() {
 		[[ -s $sb/tui-exit ]] && break
 		sleep 0.05
 	done
-	[[ -s $sb/tui-exit ]] || { print -r -- '# timeout waiting for fm to exit; screen:'; print -r -- "${(F)${(f)$(tui_screen)}/#/#   }"; exit 1 }
+	[[ -s $sb/tui-exit ]] || { print -r -- '# timeout waiting for fm to exit; screen:'; tui_dump; exit 1 }
 	read -r tui_status tui_pwd < $sb/tui-exit
 }
 # tui_wait_view VIEW [dir] [what]: wait for the fzf prompt of a view, " DIR /path "

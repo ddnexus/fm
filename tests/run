@@ -54,7 +54,7 @@ for name in $tests; do
 	((n+=1))
 	file=$root/tests/${name%%/*}.zsh
 	test_id=t$n
-	sb=$(mktemp -d -t fm-test.XXXXXX)
+	sb=$(mktemp -d -t fm-test.XXXXXX); sb=${sb:A} # physical path: on macOS /var is a link to /private/var, and the panel shows the physical cwd
 	mkdir -p $sb/data $sb/tmp
 	started=$EPOCHREALTIME
 	(
