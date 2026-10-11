@@ -23,7 +23,8 @@ cat <<-HELP
 
 	FAV WIDGET                FM provide a zsh widget to preview, navigate and pick
 	                          and automatically place the selected items into the
-	                          prompt line.
+	                          prompt line, like a completion: it starts from the
+	                          word at the cursor and replaces it with the picks.
 	FM__WIDGET_KEY            Variable to press for the widget shortcut key
 	                          (defalt: press alt-f twice very fast)
 

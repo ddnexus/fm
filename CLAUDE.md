@@ -71,7 +71,7 @@ This makes the two declaration forms meaningful, so pick deliberately:
 
 ### Two modes
 
-`fm_mode` is `command` (the `fm` command) or `widget` (the zle widget, which inserts the picked paths into the prompt through `LBUFFER+=$( fm__panel-start )`). The mode selects `FM__<MODE>_FZF_OPTS`, the `fm__<mode>_keys` array and the `preview[<mode>-panel|menu]` setting. In widget mode stdout is the result, so nothing but the picked paths may be printed there; dialogs write to `/dev/tty`. Menu rows in `fm__menu` are flagged `cw`, `c-` or `-w` to say which mode shows them.
+`fm_mode` is `command` (the `fm` command) or `widget` (the zle widget, which replaces the word at the cursor with the picked paths, like a completion). The mode selects `FM__<MODE>_FZF_OPTS`, the `fm__<mode>_keys` array and the `preview[<mode>-panel|menu]` setting. The widget runs the panel in a subshell (`$( … 3>&1 >/dev/tty )`): stdout goes to the terminal as in command mode, PICK/PICK_WD print the paths to fd 3 and `fm__widget` formats them (relative to the prompt dir, `~`, quoted). The subshell also means no `vared`/zle there (`fm__fav-accept-name` skips the name confirmation in widget mode) and no lasting `cd`. Menu rows in `fm__menu` are flagged `cw`, `c-` or `-w` to say which mode shows them.
 
 ### Preview scripts run in separate processes
 

@@ -5,7 +5,7 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-local -P dir=$1 cmd=$FM__CMD_LS
+local -P dir=${1:-.} cmd=$FM__CMD_LS # explicit dir: with no path and no tty on stdin (zle widget) eza reads the paths from stdin
 if $hidden; then
 	case $FM__CMD_LS in
 		eza*) cmd+=' -a' ;;

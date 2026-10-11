@@ -153,6 +153,9 @@ fm__widget_keys=(
 	$FM__KEY_CD_LAST
 	$FM__KEY_CD_START
 	$FM__KEY_CD_CONTAIN
+# Favorites
+	$FM__KEY_FAV_ADD_WD
+	$FM__KEY_FAV_ADD
 # widget
 	${FM__KEY_PICK=ctrl-k}     # widget only
 	${FM__KEY_PICK_WD=ctrl-d}  # widget only

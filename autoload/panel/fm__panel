@@ -77,8 +77,8 @@ case $key in
 	$FM__KEY_NEW_SHELL|NEW_SHELL)         fm__new-shell ;;
 	$FM__KEY_COPY_PATH|COPY_PATH)         fm__copy-paths ;;
 # Widget
-	$FM__KEY_PICK|PICK)                   print -- "${(Dq@)items}"; return 0 ;; # widget only
-	$FM__KEY_PICK_WD|PICK_WD)             print -- "${(Dq)PWD}"; return 0 ;; # widget only
+	$FM__KEY_PICK|PICK)                   print -l -- $items >&3; return 0 ;; # widget only: fd 3 is the result, fm__widget formats the paths
+	$FM__KEY_PICK_WD|PICK_WD)             print -- $PWD >&3; return 0 ;;      # widget only
 # Added Tools
 	*)                                    fm__run-added ;;
 esac

@@ -37,8 +37,8 @@ cat <<-MENU |
 	c-  magenta  COPY        Copy Selected Items
 	c-  magenta  CUT         Cut Selected Items
 	c-  magenta  PASTE       Paste Items
-	c-  magenta  FAV_ADD_WD  Add Working Dir Favorite
-	c-  magenta  FAV_ADD     Add Selected Favorites
+	cw  magenta  FAV_ADD_WD  Add Working Dir Favorite
+	cw  magenta  FAV_ADD     Add Selected Favorites
 	c-  magenta  MARK        Mark Selected Targets
 	c-  magenta  LINK        Create Links to Targets
 	c-  magenta  RENAME      reName Selected Elements

@@ -24,7 +24,7 @@ FM has all the features that you would expect from a CLI but also from a Desktop
 - **Sudo**: Automatic prompt when permissions are required.
 - **Extensible**: Easily add your own custom tools to the FM menu.
 - **Help**: Inline documentation for all features.
-- **Zsh Widget**: Integrate FM directly into your Zsh prompt to pick paths while typing commands.
+- **Zsh Widget**: Explore and pick paths from the Zsh prompt while typing a command, like a completion that can preview, search by name or content, and jump to favorites.
 
 ## Try it
 
@@ -116,6 +116,8 @@ Run `fm help` for an overview of variables and commands.
 
 ### Zsh Features
 The `widget` and shell favorite `aliases` are exclusive to Zsh.
+
+**Widget:** press `alt-f` twice (`FM__WIDGET_KEY`) while typing a command to open FM under the prompt. It works like a completion: it starts from the word at the cursor (e.g. after `vim src/fo` it opens `src` with the query `fo`; `~`, `~favorite` and absolute dirs work too), you navigate, search and preview as in `fm`, then `ctrl-k` replaces the word with the selected items (`ctrl-d` with the current dir) and `esc` closes it leaving the line untouched. The inserted paths are relative to the prompt dir when inside it, quoted for the shell, with a trailing `/` for dirs, so you can keep typing or open the widget again to descend. Only the actions that return a path are available in the widget, plus adding favorites.
 
 ## Customization
 

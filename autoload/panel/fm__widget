@@ -9,18 +9,53 @@ setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_POSIX_IDENTIFIE
 if [[ $CONTEXT == vared ]] return 0
 local fs_view=DIR view=DIR fm_mode=widget
 local hidden=false sort=false
-local rg_query rg_message
+local rg_query rg_message query
 local -a recent_dirs header=()
 local -A preview
 fm__read -data preview
+
+# The word at the cursor is the starting point, like for the completion:
+# the dir part (~, ~fav and absolute dirs included) is the start dir, the rest is the query
+local -P word dir=. start=$PWD
+if [[ $LBUFFER != *[[:space:]] ]] word=${${(z)LBUFFER}[-1]}
+query=${(Q)word}
+if [[ $query == [~/]* && -d ${~query} ]]; then
+	dir=${~query} query=''
+elif [[ $query == */* ]]; then
+	dir=${query%/*} query=${query##*/}
+	dir=${~dir:-/}
+	if [[ ! -d $dir ]] dir=. query=${(Q)word}
+fi
+
 fm__read -data recent_dirs
-recent_dirs=( $PWD ${recent_dirs:#$PWD} )
+recent_dirs=( $dir:a ${recent_dirs:#$dir:a} )
 fm__write -data recent_dirs
 
 tput cud1
-LBUFFER+=$( fm__panel-start )
+# the panel runs in a subshell: its stdout goes to the terminal like in command mode, PICK/PICK_WD print the result to fd 3
+local -Pa picked=( ${(f)"$( builtin cd -q -- $dir && fm__panel-start 3>&1 >/dev/tty )"} )
 local -P res=$?
 tput cuu1
+
+# Picked paths, like the completion: relative to the prompt dir when inside it, ~ for $HOME,
+# quoted for the shell, dirs with a trailing / and no space after a single dir (to keep typing into it)
+local -P item prefix slash paths=()
+for item in $picked; do
+	item=${item%/} prefix='' slash=''
+	if [[ -d $item ]] slash=/
+	if [[ $item == $start ]]; then item=. slash=''
+	elif [[ $item == $start/* ]]; then item=${item#$start/}
+	elif [[ $item == $HOME(|/*) ]]; then prefix='~' item=${item#$HOME}
+	fi
+	paths+=$prefix${item:+${(q)item}}$slash
+done
+source $FM__DATA/favorites # the panel ran in a subshell: load the favorites it may have added
+if [[ $#paths -gt 0 ]]; then
+	if [[ $word ]] LBUFFER=$LBUFFER[1,-$#word-1]
+	LBUFFER+=${(j: :)paths}
+	if [[ $#paths -gt 1 || $paths[-1] != */ ]] LBUFFER+=' '
+fi
+
 [[ $widgets[autosuggest-clear] ]] && zle autosuggest-clear
 zle redisplay
 typeset -f zle-line-init > /dev/null && zle zle-line-init
