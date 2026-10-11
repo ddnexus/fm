@@ -117,7 +117,7 @@ Run `fm help` for an overview of variables and commands.
 ### Zsh Features
 The `widget` and shell favorite `aliases` are exclusive to Zsh.
 
-**Widget:** press `alt-f` twice (`FM__WIDGET_KEY`) while typing a command to open FM under the prompt. It works like a completion: it starts from the word at the cursor (e.g. after `vim src/fo` it opens `src` with the query `fo`; `~`, `~favorite` and absolute dirs work too), you navigate, search and preview as in `fm`, then `ctrl-k` replaces the word with the selected items (`ctrl-d` with the current dir) and `esc` closes it leaving the line untouched. The inserted paths are relative to the prompt dir when inside it, abbreviated with the shell named dirs otherwise (`~`, `~favorite`), quoted for the shell, with a trailing `/` for dirs, so you can keep typing or open the widget again to descend. Only the actions that return a path are available in the widget, plus adding favorites.
+**Widget:** press `alt-f` twice (`FM__WIDGET_KEY`) while typing a command to open FM under the prompt. It works like a completion: it starts from the word at the cursor (e.g. after `vim src/fo` it opens `src` with the query `fo`; `~`, `~favorite` and absolute dirs work too), you navigate, search and preview as in `fm`, then `ctrl-k` replaces the word with the selected items (`ctrl-d` with the current dir) and `esc` closes it leaving the line untouched. The inserted paths are the shorter between the path relative to the prompt dir and the one abbreviated with the shell named dirs (`~`, `~favorite`), quoted for the shell, with a trailing `/` for dirs, so you can keep typing or open the widget again to descend. Only the actions that return a path are available in the widget, plus adding favorites.
 
 ## Customization
 

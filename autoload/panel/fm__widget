@@ -37,16 +37,18 @@ local -Pa picked=( ${(f)"$( builtin cd -q -- $dir && fm__panel-start 3>&1 >/dev/
 local -P res=$?
 tput cuu1
 
-# Picked paths, like the completion: relative to the prompt dir when inside it, abbreviated with the
-# shell named dirs (~, ~favorite, ...) otherwise, quoted for the shell ((D) quotes by itself, (Dq) over-quotes),
-# dirs with a trailing / and no space after a single dir (to keep typing into it)
-local -P item slash paths=()
+# Picked paths, like the completion: the shorter between the path relative to the prompt dir (when inside it)
+# and the path abbreviated with the shell named dirs (~, ~favorite, ...), quoted for the shell ((D) quotes
+# by itself, (Dq) over-quotes), dirs with a trailing / and no space after a single dir (to keep typing into it)
+local -P item rel abbr slash paths=()
 for item in $picked; do
 	item=${item%/} slash=''
 	if [[ -d $item ]] slash=/
+	abbr=${(D)item} rel=''
+	if [[ $item == $start/* ]] rel=${(q)${item#$start/}}
 	if [[ $item == $start ]]; then item=. slash=''
-	elif [[ $item == $start/* ]]; then item=${(q)${item#$start/}}
-	else item=${(D)item}
+	elif [[ $rel && $#rel -le $#abbr ]]; then item=$rel
+	else item=$abbr
 	fi
 	paths+=$item$slash
 done
