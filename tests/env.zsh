@@ -34,6 +34,18 @@ test_loading_sets_the_defaults_and_creates_the_data_files() {
 	assert_eq '1 1 1 1' "$preview[command-panel] $preview[command-menu] $preview[widget-panel] $preview[widget-menu]"
 }
 
+test_loading_leaves_the_shell_options_and_variables_alone() {
+	local out=$(zsh -fc "source $fm__root/fm.zsh
+		[[ -o extendedglob ]] && print 'EXTENDED_GLOB leaked'
+		[[ -o shwordsplit ]] && print 'SH_WORD_SPLIT changed'
+		setopt shwordsplit; source $fm__root/fm.zsh
+		[[ -o shwordsplit ]] || print 'SH_WORD_SPLIT reset'
+		(( \$+parameters[file] )) && print 'file is a global'
+		(( \$+parameters[preview] )) && print 'preview is a global'
+		print -r -- \"keys=\$#fm__command_keys modes=\$#FM__PREVIEW_MODES version=\$fm__version\"")
+	assert_eq 'keys=36 modes=3 version=0.2.0' "$out"
+}
+
 test_loading_registers_the_functions_by_name_through_fpath() {
 	fm_load
 	local -a dirs=( ${(M)fpath:#$fm__root/autoload/*} )

@@ -55,7 +55,7 @@ Gotchas:
 
 ### Loading
 
-`fm.zsh` sets every default (`FM__KEY_*`, `FM__CMD_*`, limits, fzf options), builds the `fm__command_keys` and `fm__widget_keys` arrays, prepends the `autoload/*` dirs to `fpath` and autoloads every function by name (the conventional way, which the plugin managers track correctly; `preview/panel` does the same for its own process), creates the data files and registers the zle widget. Defaults written `${VAR:=x}` cannot be emptied by the user; those written `${VAR=x}` can be disabled by setting them to `''`.
+`fm.zsh` sets every default (`FM__KEY_*`, `FM__CMD_*`, limits, fzf options), builds the `fm__command_keys` and `fm__widget_keys` arrays, prepends the `autoload/*` dirs to `fpath` and autoloads every function by name (the conventional way, which the plugin managers track correctly; `preview/panel` does the same for its own process), creates the data files and registers the zle widget. Its body is an anonymous function: the options it sets stay local, it leaves no variables behind besides the intended globals, and sourcing it again is silent (the launchers do that). Defaults written `${VAR:=x}` cannot be emptied by the user; those written `${VAR=x}` can be disabled by setting them to `''`.
 
 Each file under `autoload/` is one function: the file name is the function name and the file body is the function body, with no `name() { }` wrapper. The subdirectories (`cmd`, `panel`, `view`, `fs`, `fav`, `ui`) only group files; all of them are autoloaded by one glob. `fm <cmd>` dispatches to `fm__cmd-<cmd>`, so adding a subcommand means adding `autoload/cmd/fm__cmd-<name>` (`fm` alone is `fm__cmd-run`, `fm -` is `fm__cmd--`).
 
@@ -117,4 +117,5 @@ Commands that modify the filesystem (`autoload/fs`, `autoload/fav`) share one sh
 - The code uses zsh short forms throughout: `if [[ … ]] cmd`, `for x in $list; cmd`, `{ … } always { … }`.
 - `NO_SH_WORD_SPLIT` is set, and commands with their options are stored in strings (`FM__CMD_*`, `sudo`), so they are run as `$=FM__CMD_CAT`, `$=sudo`.
 - Do not declare a `local` inside a loop body: zsh prints `name=value` to stdout when an already set local is declared again without a value.
+- Options: `fm`, `fm__widget`, the preview scripts and `fm__compile` set `LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB`, and every other function runs as their callee under those options (the code relies on them, e.g. `[0-9;]#` patterns). A function called from a new entry point must set them itself; `fm.zsh` does not change the shell's options.
 - Every file starts with the shebang and the copyright/GPL3 header.
