@@ -5,7 +5,11 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
+# fm__fav-rm [line-number ...]: remove those lines from the favorites file (rewritten in zsh: no sed -i, which differs on BSD)
 if [[ $# -eq 0 ]] return 0
-sed -i ${(j|d;|)@}d $FM__DATA/favorites
+local -P lines=( "${(@f)$(<$FM__DATA/favorites)}" ) n
+for n in ${(On)@}; lines[n]=() # highest first, so the lower indexes stay valid
+lines=( $lines )                # drops the empty lines
+if [[ $#lines -gt 0 ]] { print -l -- $lines > $FM__DATA/favorites } else { : > $FM__DATA/favorites }
 hash -drf
 source $FM__DATA/favorites

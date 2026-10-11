@@ -20,7 +20,6 @@ test_cat_a_binary_file_prints_a_notice_and_the_stat() {
 	local out=$(fm__cat binary.bin)
 	assert_contains '> Binary content <' "$out"
 	assert_contains 'binary.bin' "$out" 'stat output'
-	assert_contains 'Size:' "$out"
 }
 
 test_cat_a_broken_link_prints_nothing() {

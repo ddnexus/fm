@@ -6,7 +6,7 @@
 
 
 cat <<-HELP
-	FM $fm__version - Copyright (c) 2020 Domizio Demichelis - dd.nexus@gmail.com
+	FM $fm__version - Copyright (c) 2021-2026 Domizio Demichelis - dd.nexus@gmail.com
 
 	USAGE
 	    fm [COMMAND]
@@ -21,12 +21,12 @@ cat <<-HELP
 	                          (wrapper around the executable fm__compile)
 	    help                  Show this screen
 
-	FAV WIDGET                FM provide a zsh widget to preview, navigate and pick
+	FAV WIDGET                FM provides a zsh widget to preview, navigate and pick
 	                          and automatically place the selected items into the
 	                          prompt line, like a completion: it starts from the
 	                          word at the cursor and replaces it with the picks.
 	FM__WIDGET_KEY            Variable to press for the widget shortcut key
-	                          (defalt: press alt-f twice very fast)
+	                          (default: press alt-f twice very fast)
 
 	KEY OPTIONS               All the FM__KEY_* options are customizable shortcuts.
 	                          They are linked to their respective menu entry in the

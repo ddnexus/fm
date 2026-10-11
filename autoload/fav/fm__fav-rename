@@ -7,6 +7,7 @@
 
 setopt LOCAL_OPTIONS ERR_RETURN
 local -P line ln old_name new_name
+local -Pa fav_lines
 local num=0 message='Favorites renamed' name
 local fav_names=(); for line in $lines; fav_names+=${${=line}[2]}
 fm__open-dialog -yellow 'reName Selected Favorites' fav_names
@@ -17,7 +18,9 @@ fm__open-dialog -yellow 'reName Selected Favorites' fav_names
 		if [[ -z $new_name || $new_name == $old_name ]] { fm__print -yellow 'Skipped!' ; continue }
 		name=$new_name && fm__fav-accept-name -yellow
 		if [[ $name ]]; then
-			sed -i -E "${ln}s/[^[:space:]]+=/${name}=/" $FM__DATA/favorites
+			fav_lines=( "${(@f)$(<$FM__DATA/favorites)}" ) # rewritten in zsh: no sed -i, which differs on BSD
+			fav_lines[ln]="hash -d ${name}=${fav_lines[ln]#*=}"
+			print -l -- $fav_lines > $FM__DATA/favorites
 			((num+=1))
 			fm__print -yellow 'Renamed!'
 		else

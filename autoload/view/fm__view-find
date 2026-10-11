@@ -14,9 +14,9 @@ case $FM__CMD_FIND in
 		;;
 	find*)
 		case $hidden in
-			true)  $=FM__CMD_FIND  ;;
+			true)  $=FM__CMD_FIND . ;; # BSD find needs the path
 			false) $=FM__CMD_FIND . -path '*/.*' -prune -o -print ;;
-		esac 2>/dev/null | sed 's/\.\///'
+		esac 2>/dev/null | sed -e '/^\.$/d' -e 's|^\./||' # no . entry, paths relative like fd prints them
 		;;
 esac |
 	if [[ $sort == true && $FM__CMD_SORT ]]; then
