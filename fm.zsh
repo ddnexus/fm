@@ -74,7 +74,7 @@ fm__command_keys=(
 : ${FM__CMD_XCLIP:=$( fm__get-cmd 'xclip -selection clipboard' 'xsel --clipboard -i' )}
 : ${FM__CMD_SUDO=$( fm__get-cmd sudo )} #  can be disabled by setting it to ''
 : ${FM__CMD_STAT:=$( fm__get-cmd stat )}
-: ${FM__CMD_SORT:=$( fm__get-cmd 'sort -fbi' )}
+: ${FM__CMD_SORT:=$( fm__get-cmd 'sort -fb' )} # run with LC_ALL=C: -i would ignore the non-ASCII bytes there
 
 : ${FM__MAX_GREP_FILES:=100}
 : ${FM__MAX_RECENT_DIRS:=100}

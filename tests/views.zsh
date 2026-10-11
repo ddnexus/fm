@@ -7,11 +7,12 @@
 
 # fm__view-*: what each view pipes into fzf
 
-# FM sorts with `LC_ALL=C sort -fbi`: case folded, and the non-ASCII bytes are "nonprinting" in the C locale,
-# so they are ignored (ünïcödé.txt sorts as ncd.txt). The ASCII lines must be in case-insensitive order.
+# FM sorts with `LC_ALL=C sort -fb`: case folded, non-ASCII bytes after the ASCII ones
 assert_sorted() {
-	local -a ascii=( ${lines:#*[^ -~]*} )
-	assert_eq "${(F)${(@oi)ascii}}" "${(F)ascii}" 'lines sorted'
+	local -a ascii=( ${lines:#*[^ -~]*} ) others=( ${(M)lines:#*[^ -~]*} )
+	local -a expected=( $ascii $others )
+	assert_eq "${(F)${(@oi)ascii}}" "${(F)ascii}" 'ASCII lines in case-insensitive order'
+	assert_eq "${(F)expected}" "${(F)lines}" 'non-ASCII lines last'
 }
 
 # DIR
@@ -105,6 +106,7 @@ test_view_find_sorted() {
 	view=FIND sort=true
 	view_lines
 	assert_sorted
+	assert_eq 'ünïcödé.txt' "$lines[-1]"
 }
 
 # GREP
