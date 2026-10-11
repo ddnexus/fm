@@ -11,7 +11,7 @@ local num=0 message='Edited Files'
 fm__open-dialog -yellow 'Edit Selected Files' 'files'
 {
 	for item in $items; do
-		if [[ -d $item ]] continue
+		if [[ -d $item || -L $item && ! -e $item ]] continue # dirs and broken links
 		if [[ ! -w $item ]] sudo=$FM__CMD_SUDO # any non writable item triggers sudo
 		files+=$item
 	done

@@ -23,6 +23,7 @@ test_new_file() {
 	fm_load
 	tui_start
 	tui_wait_view DIR
+	tui_query notes 1
 	tui_send C-M-f
 	tui_wait 'Create New File'
 	tui_wait 'Enter a name for the new File>'
@@ -30,6 +31,7 @@ test_new_file() {
 	tui_send Enter
 	dialog_done '1 File created'
 	assert_file new.txt
+	tui_wait ' 17/17' 5 'the query is reset: the new file is shown'
 	assert_contains 'new.txt' "$(tui_screen)"
 	tui_send C-q
 	tui_exit
@@ -191,8 +193,7 @@ test_paste_several_items() {
 	tui_exit
 }
 
-test_paste_stops_at_the_first_error() {
-	# copying a dir into itself fails: the paste aborts there and reports the error (ERR_RETURN design)
+test_paste_skips_the_sources_containing_the_destination() {
 	fm_load
 	tui_start
 	tui_wait_view DIR
@@ -203,9 +204,30 @@ test_paste_stops_at_the_first_error() {
 	tui_send C-M-v
 	tui_wait 'Paste the Items in'
 	tui_send y
-	dialog_done '1 Items pasted here [ERROR 1]' DIR $sb/fx/empty
+	tui_wait 'Skipped empty (it contains the destination)'
+	dialog_done '15 Items pasted here' DIR $sb/fx/empty
 	assert_dir 'empty/dir one'
-	assert_missing empty/README.md
+	assert_file empty/README.md
+	assert_missing 'empty/empty'
+	tui_send C-q
+	tui_exit
+}
+
+test_paste_stops_at_the_first_error() {
+	# the ERR_RETURN design: the first failing command aborts the dialog, which reports the error
+	fm_load
+	tui_start
+	tui_wait_view DIR
+	fs_action notes C-M-c
+	tui_wait '1 Items copied'
+	tui_settle
+	chmod -w . # the destination is not writable, and the harness disables sudo
+	tui_send C-M-v
+	tui_wait 'Paste the Items in'
+	tui_send y
+	dialog_done '0 Items pasted here [ERROR 1]'
+	chmod +w .
+	assert_missing 'notes(pasted).txt'
 	tui_send C-q
 	tui_exit
 }
@@ -244,6 +266,8 @@ test_rename() {
 	dialog_done '1 Items renamed'
 	assert_file renamed.txt
 	assert_missing notes.txt
+	tui_wait ' 16/16' 5 'the query is reset: the renamed file is shown'
+	assert_contains 'renamed.txt' "$(tui_screen)"
 	tui_send C-q
 	tui_exit
 }
@@ -357,13 +381,15 @@ test_execute_bit_from_the_menu() {
 	fm_load
 	tui_start
 	tui_wait_view DIR
-	tui_query 'README !link' 1
+	tui_send C-a
 	tui_send C-Space
 	tui_wait 'Toggle This Menu'
 	tui_query 'Execute bit ON' 1
 	tui_send Enter
-	dialog_done '1 File execute bit switched to ON'
+	dialog_done '11 File execute bit switched to ON' # dirs, links to dirs and broken links skipped
 	assert_ok test -x README.md
+	assert_ok test -x notes.txt
+	tui_query 'README !link' 1
 	tui_send C-Space
 	tui_wait 'Toggle This Menu'
 	tui_query 'Execute bit OFF' 1
@@ -390,7 +416,7 @@ test_fs_commands_in_find_view_go_back_to_find_view() {
 	tui_type found.txt
 	tui_send Enter
 	dialog_done '1 File created' FIND
-	tui_query '' 20
+	tui_wait ' 20/20' 5 'the query is reset'
 	assert_contains 'found.txt' "$(tui_screen)"
 	tui_send C-q
 	tui_exit
@@ -403,9 +429,11 @@ test_edit_runs_the_editor_on_the_selected_files_only() {
 	tui_wait_view DIR
 	tui_send C-a
 	tui_send C-e
-	dialog_done '12 Edited Files'
+	dialog_done '11 Edited Files'
 	assert_lacks "$PWD/sub" "$(<$sb/edited)" 'dirs are skipped'
 	assert_lacks "$PWD/link-dir" "$(<$sb/edited)" 'links to dirs too'
+	assert_lacks "$PWD/broken-link" "$(<$sb/edited)" 'broken links too'
+	assert_contains "$PWD/link-file" "$(<$sb/edited)" 'links to files are edited'
 	assert_contains "$PWD/file one.txt" "$(<$sb/edited)"
 	tui_send C-q
 	tui_exit

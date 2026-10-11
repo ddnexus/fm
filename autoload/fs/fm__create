@@ -24,6 +24,7 @@ fm__open-dialog -green "Create New $label"
 	fi
 	$=sudo $=cmd $name
 	((num+=1))
+	query='' # show the new item
 	view=$fs_view
 } always {
 	fm__close-dialog

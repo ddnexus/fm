@@ -18,6 +18,7 @@ fm__open-dialog -green 'Paste Items' sources
 		if [[ ! -w $PWD ]] { dest_sudo=$FM__CMD_SUDO }
 		for source in $sources; do
 			if [[ ! -e $source && ! -L $source ]] continue # -L: broken links are pasted too
+			if [[ $PWD == "$source" || $PWD == "$source"/* ]] { fm__print -yellow "Skipped $source:t (it contains the destination)"; continue }
 			name=$source:t && fm__dest-name 'pasted'
 			case $clipboard[mode] in
 				copied)
@@ -37,10 +38,13 @@ fm__open-dialog -green 'Paste Items' sources
 					;;
 			esac
 		done
-		if [[ $num -gt 0 && $clipboard[mode] == cut ]]; then
-			clipboard=()
-			fm__write -tmp clipboard
+		if [[ $num -gt 0 ]]; then
+			query='' # show the pasted items
 			view=$fs_view
+			if [[ $clipboard[mode] == cut ]]; then
+				clipboard=()
+				fm__write -tmp clipboard
+			fi
 		fi
 	else
 		fm__print -yellow '\nSkipped!'

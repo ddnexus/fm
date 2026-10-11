@@ -21,7 +21,7 @@ fm__open-dialog -green 'Create Links for Targets' targets
 			$=sudo ln -s $target ./$name
 			((num+=1))
 		done
-		if [[ $num -gt 0 ]] view=$fs_view
+		if [[ $num -gt 0 ]] { query=''; view=$fs_view } # show the links
 	else
 		fm__print -yellow '\nSkipped!'
 	fi

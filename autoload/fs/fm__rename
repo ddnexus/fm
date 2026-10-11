@@ -29,6 +29,7 @@ fm__open-dialog -yellow 'Rename Selected Items' items
 		$=sudo mv -f $item $source_dir/$new_name
 		((num+=1))
 	done
+	if [[ $num -gt 0 ]] query='' # show the renamed items
 } always {
 	fm__close-dialog
 }

@@ -10,6 +10,9 @@
 - Fixed: `esc` and `ctrl-c` printed an FM ERROR and returned 130 instead of quitting
 - Fixed: the bash and fish launchers got the `cd` target polluted by sourcing fm.zsh twice, and failed on paths with spaces
 - Fixed: `fm env` lacked the widget keys, `fm help` lacked FM__CMD_XCLIP, the PICK notes lacked their key variable, typos
+- Paste skips the sources that contain the destination dir (pasting a selection into one of its dirs no longer aborts)
+- The query is reset after creating, renaming, pasting and linking, so the new items are visible
+- Edit and the execute bit switch skip the broken links (no sudo prompt for a dangling link)
 - Widget: fixed the empty DIR view with eza (it read the paths from the widget's stdin)
 - Widget: works like a completion: starts from the word at the cursor (dir part and query) and replaces it with the picked paths, in the shorter form between relative to the prompt dir and abbreviated with the shell named dirs (~, ~favorite), quoted, dirs with a trailing /
 - Widget: the panel output goes to the terminal, so dialogs work; FAV_ADD and FAV_ADD_WD available (with the automatic name)
