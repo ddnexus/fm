@@ -8,8 +8,7 @@
 setopt LOCAL_OPTIONS ERR_RETURN
 local -P onoff=$1 sudo item files=() param
 local num=0 message="File execute bit switched to $onoff"
-fm__open-dialog -yellow "Switch execute bit $onoff" files
-{
+{ # no dialog: nothing to ask, the result goes to the header
 	for item in $items; do
 		if [[ -d $item || -L $item && ! -e $item ]] continue # dirs and broken links
 		if [[ ! -w $item ]] sudo=$FM__CMD_SUDO # any non writable item triggers sudo
@@ -24,5 +23,5 @@ fm__open-dialog -yellow "Switch execute bit $onoff" files
 	$=sudo chmod $param $files
 	num=$#files
 } always {
-	fm__close-dialog 0
+	fm__close-dialog -notify
 }

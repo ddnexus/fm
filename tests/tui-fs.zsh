@@ -386,7 +386,8 @@ test_execute_bit_from_the_menu() {
 	tui_wait 'Toggle This Menu'
 	tui_query 'Execute bit ON' 1
 	tui_send Enter
-	dialog_done '11 File execute bit switched to ON' # dirs, links to dirs and broken links skipped
+	tui_wait '11 File execute bit switched to ON' # dirs, links to dirs and broken links skipped; no dialog
+	tui_wait_view DIR
 	assert_ok test -x README.md
 	assert_ok test -x notes.txt
 	tui_query 'README !link' 1
@@ -394,7 +395,8 @@ test_execute_bit_from_the_menu() {
 	tui_wait 'Toggle This Menu'
 	tui_query 'Execute bit OFF' 1
 	tui_send Enter
-	dialog_done '1 File execute bit switched to OFF'
+	tui_wait '1 File execute bit switched to OFF'
+	tui_wait_view DIR
 	assert_fail test -x README.md
 	tui_send C-q
 	tui_exit
@@ -429,7 +431,7 @@ test_edit_runs_the_editor_on_the_selected_files_only() {
 	tui_wait_view DIR
 	tui_send C-a
 	tui_send C-e
-	dialog_done '11 Edited Files'
+	tui_wait '11 Edited Files' # no dialog: the editor runs and the header reports
 	assert_lacks "$PWD/sub" "$(<$sb/edited)" 'dirs are skipped'
 	assert_lacks "$PWD/link-dir" "$(<$sb/edited)" 'links to dirs too'
 	assert_lacks "$PWD/broken-link" "$(<$sb/edited)" 'broken links too'

@@ -579,7 +579,7 @@ case $id in
 		;;
 	EXEC_ON)
 		cat <<-notes
-			Switch the execute bit of the Selected Files ON. Dir Items are silently skipped.
+			Switch the execute bit of the Selected Files ON. Dirs and broken links are silently skipped.
 
 			Notice
 			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable)
@@ -589,7 +589,7 @@ case $id in
 	;;
 	EXEC_OFF)
 		cat <<-notes
-			Switch the exeuted bit of the Selected Files OFF. Dir Items are silently skipped.
+			Switch the exeuted bit of the Selected Files OFF. Dirs and broken links are silently skipped.
 
 			Notice
 			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable)
@@ -609,7 +609,7 @@ case $id in
 		;;
 	EDIT)
 		cat <<-notes
-			Edit the Selected Files with the ${B}EDITOR${E} of your system. Dir Items are silently skipped.
+			Edit the Selected Files with the ${B}EDITOR${E} of your system. Dirs and broken links are silently skipped.
 
 			Notice
 			* If any of the Selected Files is not writable by your user, ${B}sudo${E} will prompt for your password (using the command in the FM__CMD_SUDO variable)

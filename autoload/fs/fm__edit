@@ -8,8 +8,7 @@
 setopt LOCAL_OPTIONS ERR_RETURN
 local -P sudo item files=()
 local num=0 message='Edited Files'
-fm__open-dialog -yellow 'Edit Selected Files' 'files'
-{
+{ # no dialog: the editor has its own screen, the result goes to the header
 	for item in $items; do
 		if [[ -d $item || -L $item && ! -e $item ]] continue # dirs and broken links
 		if [[ ! -w $item ]] sudo=$FM__CMD_SUDO # any non writable item triggers sudo
@@ -20,5 +19,5 @@ fm__open-dialog -yellow 'Edit Selected Files' 'files'
 	$=sudo $=FM__CMD_EDIT $files
 	num=$#files
 } always {
-	fm__close-dialog 0
+	fm__close-dialog -notify
 }

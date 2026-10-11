@@ -105,7 +105,7 @@ An action is wired in several places, all keyed by the same id (`COPY`, `VIEW_GR
 
 ### Dialog pattern for fs commands
 
-Commands that modify the filesystem (`autoload/fs`, `autoload/fav`) share one shape: `setopt LOCAL_OPTIONS ERR_RETURN`, `fm__open-dialog -<color> '<Title>' <array name>` (alternate screen with a recap), the work inside `{ … } always { fm__close-dialog }`, counting successes in `num`. The first failing command aborts the body, and `fm__close-dialog` reports `$num $message` plus `[ERROR n]` or `[INTERRUPTED]`. `$FM__CMD_SUDO` is prepended automatically when the target is not writable. In widget mode (only `fm__fav-add` gets there, with the automatic name) there is no dialog: `fm__open-dialog` returns at once, `fm__close-dialog` only notifies, and the prints meant for the dialog are skipped.
+Commands that modify the filesystem (`autoload/fs`, `autoload/fav`) share one shape: `setopt LOCAL_OPTIONS ERR_RETURN`, `fm__open-dialog -<color> '<Title>' <array name>` (alternate screen with a recap), the work inside `{ … } always { fm__close-dialog }`, counting successes in `num`. The first failing command aborts the body, and `fm__close-dialog` reports `$num $message` plus `[ERROR n]` or `[INTERRUPTED]`. `$FM__CMD_SUDO` is prepended automatically when the target is not writable. Edit and the execute bit switch have nothing to ask: they skip `fm__open-dialog` and report with `fm__close-dialog -notify`. In widget mode (only `fm__fav-add` gets there, with the automatic name) there is no dialog either: `fm__open-dialog` returns at once, `fm__close-dialog` only notifies, and the prints meant for the dialog are skipped.
 
 ### Added tools
 

@@ -5,7 +5,10 @@
 # https://www.gnu.org/licenses/gpl-3.0.en.html
 
 
-local -P sleep_time=${1:-1} note res=$?
+# fm__close-dialog [seconds|-notify]: report "$num $message" (plus [INTERRUPTED] or [ERROR n]) in the header.
+# After a dialog it also prints the report in the dialog and waits the seconds (default 1) before the panel
+# redraws; with -notify (commands with no dialog) and in widget mode (no dialogs there) it only notifies.
+local -P arg=$1 note res=$?
 
 if [[ $TRY_BLOCK_INTERRUPT -gt 0 ]]; then
 	TRY_BLOCK_INTERRUPT=0
@@ -15,9 +18,9 @@ elif [[ $res -gt 0 ]]; then
 fi
 
 fm__notify "$num $message$note"
-if [[ $fm_mode == widget ]] return 0 # no dialog in the widget: the notification is enough (see fm__open-dialog)
+if [[ $arg == -notify || $fm_mode == widget ]] return 0
 
 fm__print -magenta "\n$num $message$note" > /dev/tty
-sleep $sleep_time
+sleep ${arg:-1}
 
 tput csr 0 $(tput lines)
