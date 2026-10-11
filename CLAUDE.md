@@ -8,15 +8,27 @@ FM is a terminal file manager written entirely in zsh, with `fzf` as its TUI eng
 
 ## Commands
 
-There is no build step, test suite, linter or CI. What exists:
+There is no build step, linter or CI. What exists:
 
 ```zsh
-# Syntax-check every source file (the only automated check available)
+tests/run                 # the test suite (TAP output), ~3 min; `tests/run -l` lists the tests
+tests/run items views     # only the tests whose file/name matches a pattern; -v shows the output of passing tests too
+tests/run -c              # the same suite inside the try-fm container, with the working copy mounted (needs podman or docker)
+try-fm/try-fm build       # (re)build the container image from the working copy; `try-fm/try-fm start` runs the demo
+
+# Syntax-check every source file
 zsh -fc 'setopt extended_glob; for f in fm.zsh fm__compile added-tools-examples {autoload/**,preview}/^*.zwc(.); do zsh -n $f || print "FAIL $f"; done'
 
 # Optional startup speed-up: zcompile every function to a .zwc file next to its source
 fm compile        # wrapper around ./fm__compile
 ```
+
+### Tests
+
+`tests/run` runs every `test_*` function of `tests/*.zsh` in its own subshell and sandbox (`FM__DATA`/`FM__TMP` redirected, cwd in a fixture tree with awkward names, see `fixture` in `tests/lib`); a failing assertion exits the subshell, `skip` exits 77. Two layers:
+
+- Headless tests (`items`, `views`, `env`, `cat`): call the functions directly after `fm_load [VAR=value ...]` and `eval $panel_state` (which declares the dynamically scoped session state like `fm__cmd-run` does). `view_lines` fills `lines` as fzf would return them (colors stripped).
+- TUI tests (`tui-*`): drive `fm` in a tmux pane (`tui_start`, `tui_send`, `tui_query`, `tui_wait`, `dialog_done`, `tui_exit`; the widget and the launchers through `tui_zsh`/`tui_run`). Rules learned the hard way: fzf filters asynchronously, so pass the expected match count to `tui_query` before acting on the current item; keys sent while fzf restarts (after every action, and during the 1 s sleep of the dialogs) are flushed, so wait for the new screen (`dialog_done`, `tui_wait_view`, or `tui_settle` when nothing visible changes); an `Escape` followed quickly by a key is read as an alt-chord; the menu and the dialogs reuse the panel prompt line, so wait for a text that only the new screen has. The harness sets `FM__CMD_SUDO=''`: never let a test reach the real sudo.
 
 The panel is an interactive fzf session, so it needs a real terminal: it cannot be driven from a non-interactive tool shell. To try a change by hand, open a new zsh (functions already called in a running shell keep their old body) and run `fm`.
 
@@ -35,7 +47,7 @@ Gotchas:
 
 - `fm.zsh` exports `fm__root`, and `fm__compile` compiles `$fm__root` when it is set, not its own directory. In a shell that already loaded FM from another path, use `env -u fm__root ./fm__compile`.
 - `.zwc` files are not ignored by git: never commit them. zsh loads whichever of source and `.zwc` is newer, so stale ones are harmless.
-- `try-fm/` (Docker demo) installs FM from GitHub with zinit, so it does not test the working copy. `TRY_FM_CONTEXT=$PWD/try-fm/docker ./try-fm/try-fm start` only builds the image from the local Dockerfile. The `try-fm` script and its default Docker context are fetched from `master`; development happens on `dev`.
+- `try-fm/` (container demo and test environment, Fedora image, docker or podman): `try-fm/Dockerfile` is built with the repo root as context and copies FM to `/opt/fm`; run from a clone, `try-fm/try-fm` builds from the working copy and `try-fm/try-fm test` mounts it over `/opt/fm`. The standalone script (downloaded with curl) builds from the `master` branch on GitHub; development happens on `dev`. The container `~/.zshrc` is `try-fm/zshrc`; `TRY_FM=true` in the image makes `preview/menu` show the session caveats.
 - The version lives in `fm__version` (`fm.zsh`) and `CHANGELOG.md`.
 - History is kept linear, with no merge commits: rebase `dev` on `master`, then fast-forward `master`.
 
@@ -88,6 +100,8 @@ An action is wired in several places, all keyed by the same id (`COPY`, `VIEW_GR
 - `autoload/panel/fm__menu`: the menu row
 - `preview/menu`: the usage note
 - `autoload/cmd/fm__cmd-env`: the variable list (and `fm__cmd-help` for non-key options)
+
+`tests/env.zsh` checks this wiring for every `FM__KEY_*` and `FM__CMD_*` of `fm.zsh`, and `tests/cat.zsh` that every menu row has a usage note.
 
 ### Dialog pattern for fs commands
 

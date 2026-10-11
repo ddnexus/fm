@@ -1,0 +1,89 @@
+#!/usr/bin/env zsh
+
+# Copyright (c) 2021-2026 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
+# FM test runner. TAP output.
+#
+#   tests/run [-v] [-l] [pattern ...]   run the tests (those matching a pattern, when given) on this machine
+#   tests/run -c [...]                  the same, inside the try-fm container with the working copy mounted
+#
+# Every file tests/*.zsh holds test_* functions. Each test runs in its own subshell and sandbox:
+# FM__DATA and FM__TMP point into the sandbox, the cwd is the fixture tree (see tests/lib).
+# A test fails when an assertion fails or the function returns non-zero; exit 77 skips it.
+# The output of a test is shown only when it fails (or with -v).
+
+emulate -L zsh
+setopt EXTENDED_GLOB NO_SH_WORD_SPLIT PIPE_FAIL
+zmodload zsh/datetime
+
+local root=${0:A:h:h}
+local -A opts
+zparseopts -D -E -F -A opts -- c v l h || exit 2
+if (( $+opts[-h] )); then
+	sed -n '8,17p' $0 | sed 's/^# \{0,1\}//'
+	exit 0
+fi
+if (( $+opts[-c] )); then
+	exec $root/try-fm/try-fm test ${(k)opts:#-c} "$@"
+fi
+
+local -a tests selected
+local file name pattern
+for file in $root/tests/*.zsh(N); do
+	for name in ${(f)"$(grep -oE '^test_[A-Za-z0-9_-]+' $file)"}; tests+="${file:t:r}/$name"
+done
+if (( $# )); then
+	for name in $tests; for pattern; [[ $name == *$pattern* ]] && { selected+=$name; break }
+	tests=( $selected )
+fi
+if (( $+opts[-l] )); then
+	print -l -- $tests
+	exit 0
+fi
+
+local FM_TEST_TMUX=fm-tests-$$
+trap 'rm -rf $sb; command tmux -L $FM_TEST_TMUX kill-server 2>/dev/null; exit 130' INT TERM
+local n=0 passed=0 failed=0 skipped=0 res started sb elapsed test_id
+local -a failures
+
+print "1..$#tests"
+for name in $tests; do
+	((n+=1))
+	file=$root/tests/${name%%/*}.zsh
+	test_id=t$n
+	sb=$(mktemp -d -t fm-test.XXXXXX)
+	mkdir -p $sb/data $sb/tmp
+	started=$EPOCHREALTIME
+	(
+		export FM__DATA=$sb/data FM__TMP=$sb/tmp LC_ALL=C.UTF-8 # C.UTF-8 sorts by code point, like the LC_ALL=C sort of FM
+		unset TMUX
+		fm__root=$root
+		source $root/tests/lib
+		fixture $sb/fx
+		cd $sb/fx
+		source $file
+		${name#*/}
+	) > $sb/out 2>&1 < /dev/null
+	res=$?
+	command tmux -L $FM_TEST_TMUX kill-session -t $test_id 2>/dev/null
+	elapsed=$(printf '%.0fms' $(( (EPOCHREALTIME - started) * 1000 )))
+	case $res in
+		0)  ((passed+=1));  print "ok $n - $name ($elapsed)" ;;
+		77) ((skipped+=1)); print "ok $n - $name # SKIP ${${(M)${(f)"$(<$sb/out)"}:#\# SKIP: *}#\# SKIP: }" ;;
+		*)  ((failed+=1));  failures+=$name; print "not ok $n - $name (exit $res, $elapsed)" ;;
+	esac
+	if [[ $res -ne 0 && $res -ne 77 || $+opts[-v] -eq 1 ]]; then
+		sed 's/^/#   /' $sb/out
+	fi
+	rm -rf $sb
+done
+command tmux -L $FM_TEST_TMUX kill-server 2>/dev/null
+
+print "# $passed passed, $failed failed, $skipped skipped"
+if (( failed )); then
+	print -l -- '# failed:' "#   "$^failures
+	exit 1
+fi

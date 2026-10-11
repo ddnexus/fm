@@ -1,0 +1,224 @@
+#!/usr/bin/env zsh
+
+# Copyright (c) 2021-2026 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
+# Helpers sourced by tests/run into the subshell of every test.
+# The runner provides: fm__root, sb (the sandbox dir), test_id, FM_TEST_TMUX (tmux socket name)
+# and exports FM__DATA=$sb/data FM__TMP=$sb/tmp, with cwd in the fixture tree $sb/fx.
+# HOME is the real one (FM only reads it; a fake HOME would break the tools installed through shims).
+
+zmodload zsh/param/private
+
+######## assertions: a failing assertion prints a TAP diagnostic and exits the test subshell ########
+
+fail() { print -r -- "# FAIL: $*"; exit 1 }
+skip() { print -r -- "# SKIP: $*"; exit 77 }
+
+assert_eq() { # expected actual [what]
+	[[ $1 == $2 ]] && return 0
+	print -r -- "# ${3:-assert_eq} failed"
+	print -r -- "#   expected: ${(q+)1}"
+	print -r -- "#   actual:   ${(q+)2}"
+	exit 1
+}
+assert_ne() { # unexpected actual [what]
+	[[ $1 != $2 ]] && return 0
+	print -r -- "# ${3:-assert_ne} failed: both are ${(q+)2}"
+	exit 1
+}
+assert_match() { # zsh-pattern string [what]
+	[[ $2 == ${~1} ]] && return 0
+	print -r -- "# ${3:-assert_match} failed"
+	print -r -- "#   pattern: $1"
+	print -r -- "#   actual:  ${(q+)2}"
+	exit 1
+}
+assert_contains() { # needle haystack [what]   (literal needle)
+	[[ $2 == *"$1"* ]] && return 0
+	print -r -- "# ${3:-assert_contains} failed"
+	print -r -- "#   needle:   ${(q+)1}"
+	print -r -- "#   haystack: ${(q+)2}"
+	exit 1
+}
+assert_lacks() { # needle haystack [what]   (literal needle)
+	[[ $2 != *"$1"* ]] && return 0
+	print -r -- "# ${3:-assert_lacks} failed: found ${(q+)1} in ${(q+)2}"
+	exit 1
+}
+assert_exists()  { [[ -e $1 || -L $1 ]] || fail "${2:-expected to exist}: $1" }
+assert_missing() { [[ -e $1 || -L $1 ]] && fail "${2:-expected to be missing}: $1"; return 0 }
+assert_dir()     { [[ -d $1 ]] || fail "${2:-expected a dir}: $1" }
+assert_file()    { [[ -f $1 ]] || fail "${2:-expected a file}: $1" }
+assert_link()    { [[ -L $1 ]] || fail "${2:-expected a symlink}: $1" }
+assert_ok()   { "$@" || fail "exit $? from: $*" }
+assert_fail() { "$@" && fail "exit 0 from: $*"; return 0 }
+assert_in()     { (( ${${(P)2}[(Ie)$1]} )) || fail "${3:-$1 not found in $2}" }     # element array-name [what]
+assert_not_in() { (( ${${(P)2}[(Ie)$1]} )) && fail "${3:-$1 found in $2}"; return 0 }
+
+######## FM loading and panel state ########
+
+# Source fm.zsh with the given environment overrides, e.g. fm_load FM__CMD_LS='ls -lh --color' FM__HINTS=false
+# Called inside a function, so the LOCAL_OPTIONS of fm.zsh are restored on return.
+fm_load() {
+	local kv
+	for kv; export -- $kv
+	source $fm__root/fm.zsh
+}
+
+# The session state that fm__cmd-run declares as dynamically scoped locals: eval it in the test
+# function, then every FM function called from the test reads and writes those variables.
+panel_state='local fs_view=DIR view=DIR fm_mode=command hidden=false sort=false
+	local rg_query rg_message query key num message name
+	local -a lines items targets recent_dirs added_menu header list sources
+	local -A clipboard preview
+	fm__read -data preview'
+
+# Lines of a view as fzf returns them: fzf --ansi strips the color codes from its output
+view_lines() { lines=( "${(@f)$(fm__view-${view:l})}" ); lines=( ${lines//$'\e'\[[0-9;]#m/} ) }
+
+# The DIR line of an entry (not the line of a link pointing to it)
+line_of() { print -r -- ${${(M)lines:#*[[:space:]]$1}:#* -\> *} }
+
+# Raw content of a data/tmp file without the typeset prefix, e.g. data_of -data recent_dirs -> ( /a /b )
+data_of() { print -r -- "${$(<${(P)${:-FM__${(U)1:1}}}/$2)#*=}" }
+
+# The string without ANSI color codes
+plain() { print -r -- "${1//$'\e'\[[0-9;]#m/}" }
+
+######## fixture tree ########
+
+# Create the fixture tree in $1 (default: $sb/fx). The names cover what the DIR line parser must handle:
+# spaces, double spaces, unicode, hidden entries, eza type indicators, links (to file, to dir, broken,
+# with " -> " in the name) and a plain name containing " -> ".
+fixture() {
+	local -P fx=${1:?the fixture dir is required} old=$PWD
+	mkdir -p $fx && cd $fx || { print -u2 "fixture: cannot create $fx"; return 1 } # never write in the cwd
+	print -l '# Title' 'hello world' 'second line' > README.md
+	print -l 'hello' 'TODO: hello again' 'bye' > notes.txt
+	print 'nothing to see' > 'file one.txt'
+	print 'two spaces' > 'spaces  two.txt'
+	print 'unicode' > 'ünïcödé.txt'
+	print -l '#!/bin/sh' 'echo run' > script.sh; chmod +x script.sh
+	print 'hidden' > .hidden
+	mkdir -p .hidden-dir 'dir one' sub/deep empty
+	print 'inside hidden' > .hidden-dir/inside
+	print 'nested hello' > 'dir one/nested.txt'
+	print 'hello from a' > sub/a.md
+	print 'deep' > sub/deep/b.md
+	ln -s README.md link-file
+	ln -s sub link-dir
+	ln -s nowhere broken-link
+	ln -s README.md 'link -> weird'
+	print 'arrow' > 'arrow -> name'
+	printf '\x00\x01\x02\xff\xfe binary \x00' > binary.bin
+	tar -cf archive.tar sub 2>/dev/null
+	cd $old
+}
+
+######## TUI: FM driven in a tmux pane ########
+# One tmux server per runner (socket $FM_TEST_TMUX), one session per test (named $test_id).
+# The pane runs zsh -f with a clean environment: the sandbox vars, TERM and PATH only.
+
+tmux() { command tmux -L $FM_TEST_TMUX "$@" }
+
+# tui_zsh [before] [after]: start an interactive zsh in $PWD whose .zshrc evaluates `before`
+# (e.g. FM__CMD_LS=... or FM__PREVIEW_MODES=(0)), sources fm.zsh and evaluates `after` (e.g. fm add ...).
+# A dump-buffer widget bound to ctrl-x d writes the command line to $sb/buffer and clears it (see tui_buffer).
+tui_zsh() {
+	mkdir -p $sb/zdot
+	cat > $sb/zdot/.zshrc <<-EOF
+		FM__CMD_SUDO='' # never escalate from the tests; the sudo test sets it back
+		$1
+		source $fm__root/fm.zsh
+		PS1='%# '
+		dump-buffer() { print -r -- "\$BUFFER" > $sb/buffer; zle kill-whole-line }
+		zle -N dump-buffer
+		bindkey '^Xd' dump-buffer
+		$2
+	EOF
+	tui_env+=ZDOTDIR=$sb/zdot
+	tui_run 'zsh -i'
+	tui_wait '%'
+}
+# tui_start [before] [after]: run `fm` from the prompt of the interactive zsh (see tui_zsh); tui_exit collects its result
+tui_start() {
+	tui_zsh "$1" "$2"
+	tui_type 'fm; print -r -- "$? $PWD" > '$sb/tui-exit
+	tui_send Enter
+}
+# dialog_done message [view] [dir]: wait for the final message of a dialog and for the panel to be back (the dialog sleeps 1s)
+dialog_done() {
+	tui_wait "$1"
+	tui_wait_gone 'Cancel'
+	tui_wait_view ${2:-DIR} $3
+}
+# tui_settle: after an action that restarts fzf without a visible change, let it restart (keys typed meanwhile are flushed)
+tui_settle() { sleep 0.4 }
+# tui_buffer: the command line of the interactive zsh (cleared afterwards)
+tui_buffer() {
+	rm -f $sb/buffer
+	tui_send C-x d
+	local -P i
+	for ((i=0; i<100; i++)); do [[ -e $sb/buffer ]] && break; sleep 0.05; done
+	[[ -e $sb/buffer ]] || fail 'the dump-buffer widget did not run'
+	print -r -- "$(<$sb/buffer)"
+}
+# tui_run cmd: run any command line in a new pane with the clean environment
+tui_run() {
+	tmux new-session -d -s $test_id -x ${TUI_COLS:-120} -y ${TUI_LINES:-40} -c $PWD \
+		"env -i HOME=$HOME PATH=$PATH TERM=xterm-256color LC_ALL=$LC_ALL FM__DATA=$FM__DATA FM__TMP=$FM__TMP ${(j: :)tui_env} $1" ||
+			fail 'tmux could not start the session'
+}
+tui_send()   { tmux send-keys -t $test_id "$@" }       # key names: M-d C-q C-M-c Enter Escape Space ...
+tui_type()   { tmux send-keys -t $test_id -l -- "$*" } # literal text
+# tui_query text [n]: replace the fzf query (ctrl-u clears it; it persists across actions) and wait for the list
+# to settle on n matches (fzf filters asynchronously: a key sent right after typing may act on the stale list)
+tui_query() {
+	tui_send C-u
+	tui_type "$1"
+	if [[ $2 ]] { tui_wait " $2/" } else { sleep 0.2 }
+}
+tui_screen() { tmux capture-pane -t $test_id -p -J | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' } # trailing blank lines removed
+tui_alive()  { tmux has-session -t $test_id 2>/dev/null }
+
+# tui_wait text [timeout_s]: poll the screen until it contains the literal text (default timeout 5s)
+tui_wait() {
+	local -P i screen n=$(( ${2:-5} * 20 ))
+	for ((i=0; i<n; i++)); do
+		tui_alive || fail "the pane exited while waiting for ${(q+)1}"
+		screen=$(tui_screen)
+		[[ $screen == *"$1"* ]] && return 0
+		sleep 0.05
+	done
+	print -r -- "# timeout waiting for ${(q+)1}${3:+ ($3)}; screen:"
+	print -r -- "${(F)${(f)screen}/#/#   }"
+	exit 1
+}
+# tui_wait_gone text [timeout_s]: poll until the literal text disappears from the screen
+tui_wait_gone() {
+	local -P i screen n=$(( ${2:-5} * 20 ))
+	for ((i=0; i<n; i++)); do
+		tui_alive || fail "the pane exited while waiting for ${(q+)1} to disappear"
+		screen=$(tui_screen)
+		[[ $screen != *"$1"* ]] && return 0
+		sleep 0.05
+	done
+	print -r -- "# timeout waiting for ${(q+)1} to disappear; screen:"
+	print -r -- "${(F)${(f)screen}/#/#   }"
+	exit 1
+}
+# tui_exit [timeout_s]: wait for fm (started by tui_start) to exit and set tui_status and tui_pwd
+tui_exit() {
+	local -P i n=$(( ${1:-5} * 20 ))
+	for ((i=0; i<n; i++)); do
+		[[ -s $sb/tui-exit ]] && break
+		sleep 0.05
+	done
+	[[ -s $sb/tui-exit ]] || { print -r -- '# timeout waiting for fm to exit; screen:'; print -r -- "${(F)${(f)$(tui_screen)}/#/#   }"; exit 1 }
+	read -r tui_status tui_pwd < $sb/tui-exit
+}
+# tui_wait_view VIEW [dir] [what]: wait for the fzf prompt of a view, " DIR /path "
+tui_wait_view() { tui_wait " $1 ${2:-$PWD} " 5 "$3" }
