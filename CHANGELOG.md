@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `fm reload` reloads FM in the current shell (after an update); `fm dev` reloads it automatically when a source file changes
 - Test suite: `tests/run` (headless tests and tmux-driven TUI tests), `tests/run -c` runs it in the try-fm container
 - try-fm: rebuilt on Fedora with the distro packages only, FM copied from the repo, works with docker and podman, `test` subcommand, playground dir
 - Fixed: broken symlinks could not be selected (DIR view), pasted or linked

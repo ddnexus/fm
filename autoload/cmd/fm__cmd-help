@@ -19,6 +19,8 @@ cat <<-HELP
 	                          See the "Added Tools" section in the FM Menu
 	    compile               Compile all the FM functions for faster execution
 	                          (wrapper around the executable fm__compile)
+	    reload                Reload FM in this shell (after an update: no new shell needed)
+	    dev [off]             Reload FM automatically when its sources change (to develop FM)
 	    help                  Show this screen
 
 	FAV WIDGET                FM provides a zsh widget to preview, navigate and pick

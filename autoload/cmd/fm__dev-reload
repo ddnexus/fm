@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+# Copyright (c) 2021-2026 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
+# The hook of fm dev: reload FM when a source file is newer than the stamp of the last load
+setopt LOCAL_OPTIONS EXTENDED_GLOB
+local -P newest=( $fm__root/(fm.zsh|autoload/**/^*.zwc|preview/^*.zwc)(.om[1]N) )
+if [[ $newest && $newest -nt $FM__TMP/dev-stamp ]]; then
+	fm reload
+	print "FM reloaded: ${newest#$fm__root/} changed"
+fi

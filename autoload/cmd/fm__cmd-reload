@@ -1,0 +1,12 @@
+#!/usr/bin/env zsh
+
+# Copyright (c) 2021-2026 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
+# fm reload: forget the loaded functions and source fm.zsh again, so the current shell runs the sources
+# as they are now (after an update, or while developing FM: see fm dev). The FM__* variables are kept.
+unfunction -m 'fm__*' fm 2>/dev/null
+source $fm__root/fm.zsh
+touch $FM__TMP/dev-stamp # fm__dev-reload compares the sources with it

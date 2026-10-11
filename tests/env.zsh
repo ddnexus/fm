@@ -213,6 +213,36 @@ test_fm_compile_compiles_its_own_copy_whatever_fm_root_says() {
 	assert_file $sb/copy/autoload/panel/fm__panel.zwc
 }
 
+test_fm_reload_runs_the_changed_function_files() {
+	fm_load
+	cp -r $fm__root $sb/copy && source $sb/copy/fm.zsh
+	assert_eq $sb/copy "$fm__root"
+	fm__get-cmd ls > /dev/null # loaded in this shell (a $(...) would load it in a subshell only)
+	print 'print CHANGED' > $sb/copy/autoload/panel/fm__get-cmd
+	assert_eq ls "$(fm__get-cmd ls)" 'the loaded body stays in memory'
+	fm reload
+	assert_eq CHANGED "$(fm__get-cmd ls)"
+	assert_eq ctrl-space "$FM__KEY_MENU" 'the variables are kept'
+}
+
+test_fm_dev_reloads_when_a_source_changes() {
+	fm_load
+	cp -r $fm__root $sb/copy && source $sb/copy/fm.zsh
+	fm dev > /dev/null
+	assert_in fm__dev-reload preexec_functions
+	assert_in fm__dev-reload precmd_functions
+	fm__get-cmd ls > /dev/null # loaded in this shell
+	fm__dev-reload
+	assert_eq ls "$(fm__get-cmd ls)" 'nothing changed, nothing reloaded'
+	sleep 1 # the mtime resolution of the stamp
+	print 'print CHANGED' > $sb/copy/autoload/panel/fm__get-cmd
+	assert_contains 'FM reloaded: autoload/panel/fm__get-cmd changed' "$(fm__dev-reload)"
+	assert_eq CHANGED "$(fm__get-cmd ls)"
+	fm dev off > /dev/null
+	assert_not_in fm__dev-reload preexec_functions
+	assert_not_in fm__dev-reload precmd_functions
+}
+
 # fm add
 
 read_added_menu() { added_menu=(); fm__read -tmp added_menu }

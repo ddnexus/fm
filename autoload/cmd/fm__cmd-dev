@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+
+# Copyright (c) 2021-2026 Domizio Demichelis
+# Released under GNU3 license
+# https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
+# fm dev [off]: reload FM automatically when one of its source files changes (for developing FM in a shell that
+# loads the live repo). The check runs before every command and every prompt (see fm__dev-reload).
+autoload -Uz add-zsh-hook
+if [[ $1 == off ]]; then
+	add-zsh-hook -d preexec fm__dev-reload
+	add-zsh-hook -d precmd fm__dev-reload
+	print "FM dev mode off"
+	return 0
+fi
+touch $FM__TMP/dev-stamp
+add-zsh-hook preexec fm__dev-reload
+add-zsh-hook precmd fm__dev-reload
+print "FM dev mode on: the functions are reloaded when a file of $fm__root changes (fm dev off to stop)"

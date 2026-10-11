@@ -112,7 +112,7 @@ Port the 3 lines from `launcher/fm.sh` to your shell's syntax.
 
 Type `fm` to start.
 Press `ctrl-space` to open the menu, which includes usage notes and documentation.
-Run `fm help` for an overview of variables and commands.
+Run `fm help` for an overview of variables and commands; `fm reload` applies an update to the running shell.
 
 **Tip:** Alias `fm` for speed: `alias f=fm`.
 
