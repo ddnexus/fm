@@ -204,16 +204,34 @@ test_widget_adds_favorites_with_the_automatic_name() {
 	tui_wait_view DIR
 	tui_send C-M-w
 	tui_wait '1 Favorites added'
-	tui_wait_view FAV '~fx'
-	assert_contains 'earlier output' "$(tui_screen)" 'the dialog left the alternate screen: the prompt screen is back'
+	local screen=$(tui_screen)
+	assert_lacks 'Add Selected Favorites' "$screen" 'no dialog in the widget'
+	assert_contains ' FAV ~fx ' "$screen" 'the FAV view is shown at once'
+	assert_contains 'earlier output' "$screen" 'the screen outside the widget is untouched'
+	assert_eq 0 "$(tmux display -p -t $test_id '#{alternate_on}')" 'the terminal stays in the normal screen'
 	tui_send Escape
 	tui_wait_gone ' FAV '
-	assert_eq 0 "$(tmux display -p -t $test_id '#{alternate_on}')" 'the terminal is back in the normal screen'
 	assert_eq "hash -d fx=$sb/fx" "$(<$FM__DATA/favorites)"
 	tui_type "print -r -- ~fx > $sb/expanded"
 	tui_send Enter
 	local -P i; for ((i=0; i<40; i++)); do [[ -s $sb/expanded ]] && break; sleep 0.05; done
 	assert_eq $sb/fx "$(<$sb/expanded)" 'the named dir is available in the shell right away'
+}
+
+test_widget_skips_a_favorite_with_an_invalid_name_and_says_so() {
+	fm_load
+	touch 123
+	tui_zsh
+	widget
+	tui_wait_view DIR
+	tui_query 123 1
+	tui_send C-M-s
+	tui_wait '0 Favorites added'
+	assert_contains 'Favorite skipped: the name must be alpha-numeric' "$(tui_screen)"
+	assert_eq '' "$(<$FM__DATA/favorites)"
+	assert_eq 0 "$(tmux display -p -t $test_id '#{alternate_on}')"
+	tui_send Escape
+	tui_wait_gone ' DIR '
 }
 
 test_widget_does_not_leave_the_shell_in_another_dir() {

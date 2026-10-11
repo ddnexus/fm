@@ -6,6 +6,7 @@
 
 
 local -P color=$1 title=$2 elements=$3
+if [[ $fm_mode == widget ]] return 0 # no dialog in the widget: nothing interactive happens there, fm__close-dialog notifies the result
 {
 	tput smcup
 	tput home

@@ -8,8 +8,8 @@
 local -P color=$1 wanted=$2 n=2
 name=$( sed -E 's/[^A-Za-z0-9._-]/_/g; s/^[^A-Za-z]*//' <<< $name )
 if [[ -z $name ]]; then
+	if [[ $fm_mode == widget ]] { fm__notify 'Favorite skipped: the name must be alpha-numeric starting with [A-Za-z]'; return 0 } # no dialog, no vared in the widget
 	fm__print -red '[FM ERROR] The Favorite name must be alpha-numeric starting with [A-Za-z]!'
-	if [[ $fm_mode == widget ]] return 0 # no vared in the widget subshell: skipped
 	vared -p "%F{${color:1}}Type a valid name (empty to skip)>%f " name
 else
 	while [[ -n $(hash -dm $name) && -e ~$name ]] { name=${name}-fav$n ; ((n+=1)) }

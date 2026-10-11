@@ -15,8 +15,9 @@ elif [[ $res -gt 0 ]]; then
 fi
 
 fm__notify "$num $message$note"
+if [[ $fm_mode == widget ]] return 0 # no dialog in the widget: the notification is enough (see fm__open-dialog)
+
 fm__print -magenta "\n$num $message$note" > /dev/tty
 sleep $sleep_time
 
 tput csr 0 $(tput lines)
-if [[ $fm_mode == widget ]] tput rmcup # back to the prompt screen: in command mode fm__cmd-run does it at the end
