@@ -71,6 +71,8 @@ antigen bundle ddnexus/fm
 zgen load ddnexus/fm
 ```
 
+antigen and zgen have no build hook: run `fm compile` once after installing (optional, it only speeds up the startup).
+
 **Manual Installation:**
 
 1. Clone the repository to your preferred directory.
@@ -92,14 +94,14 @@ No extra configuration needed.
 **Bash / POSIX Shells:**
 Add the launcher to your config (e.g., `~/.bashrc`):
 ```sh
-# Run this once to append the launcher
+# Run this once, from a zsh where FM is loaded (it knows $fm__root)
 zsh -c 'print "\n. $fm__root/launcher/fm.sh" >> ~/.bashrc'
 ```
 
 **Fish:**
 Add the launcher to `config.fish`:
 ```sh
-# Run this once
+# Run this once, from a zsh where FM is loaded
 zsh -c 'mkdir -p ~/.config/fish; echo "\nsource $fm__root/launcher/fm.fish" >> ~/.config/fish/config.fish'
 ```
 

@@ -45,7 +45,7 @@ FZF_PREVIEW_COLUMNS=80 ./preview/panel README.md FIND false                     
 
 Gotchas:
 
-- `fm.zsh` exports `fm__root`, and `fm__compile` compiles `$fm__root` when it is set, not its own directory. In a shell that already loaded FM from another path, use `env -u fm__root ./fm__compile`.
+- `fm.zsh` exports `fm__root` (the preview scripts need it), so a shell that loaded FM passes it to every child: `fm__compile` ignores it and always compiles its own directory (a plugin manager's build hook may run in such a shell).
 - `.zwc` files are not ignored by git: never commit them. zsh loads whichever of source and `.zwc` is newer, so stale ones are harmless.
 - `try-fm/` (container demo and test environment, Fedora image, docker or podman): `try-fm/Dockerfile` is built with the repo root as context and copies FM to `/opt/fm`; run from a clone, `try-fm/try-fm` builds from the working copy and `try-fm/try-fm test` mounts it over `/opt/fm`. The standalone script (downloaded with curl) builds from the `master` branch on GitHub; development happens on `dev`. The container `~/.zshrc` is `try-fm/zshrc`; `TRY_FM=true` in the image makes `preview/menu` show the session caveats.
 - The version lives in `fm__version` (`fm.zsh`) and `CHANGELOG.md`.

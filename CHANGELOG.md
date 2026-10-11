@@ -17,6 +17,7 @@
 - try-fm: `ctrl-p` works at the first press (the engine's detach key sequence is disabled)
 - Widget: adding favorites shows no dialog, just the notification in the header (the dialog replaced the whole screen for a second and left the terminal in the alternate screen)
 - Edit and the execute bit switch show no dialog either (it had nothing to ask and an empty recap), just the header notification
+- Fixed: `fm__compile` compiled the FM of the exported `fm__root` instead of its own copy (a plugin manager's build hook run from a shell with another FM loaded compiled the wrong one)
 - Widget: fixed the empty DIR view with eza (it read the paths from the widget's stdin)
 - Widget: works like a completion: starts from the word at the cursor (dir part and query) and replaces it with the picked paths, in the shorter form between relative to the prompt dir and abbreviated with the shell named dirs (~, ~favorite), quoted, dirs with a trailing /
 - Widget: the panel output goes to the terminal, so dialogs work; FAV_ADD and FAV_ADD_WD available (with the automatic name)

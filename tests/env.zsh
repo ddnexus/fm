@@ -177,6 +177,15 @@ test_fm_compile_creates_a_zwc_for_every_function_file() {
 	assert_contains 'FM__KEY_MENU' "$(zsh -fc "source $sb/copy/fm.zsh; fm env")" 'the compiled functions work'
 }
 
+test_fm_compile_compiles_its_own_copy_whatever_fm_root_says() {
+	# a build hook may run in a shell that loaded another FM (fm__root is exported)
+	fm_load
+	cp -r $fm__root $sb/copy
+	rm -f $sb/copy/**/*.zwc(N)
+	fm__root=/elsewhere $sb/copy/fm__compile
+	assert_file $sb/copy/autoload/panel/fm__panel.zwc
+}
+
 # fm add
 
 read_added_menu() { added_menu=(); fm__read -tmp added_menu }
