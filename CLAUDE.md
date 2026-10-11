@@ -8,7 +8,7 @@ FM is a terminal file manager written entirely in zsh, with `fzf` as its TUI eng
 
 ## Commands
 
-There is no build step or linter. CI (`.github/workflows/test.yml`) runs `try-fm/try-fm test` (Fedora container) and `tests/run` on a macOS runner (tools from brew) on every push to `master` and on pull requests (not on `dev`: pushes there may be untested work in progress; run it on demand with `gh workflow run tests.yml --ref dev`). What exists:
+There is no build step or linter. CI (`.github/workflows/test.yml`) runs `try-fm/try-fm test` (Fedora container) and `tests/run` on a macOS runner (tools from brew) on every push to `master` and on pull requests (not on `dev`: pushes there may be untested work in progress; run it on demand with `gh workflow run test.yml --ref dev`). What exists:
 
 ```zsh
 tests/run                 # the test suite (TAP output), ~3 min; `tests/run -l` lists the tests
