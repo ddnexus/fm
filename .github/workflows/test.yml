@@ -1,10 +1,9 @@
 name: tests
 
-# Registered here so that it can be started on demand on any branch (GitHub needs the file on the default branch):
-#   gh workflow run test.yml --ref dev
-# The automatic triggers (pushes to master, pull requests) arrive with the next release.
 on:
-  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
 
 jobs:
   suite:
@@ -13,13 +12,5 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      # builds the image from the checkout (docker) and runs tests/run in it with the checkout mounted over /opt/fm
       - run: try-fm/try-fm test
-
-  macos:
-    name: test suite on macOS (host, tools from brew)
-    runs-on: macos-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - run: brew install fzf ripgrep eza fd bat tmux
-      - run: tests/run

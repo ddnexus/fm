@@ -9,6 +9,17 @@
 
 keys_in_fm_zsh() { grep -oE 'FM__KEY_[A-Z_]+' $fm__root/fm.zsh | sort -u }
 
+test_every_source_file_parses() {
+	local f failed=()
+	for f in $fm__root/fm.zsh $fm__root/fm__compile $fm__root/added-tools-examples $fm__root/tests/run $fm__root/tests/lib $fm__root/tests/*.zsh $fm__root/{autoload/**,preview}/^*.zwc(.); do
+		zsh -n $f 2>/dev/null || failed+=$f
+	done
+	for f in $fm__root/launcher/fm.sh $fm__root/try-fm/try-fm; do
+		sh -n $f 2>/dev/null || failed+=$f
+	done
+	assert_eq '' "${(F)failed}" 'files with syntax errors'
+}
+
 test_loading_sets_the_defaults_and_creates_the_data_files() {
 	fm_load
 	assert_eq ctrl-space "$FM__KEY_MENU"
