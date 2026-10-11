@@ -12,7 +12,7 @@ There is no build step or linter. CI (`.github/workflows/test.yml`) runs `try-fm
 
 ```zsh
 tests/run                 # the test suite (TAP output), ~3 min; `tests/run -l` lists the tests
-tests/run items views     # only the tests whose file/name matches a pattern; -v shows the output of passing tests too
+tests/run items views     # only the tests whose file/name matches a pattern; -v shows the output of passing tests too, -x stops at the first failure
 tests/run -c              # the same suite inside the try-fm container, with the working copy mounted (needs podman or docker)
 try-fm/try-fm build       # (re)build the container image from the working copy; `try-fm/try-fm start` runs the demo
 

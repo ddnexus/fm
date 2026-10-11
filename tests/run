@@ -7,13 +7,14 @@
 
 # FM test runner. TAP output.
 #
-#   tests/run [-v] [-l] [pattern ...]   run the tests (those matching a pattern, when given) on this machine
-#   tests/run -c [...]                  the same, inside the try-fm container with the working copy mounted
+#   tests/run [-v] [-x] [-l] [pattern ...]   run the tests (those matching a pattern, when given) on this machine
+#   tests/run -c [...]                       the same, inside the try-fm container with the working copy mounted
+#   -v shows the output of every test, -x stops at the first failure (TAP "Bail out!"), -l lists the tests
 #
 # Every file tests/*.zsh holds test_* functions. Each test runs in its own subshell and sandbox:
 # FM__DATA and FM__TMP point into the sandbox, the cwd is the fixture tree (see tests/lib).
 # A test fails when an assertion fails or the function returns non-zero; exit 77 skips it.
-# The output of a test is shown only when it fails (or with -v).
+# The output of a test is shown only when it fails.
 
 emulate -L zsh
 setopt EXTENDED_GLOB NO_SH_WORD_SPLIT PIPE_FAIL
@@ -21,9 +22,9 @@ zmodload zsh/datetime
 
 local root=${0:A:h:h}
 local -A opts
-zparseopts -D -E -F -A opts -- c v l h || exit 2
+zparseopts -D -E -F -A opts -- c v x l h || exit 2
 if (( $+opts[-h] )); then
-	sed -n '8,17p' $0 | sed 's/^# \{0,1\}//'
+	sed -n '8,18p' $0 | sed 's/^# \{0,1\}//'
 	exit 0
 fi
 if (( $+opts[-c] )); then
@@ -79,6 +80,7 @@ for name in $tests; do
 		sed 's/^/#   /' $sb/out
 	fi
 	rm -rf $sb
+	if [[ $res -ne 0 && $res -ne 77 && $+opts[-x] -eq 1 ]] { print 'Bail out! stopped at the first failure (-x)'; break }
 done
 command tmux -L $FM_TEST_TMUX kill-server 2>/dev/null
 
