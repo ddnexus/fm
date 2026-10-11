@@ -398,7 +398,7 @@ test_tools_without_command_notify() {
 
 test_panel_with_the_ls_fallback() {
 	fm_load
-	tui_start 'FM__CMD_LS="ls -lh --color --group-directories-first"'
+	tui_start 'FM__CMD_LS="ls -lh"' # the portable fallback (BSD ls has no --color/--group-directories-first)
 	tui_wait_view DIR
 	assert_lacks 'total ' "$(tui_screen)"
 	tui_query 'dir one' 1
