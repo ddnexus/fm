@@ -34,6 +34,21 @@ test_loading_sets_the_defaults_and_creates_the_data_files() {
 	assert_eq '1 1 1 1' "$preview[command-panel] $preview[command-menu] $preview[widget-panel] $preview[widget-menu]"
 }
 
+test_loading_registers_the_functions_by_name_through_fpath() {
+	fm_load
+	local -a dirs=( ${(M)fpath:#$fm__root/autoload/*} )
+	assert_eq 6 $#dirs 'the autoload/* dirs are in fpath'
+	assert_eq $fm__root/autoload/cmd "$fpath[1]" 'first, so nothing shadows them' # (o) sorted glob: cmd fav fs panel ui view
+	source $fm__root/fm.zsh
+	dirs=( ${(M)fpath:#$fm__root/autoload/*} )
+	assert_eq 6 $#dirs 'not duplicated by a second source'
+	assert_eq 'fm__panel: function' "$(whence -w fm__panel)"
+	local -a stubs=( ${(k)functions[(I)fm__*]} )
+	assert_eq $(print -l $fm__root/autoload/**/*(.) | grep -vc '\.zwc$') $(( $#stubs + 1 )) 'one stub per function file (plus fm)'
+	cp -r $fm__root $sb/copy && $sb/copy/fm__compile # a compiled copy: the .zwc files get no stubs
+	assert_eq '' "$(zsh -fc "source $sb/copy/fm.zsh; functions -u | grep '\.zwc'")" 'no stubs for the compiled files'
+}
+
 test_an_optional_key_can_be_disabled() {
 	fm_load FM__KEY_QUIT=''
 	assert_eq '' "$FM__KEY_QUIT"

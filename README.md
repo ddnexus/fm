@@ -52,7 +52,7 @@ Add the relevant lines to your `$HOME/.zshrc`:
 
 **Using zinit:**
 ```zsh
-zinit ice depth'1' atinit'source fm.zsh' atclone'./fm__compile' atpull'%atclone'
+zinit ice depth'1' atclone'./fm__compile' atpull'%atclone'
 zinit light ddnexus/fm
 ```
 

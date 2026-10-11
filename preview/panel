@@ -8,7 +8,9 @@
 setopt LOCAL_OPTIONS NO_SH_WORD_SPLIT EXTENDED_GLOB PIPE_FAIL NO_POSIX_IDENTIFIERS
 
 zmodload zsh/param/private
-autoload -Uz $fm__root/autoload/**/*(.)
+# the function files are autoloaded by name from the autoload/* dirs (one function per file, named as the file)
+fpath=( $fm__root/autoload/*(/) ${fpath:#"$fm__root"/autoload/*} )
+autoload -Uz $fm__root/autoload/**/^*.zwc(.:t)
 
 local lines=($1) view=$2 hidden=$3
 shift 3

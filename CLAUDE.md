@@ -55,7 +55,7 @@ Gotchas:
 
 ### Loading
 
-`fm.zsh` sets every default (`FM__KEY_*`, `FM__CMD_*`, limits, fzf options), builds the `fm__command_keys` and `fm__widget_keys` arrays, autoloads every file under `autoload/`, creates the data files and registers the zle widget. Defaults written `${VAR:=x}` cannot be emptied by the user; those written `${VAR=x}` can be disabled by setting them to `''`.
+`fm.zsh` sets every default (`FM__KEY_*`, `FM__CMD_*`, limits, fzf options), builds the `fm__command_keys` and `fm__widget_keys` arrays, prepends the `autoload/*` dirs to `fpath` and autoloads every function by name (the conventional way, which the plugin managers track correctly; `preview/panel` does the same for its own process), creates the data files and registers the zle widget. Defaults written `${VAR:=x}` cannot be emptied by the user; those written `${VAR=x}` can be disabled by setting them to `''`.
 
 Each file under `autoload/` is one function: the file name is the function name and the file body is the function body, with no `name() { }` wrapper. The subdirectories (`cmd`, `panel`, `view`, `fs`, `fav`, `ui`) only group files; all of them are autoloaded by one glob. `fm <cmd>` dispatches to `fm__cmd-<cmd>`, so adding a subcommand means adding `autoload/cmd/fm__cmd-<name>` (`fm` alone is `fm__cmd-run`, `fm -` is `fm__cmd--`).
 

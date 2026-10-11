@@ -18,6 +18,7 @@
 - Widget: adding favorites shows no dialog, just the notification in the header (the dialog replaced the whole screen for a second and left the terminal in the alternate screen)
 - Edit and the execute bit switch show no dialog either (it had nothing to ask and an empty recap), just the header notification
 - Fixed: `fm__compile` compiled the FM of the exported `fm__root` instead of its own copy (a plugin manager's build hook run from a shell with another FM loaded compiled the wrong one)
+- The functions are autoloaded by name through `fpath` instead of by absolute path: the plugin managers track them correctly (zinit needs no `atinit` any more) and the compiled files get no stubs
 - Widget: fixed the empty DIR view with eza (it read the paths from the widget's stdin)
 - Widget: works like a completion: starts from the word at the cursor (dir part and query) and replaces it with the picked paths, in the shorter form between relative to the prompt dir and abbreviated with the shell named dirs (~, ~favorite), quoted, dirs with a trailing /
 - Widget: the panel output goes to the terminal, so dialogs work; FAV_ADD and FAV_ADD_WD available (with the automatic name)

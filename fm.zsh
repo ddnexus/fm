@@ -11,7 +11,9 @@ fm__version=0.2.0
 fm__root=$0:A:h
 
 zmodload zsh/param/private
-autoload -Uz $fm__root/autoload/**/*(.)
+# the function files are autoloaded by name from the autoload/* dirs (one function per file, named as the file)
+fpath=( $fm__root/autoload/*(/) ${fpath:#"$fm__root"/autoload/*} )
+autoload -Uz $fm__root/autoload/**/^*.zwc(.:t)
 
 : ${FM__KEY_SELECT_ALL:=ctrl-a}
 
