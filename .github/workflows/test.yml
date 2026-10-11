@@ -4,6 +4,7 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch: # on demand for any branch, e.g. gh workflow run tests.yml --ref dev
 
 jobs:
   suite:
