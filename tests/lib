@@ -168,7 +168,7 @@ tui_buffer() {
 }
 # tui_run cmd: run any command line in a new pane with the clean environment
 tui_run() {
-	tmux new-session -d -s $test_id -x ${TUI_COLS:-120} -y ${TUI_LINES:-40} -c $PWD \
+	tmux new-session -d -s $test_id -x ${TUI_COLS:-160} -y ${TUI_LINES:-40} -c $PWD \
 		"env -i HOME=$HOME PATH=$PATH TERM=xterm-256color LC_ALL=$LC_ALL FM__DATA=$FM__DATA FM__TMP=$FM__TMP ${(j: :)tui_env} $1" ||
 			fail 'tmux could not start the session'
 }

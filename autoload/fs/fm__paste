@@ -22,7 +22,7 @@ fm__open-dialog -green 'Paste Items' sources
 			name=$source:t && fm__dest-name 'pasted'
 			case $clipboard[mode] in
 				copied)
-					$=dest_sudo cp -r $source ./$name
+					$=dest_sudo cp -R $source ./$name
 					((num+=1))
 					;;
 				cut)
@@ -31,7 +31,7 @@ fm__open-dialog -green 'Paste Items' sources
 						$=dest_sudo mv $source ./$name
 						((num+=1))
 					else  # cp & rm
-						$=dest_sudo cp -r $source ./$name
+						$=dest_sudo cp -R $source ./$name
 						((num+=1))
 						$=source_sudo rm -rf $source
 					fi
