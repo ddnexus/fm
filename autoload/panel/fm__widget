@@ -37,17 +37,18 @@ local -Pa picked=( ${(f)"$( builtin cd -q -- $dir && fm__panel-start 3>&1 >/dev/
 local -P res=$?
 tput cuu1
 
-# Picked paths, like the completion: relative to the prompt dir when inside it, ~ for $HOME,
-# quoted for the shell, dirs with a trailing / and no space after a single dir (to keep typing into it)
-local -P item prefix slash paths=()
+# Picked paths, like the completion: relative to the prompt dir when inside it, abbreviated with the
+# shell named dirs (~, ~favorite, ...) otherwise, quoted for the shell ((D) quotes by itself, (Dq) over-quotes),
+# dirs with a trailing / and no space after a single dir (to keep typing into it)
+local -P item slash paths=()
 for item in $picked; do
-	item=${item%/} prefix='' slash=''
+	item=${item%/} slash=''
 	if [[ -d $item ]] slash=/
 	if [[ $item == $start ]]; then item=. slash=''
-	elif [[ $item == $start/* ]]; then item=${item#$start/}
-	elif [[ $item == $HOME(|/*) ]]; then prefix='~' item=${item#$HOME}
+	elif [[ $item == $start/* ]]; then item=${(q)${item#$start/}}
+	else item=${(D)item}
 	fi
-	paths+=$prefix${item:+${(q)item}}$slash
+	paths+=$item$slash
 done
 source $FM__DATA/favorites # the panel ran in a subshell: load the favorites it may have added
 if [[ $#paths -gt 0 ]]; then

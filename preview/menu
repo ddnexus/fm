@@ -674,7 +674,7 @@ case $id in
 		;;
 	PICK)
 		cat <<-notes
-			This menu picks the Selected items, closes the widget and automatically places them in the zsh prompt, like a completion: the word at the cursor is replaced by the picked paths, relative to the prompt dir when inside it, abbreviated (~) and quoted for the shell otherwise.
+			This menu picks the Selected items, closes the widget and automatically places them in the zsh prompt, like a completion: the word at the cursor is replaced by the picked paths, relative to the prompt dir when inside it, abbreviated with the shell named dirs (~, ~favorite, ...) and quoted for the shell otherwise.
 
 			The widget starts from the word at the cursor: its dir part (~, ~favorite and absolute dirs included) is the start dir, the rest is the initial query. E.g. after "vim src/fo" the widget opens in src with the query "fo".
 
@@ -683,7 +683,7 @@ case $id in
 		;;
 	PICK_WD)
 		cat <<-notes
-			This menu picks the current Working Dir, closes the widget and automatically places it in the zsh prompt, replacing the word at the cursor. The path is relative to the prompt dir when inside it ("." for the prompt dir itself), abbreviated (~) and quoted for the shell otherwise.
+			This menu picks the current Working Dir, closes the widget and automatically places it in the zsh prompt, replacing the word at the cursor. The path is relative to the prompt dir when inside it ("." for the prompt dir itself), abbreviated with the shell named dirs (~, ~favorite, ...) and quoted for the shell otherwise.
 
 			You may want to enable the AUTO_CD zsh option in order to get cd into it automatically.
 		notes

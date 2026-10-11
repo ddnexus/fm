@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Widget: fixed the empty DIR view with eza (it read the paths from the widget's stdin)
-- Widget: works like a completion: starts from the word at the cursor (dir part and query) and replaces it with the picked paths, relative to the prompt dir, ~ abbreviated, quoted, dirs with a trailing /
+- Widget: works like a completion: starts from the word at the cursor (dir part and query) and replaces it with the picked paths, relative to the prompt dir, abbreviated with the shell named dirs (~, ~favorite), quoted, dirs with a trailing /
 - Widget: the panel output goes to the terminal, so dialogs work; FAV_ADD and FAV_ADD_WD available (with the automatic name)
 
 ## Version 0.2.0
